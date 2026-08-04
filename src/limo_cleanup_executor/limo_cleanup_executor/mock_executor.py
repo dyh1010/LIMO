@@ -3,14 +3,14 @@ import time
 
 import rclpy
 from limo_cleanup_interfaces.action import ExecuteCleanup
+from limo_cleanup_interfaces.msg import ObjectDetection
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
 
-EXECUTION_STEPS = (
-    ('searching_object', 0.10, 'Searching for the requested object'),
+POST_DETECTION_STEPS = (
     ('approaching_object', 0.25, 'Approaching the detected object'),
     ('aligning_object', 0.35, 'Aligning the chassis for pickup'),
     ('grasping', 0.50, 'Closing the gripper around the object'),
@@ -26,12 +26,26 @@ class MockCleanupExecutor(Node):
     def __init__(self) -> None:
         super().__init__('cleanup_mock_executor')
         self.declare_parameter('step_duration', 0.6)
+        self.declare_parameter('detection_timeout', 5.0)
         self.step_duration = float(
             self.get_parameter('step_duration').get_parameter_value().double_value)
+        self.detection_timeout = float(
+            self.get_parameter(
+                'detection_timeout').get_parameter_value().double_value)
 
         self.callback_group = ReentrantCallbackGroup()
         self.busy_lock = threading.Lock()
         self.busy = False
+        self.detection_condition = threading.Condition()
+        self.detections = {}
+
+        self.create_subscription(
+            ObjectDetection,
+            '/cleanup/detection',
+            self.detection_callback,
+            10,
+            callback_group=self.callback_group,
+        )
 
         self.action_server = ActionServer(
             self,
@@ -43,7 +57,23 @@ class MockCleanupExecutor(Node):
             callback_group=self.callback_group,
         )
         self.get_logger().info(
-            f'Mock executor ready; step_duration={self.step_duration:.2f}s')
+            'Mock executor ready; '
+            f'step_duration={self.step_duration:.2f}s; '
+            f'detection_timeout={self.detection_timeout:.2f}s')
+
+    def detection_callback(self, message: ObjectDetection) -> None:
+        if not message.task_id:
+            self.get_logger().warning('Ignoring detection without a task_id')
+            return
+
+        with self.detection_condition:
+            self.detections[message.task_id] = message
+            self.detection_condition.notify_all()
+
+        self.get_logger().info(
+            f'Received detection {message.detection_id} for '
+            f'{message.task_id}: {message.object_class} '
+            f'({message.confidence:.0%})')
 
     def goal_callback(self, goal_request):
         with self.busy_lock:
@@ -66,7 +96,19 @@ class MockCleanupExecutor(Node):
         task_id = goal_handle.request.task_id
 
         try:
-            for state, progress, detail in EXECUTION_STEPS:
+            self.publish_feedback(
+                goal_handle,
+                'searching_object',
+                0.10,
+                'Waiting for a matching perception result',
+            )
+            detection = self.wait_for_detection(
+                goal_handle,
+                task_id,
+                goal_handle.request.object_class,
+            )
+
+            if detection is None:
                 if goal_handle.is_cancel_requested:
                     goal_handle.canceled()
                     result.success = False
@@ -75,13 +117,39 @@ class MockCleanupExecutor(Node):
                     self.get_logger().info(result.detail)
                     return result
 
-                feedback = ExecuteCleanup.Feedback()
-                feedback.state = state
-                feedback.progress = progress
-                feedback.detail = detail
-                goal_handle.publish_feedback(feedback)
-                self.get_logger().info(
-                    f'{task_id}: {state} ({progress:.0%})')
+                goal_handle.abort()
+                result.success = False
+                result.final_state = 'object_not_found'
+                result.detail = (
+                    f'No matching {goal_handle.request.object_class} '
+                    f'detection was received within '
+                    f'{self.detection_timeout:.1f}s')
+                self.get_logger().warning(result.detail)
+                return result
+
+            self.publish_feedback(
+                goal_handle,
+                'object_detected',
+                0.20,
+                (
+                    f'Detected {detection.object_class} at '
+                    f'({detection.position.x:.2f}, '
+                    f'{detection.position.y:.2f}, '
+                    f'{detection.position.z:.2f}) in '
+                    f'{detection.frame_id}'
+                ),
+            )
+
+            for state, progress, detail in POST_DETECTION_STEPS:
+                if goal_handle.is_cancel_requested:
+                    goal_handle.canceled()
+                    result.success = False
+                    result.final_state = 'cancelled'
+                    result.detail = f'Task {task_id} was cancelled'
+                    self.get_logger().info(result.detail)
+                    return result
+
+                self.publish_feedback(goal_handle, state, progress, detail)
                 time.sleep(self.step_duration)
 
             goal_handle.succeed()
@@ -98,8 +166,42 @@ class MockCleanupExecutor(Node):
             self.get_logger().error(result.detail)
             return result
         finally:
+            with self.detection_condition:
+                self.detections.pop(task_id, None)
             with self.busy_lock:
                 self.busy = False
+
+    def wait_for_detection(
+            self, goal_handle, task_id: str, object_class: str):
+        deadline = time.monotonic() + self.detection_timeout
+
+        with self.detection_condition:
+            while True:
+                if goal_handle.is_cancel_requested:
+                    return None
+
+                detection = self.detections.get(task_id)
+                if (
+                        detection is not None
+                        and detection.object_class == object_class):
+                    return detection
+
+                remaining = deadline - time.monotonic()
+                if remaining <= 0.0:
+                    return None
+
+                self.detection_condition.wait(timeout=min(0.1, remaining))
+
+    def publish_feedback(
+            self, goal_handle, state: str, progress: float,
+            detail: str) -> None:
+        feedback = ExecuteCleanup.Feedback()
+        feedback.state = state
+        feedback.progress = progress
+        feedback.detail = detail
+        goal_handle.publish_feedback(feedback)
+        self.get_logger().info(
+            f'{goal_handle.request.task_id}: {state} ({progress:.0%})')
 
     def destroy_node(self):
         self.action_server.destroy()

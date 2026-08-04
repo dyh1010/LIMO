@@ -1,19 +1,14 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>limo_cleanup_bringup</name>
+  <name>limo_cleanup_perception</name>
   <version>0.0.0</version>
-  <description>Launch files for the LIMO cleanup robot system.</description>
-  <maintainer email="dyh@todo.todo">dyh</maintainer>
+  <description>Perception nodes for the LIMO cleanup robot.</description>
+  <maintainer email="2099439179@qq.com">dyh</maintainer>
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
-  <depend>launch</depend>
-  <depend>launch_ros</depend>
-  <depend>limo_cleanup_core</depend>
-  <depend>limo_cleanup_language</depend>
-  <depend>limo_cleanup_executor</depend>
-  <depend>limo_cleanup_perception</depend>
+  <depend>limo_cleanup_interfaces</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
