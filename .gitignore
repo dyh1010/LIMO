@@ -1,0 +1,8 @@
+build/
+install/
+log/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.vscode/

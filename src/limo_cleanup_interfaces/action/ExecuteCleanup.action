@@ -1,0 +1,11 @@
+string task_id
+string object_class
+string raw_text
+---
+bool success
+string final_state
+string detail
+---
+string state
+float32 progress
+string detail
