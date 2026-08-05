@@ -45,6 +45,11 @@ map
 
 注意：标准版 LIMO Pro 不一定自带机械臂（MyCobot 280 为选配），arm_base_link 与 gripper_tcp 以最终采购配置为准。
 
+官方手册标称深度相机为 ORBBEC DaBai，ROS 2 Foxy 示例使用 `camera_link` 作为
+RViz 固定坐标系。但手册没有给出 Humble 驱动的完整 TF 名称，且不同
+`astra_camera` / `orbbec_camera` 驱动可能发布不同 frame_id，因此本规范中的
+`camera_depth_frame` 和 `camera_depth_optical_frame` 仍须以样机实际 TF 为准。
+
 ## 4. 坐标轴约定
 
 - base_link：x 向前，y 向左，z 向上；原点与官方 URDF 保持一致。
@@ -80,8 +85,13 @@ map
 
 1. `ros2 run tf2_tools view_frames` 生成 frames.pdf，确认整棵坐标树连通。
 2. `ros2 run tf2_ros tf2_echo base_link camera_depth_optical_frame` 确认静态变换数值与实测一致。
-3. 把已知尺寸的标定物放在底盘正前方已知距离处，比较检测三维位置经 TF2 转换到 base_link 后的误差。
-4. 位置误差进入可接受范围（首版目标 ±2 cm）之前，只允许只读验证，不允许驱动底盘或机械臂。
+3. 使用 `ros2 topic list -t` 与 `ros2 topic info --verbose <topic>` 记录 RGB、深度、
+   `camera_info` 和点云的实际消息类型、发布者与 QoS。Foxy 手册提示图像采用
+   Best Effort，Humble 环境需按实际发布者匹配。
+4. 把已知尺寸的标定物放在底盘正前方 0.3～1.5 m 的已知距离处，比较检测三维
+   位置经 TF2 转换到 base_link 后的误差。DaBai 手册标称深度有效范围为
+   0.3～3 m，0.3 m 内的结果不得纳入有效测量。
+5. 位置误差进入可接受范围（首版目标 ±2 cm）之前，只允许只读验证，不允许驱动底盘或机械臂。
 
 验证顺序（与进度记录第 16.2 节一致）：
 
