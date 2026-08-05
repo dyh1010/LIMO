@@ -6,4 +6,7 @@ __pycache__/
 .pytest_cache/
 .env
 .vscode/
-datasets/nmodels/n
+datasets/
+models/
+scripts/training/runs/
+scripts/training/*.pt

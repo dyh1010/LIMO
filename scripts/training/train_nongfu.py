@@ -22,6 +22,9 @@ def main() -> None:
     parser.add_argument('--device', default='0')
     parser.add_argument('--export-to', default='',
                         help='Directory that receives best.pt and ONNX')
+    parser.add_argument(
+        '--skip-onnx', action='store_true',
+        help='Keep the trained best.pt but skip ONNX export')
     args = parser.parse_args()
 
     model = YOLO(args.weights)
@@ -44,15 +47,23 @@ def main() -> None:
     print(f'mAP50-95={metrics.box.map:.4f} '
           f'mAP50={metrics.box.map50:.4f}')
 
-    onnx_path = model.export(format='onnx', imgsz=args.imgsz)
-    print(f'onnx: {onnx_path}')
-
+    export_dir = None
     if args.export_to:
         export_dir = Path(args.export_to)
         export_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy2(best_pt, export_dir / 'nongfu_yolov8n_best.pt')
+        print(f'exported best.pt to {export_dir}')
+
+    if args.skip_onnx:
+        print('ONNX export skipped')
+        return
+
+    onnx_path = model.export(format='onnx', imgsz=args.imgsz)
+    print(f'onnx: {onnx_path}')
+
+    if export_dir is not None:
         shutil.copy2(onnx_path, export_dir / 'nongfu_yolov8n_best.onnx')
-        print(f'exported best.pt and ONNX to {export_dir}')
+        print(f'exported ONNX to {export_dir}')
 
 
 if __name__ == '__main__':
