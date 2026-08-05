@@ -26,6 +26,8 @@ setup(
         'console_scripts': [
             'mock_perception = '
             'limo_cleanup_perception.mock_perception:main',
+            'detection_gate = '
+            'limo_cleanup_perception.detection_gate:main',
         ],
     },
 )

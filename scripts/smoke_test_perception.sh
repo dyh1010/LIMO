@@ -88,8 +88,9 @@ stop_system
 grep -q 'state: object_detected' "$normal_status"
 grep -q 'state: succeeded' "$normal_status"
 grep -q 'Published detection .*paper_box' "$normal_launch"
+grep -q 'Accepted detection .*paper_box' "$normal_launch"
 grep -q 'Received detection .*paper_box' "$normal_launch"
-echo 'PASS normal: matching detection unlocked execution'
+echo 'PASS normal: matching detection passed the gate and unlocked execution'
 
 timeout_launch="$test_dir/timeout_launch.log"
 timeout_status="$test_dir/timeout_status.log"
@@ -133,4 +134,26 @@ stop_system
 
 grep -q 'state: cancelled' "$cancel_status"
 echo 'PASS cancel: waiting task was cancelled'
+
+gate_launch="$test_dir/gate_launch.log"
+gate_status="$test_dir/gate_status.log"
+
+start_system "$gate_launch" \
+  mock_step_duration:=0.10 \
+  mock_detection_delay:=0.30 \
+  mock_detection_confidence:=0.10 \
+  detection_timeout:=1.0
+start_status_capture "$gate_status"
+ros2 topic pub --once \
+  /cleanup/command_text \
+  std_msgs/msg/String \
+  "{data: '捡塑料瓶'}" > /dev/null
+sleep 2.5
+stop_captures
+stop_system
+
+grep -q 'state: object_not_found' "$gate_status"
+grep -q 'Rejected detection .*low_confidence' "$gate_launch"
+echo 'PASS gate: low-confidence detection was rejected and execution failed safely'
+
 echo "Smoke-test logs: $test_dir"
