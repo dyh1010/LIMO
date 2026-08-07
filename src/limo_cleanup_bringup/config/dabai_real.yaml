@@ -1,0 +1,60 @@
+# DaBai real-hardware template. Replace topic/frame values only after
+# inspecting the camera graph on the delivered robot.
+cleanup_dual_model_detector:
+  ros__parameters:
+    rgb_topic: /camera/color/image_raw
+    # This must be depth registered/aligned to the RGB pixel grid.
+    depth_topic: /camera/depth_registered/image_raw
+    camera_info_topic: /camera/color/camera_info
+    depth_scale: 0.001
+    min_depth: 0.30
+    max_depth: 3.00
+    frame_id_override: ''
+    confidence: 0.50
+    iou: 0.45
+    imgsz: 640
+    device: '0'
+    process_period: 0.20
+    publish_period: 0.50
+    in_bin_overlap: 0.30
+    opening_height_ratio: 0.62
+    opening_margin_ratio: 0.0
+    always_active: false
+
+cleanup_hardware_readiness:
+  ros__parameters:
+    rgb_topic: /camera/color/image_raw
+    # This must be depth registered/aligned to the RGB pixel grid.
+    depth_topic: /camera/depth_registered/image_raw
+    camera_info_topic: /camera/color/camera_info
+    base_frame: base_link
+    camera_frame_override: ''
+    timeout_sec: 20.0
+    settle_sec: 2.0
+    max_sync_delta_sec: 0.15
+    depth_scale: 0.001
+    min_depth: 0.30
+    max_depth: 3.00
+    min_valid_depth_ratio: 0.001
+    require_tf: true
+
+    # Enable only after measuring the physical camera mount independently.
+    check_expected_extrinsics: false
+    expected_x: 0.0
+    expected_y: 0.0
+    expected_z: 0.0
+    expected_roll: 0.0
+    expected_pitch: 0.0
+    expected_yaw: 0.0
+    translation_tolerance_m: 0.02
+    rotation_tolerance_rad: 0.05
+
+    forbidden_actuation_topics:
+      - /cmd_vel
+      - /cmd_vel_nav
+      - /cmd_vel_teleop
+      - /limo/vel_cmd
+      - /arm_controller/joint_trajectory
+      - /joint_trajectory_controller/joint_trajectory
+      - /gripper_controller/commands
+    report_path: /tmp/limo_hardware_readiness.json

@@ -47,6 +47,7 @@ class DualModelDetector(Node):
             ('opening_height_ratio', 0.62),
             ('opening_margin_ratio', 0.0),
             ('frame_id_override', ''),
+            ('always_active', False),
         ])
         bottle_model_path = self.parameter_string('bottle_model_path')
         bin_model_path = self.parameter_string('bin_model_path')
@@ -68,6 +69,7 @@ class DualModelDetector(Node):
             'opening_margin_ratio')
         self.frame_id_override = self.parameter_string('frame_id_override')
         self.publish_period = self.parameter_double('publish_period')
+        self.always_active = self.parameter_bool('always_active')
 
         self.get_logger().info('Loading bottle and trash-bin models')
         self.bottle_model = YOLO(bottle_model_path)
@@ -77,7 +79,8 @@ class DualModelDetector(Node):
         self.latest_depth = None
         self.latest_rgb_header = None
         self.camera_info = None
-        self.active_task = None
+        self.active_task = (
+            'read-only-perception' if self.always_active else None)
         self.last_processed_stamp = None
         self.last_publish_time = 0.0
 
@@ -102,7 +105,8 @@ class DualModelDetector(Node):
         self.get_logger().info(
             f'Dual-model detector ready; rgb={rgb_topic}; '
             f'depth={depth_topic}; '
-            f'camera_info={camera_info_topic}')
+            f'camera_info={camera_info_topic}; '
+            f'always_active={self.always_active}')
 
     def parameter_string(self, name):
         return self.get_parameter(name).get_parameter_value().string_value
@@ -114,6 +118,9 @@ class DualModelDetector(Node):
     def parameter_integer(self, name):
         return int(
             self.get_parameter(name).get_parameter_value().integer_value)
+
+    def parameter_bool(self, name):
+        return self.get_parameter(name).get_parameter_value().bool_value
 
     def rgb_callback(self, message):
         try:
@@ -139,6 +146,8 @@ class DualModelDetector(Node):
             self.camera_info = message
 
     def task_callback(self, message):
+        if self.always_active:
+            return
         if message.action == 'cancel':
             if self.active_task == message.task_id:
                 self.active_task = None

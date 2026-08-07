@@ -12,18 +12,18 @@
 ## 离线图片验证
 
 ```bash
-source ~/robotics/train/venv/bin/activate
 source /opt/ros/humble/setup.bash
 source ~/robotics/workspaces/limo_cleanup_ws/install/setup.bash
 
-ros2 run limo_cleanup_perception offline_dual_detector -- \
+~/robotics/train/venv/bin/python -m \
+  limo_cleanup_perception.offline_dual_detector \
   --image /path/to/test.jpg \
   --bottle-model /mnt/c/Users/DYH/Desktop/limo_graphtest/models/nongfu_yolov8n_best.pt \
   --bin-model /mnt/c/Users/DYH/Desktop/limo_graphtest/models/trash_bin_yolov8n_best.pt \
   --output-dir /tmp/limo_perception_test
 ```
 
-原生 Linux 可使用以下脚本后台运行：
+批量任务可后台运行：
 
 ```bash
 ~/robotics/workspaces/limo_cleanup_ws/scripts/run_offline_perception_background.sh \
@@ -34,18 +34,6 @@ ros2 run limo_cleanup_perception offline_dual_detector -- \
 ```
 
 进度与结果分别写入 `offline_dual_detector.log`、`summary.json` 和逐图 JSON。
-
-在 Windows + WSL 中，单纯 `nohup` 可能因 WSL 发行版被回收而中止。应由隐藏的 Windows
-`wsl.exe` 进程持有 worker：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File `
-  "\\wsl.localhost\Ubuntu-22.04\home\dyh\robotics\workspaces\limo_cleanup_ws\scripts\start_wsl_offline_perception.ps1" `
-  -OutputDir "C:\path\to\output" `
-  -InputDir "C:\path\to\images"
-```
-
-输出目录会生成 `offline_dual_detector.windows.pid`、stdout、stderr、逐图结果和汇总 JSON。
 
 ## 到货后的启动方式
 
@@ -62,6 +50,19 @@ ros2 launch limo_cleanup_bringup cleanup_system.launch.py \
 ```
 
 在三维误差验收通过前保持 `use_mock_executor:=true`，不得驱动底盘或机械臂。
+
+只启动相机读取和真实感知、完全不启动任务管理器或执行器时，使用：
+
+```bash
+ros2 launch limo_cleanup_bringup real_perception_only.launch.py \
+  start_camera:=false \
+  rgb_topic:=/actual/rgb/topic \
+  depth_topic:=/actual/aligned_depth/topic \
+  camera_info_topic:=/actual/camera_info/topic
+```
+
+该入口默认 `always_active:=true`，无需先发布 `CleanupTask` 即可持续处理 RGB-D；
+它只发布感知结果和状态，不包含任何运动执行节点。
 
 ## 当前限制
 

@@ -10,6 +10,9 @@
   <depend>rclpy</depend>
   <depend>launch</depend>
   <depend>launch_ros</depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
   <depend>limo_cleanup_core</depend>
   <depend>limo_cleanup_language</depend>
   <depend>limo_cleanup_executor</depend>

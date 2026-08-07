@@ -110,8 +110,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'depth_topic',
-            default_value='/camera/depth/image_raw',
-            description='Depth image aligned to RGB',
+            default_value='/camera/depth_registered/image_raw',
+            description='Depth image registered to the RGB pixel grid',
         ),
         DeclareLaunchArgument(
             'camera_info_topic',
@@ -162,6 +162,7 @@ def generate_launch_description():
                 'depth_topic': depth_topic,
                 'camera_info_topic': camera_info_topic,
                 'device': detector_device,
+                'always_active': False,
                 'confidence': ParameterValue(
                     min_detection_confidence, value_type=float),
             }],
