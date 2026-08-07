@@ -30,6 +30,12 @@ def generate_launch_description():
     camera_info_topic = LaunchConfiguration('camera_info_topic')
     detector_device = LaunchConfiguration('detector_device')
     perception_python = LaunchConfiguration('perception_python')
+    use_gripper_controller = LaunchConfiguration('use_gripper_controller')
+    gripper_backend = LaunchConfiguration('gripper_backend')
+    allow_gripper_motion = LaunchConfiguration('allow_gripper_motion')
+    confirmed_gripper_model = LaunchConfiguration(
+        'confirmed_gripper_model')
+    gripper_serial_port = LaunchConfiguration('gripper_serial_port')
 
     mock_perception_parameters = [{
         'detection_delay': ParameterValue(
@@ -128,6 +134,31 @@ def generate_launch_description():
             default_value='/home/dyh/robotics/train/venv/bin/python',
             description='Python interpreter containing Ultralytics and Torch',
         ),
+        DeclareLaunchArgument(
+            'use_gripper_controller',
+            default_value='false',
+            description='Start the standalone gripper action controller',
+        ),
+        DeclareLaunchArgument(
+            'gripper_backend',
+            default_value='dry_run',
+            description='Gripper backend: dry_run or pymycobot',
+        ),
+        DeclareLaunchArgument(
+            'allow_gripper_motion',
+            default_value='false',
+            description='Explicitly authorize real gripper motion',
+        ),
+        DeclareLaunchArgument(
+            'confirmed_gripper_model',
+            default_value='mycobot_gripper_ag',
+            description='Expected physical gripper model',
+        ),
+        DeclareLaunchArgument(
+            'gripper_serial_port',
+            default_value='/dev/ttyACM0',
+            description='myCobot serial device',
+        ),
         Node(
             package='limo_cleanup_perception',
             executable='mock_perception',
@@ -180,6 +211,20 @@ def generate_launch_description():
                     max_detection_age, value_type=float),
             }],
             condition=IfCondition(use_detection_gate),
+        ),
+        Node(
+            package='limo_cleanup_executor',
+            executable='gripper_controller',
+            name='cleanup_gripper_controller',
+            output='screen',
+            parameters=[{
+                'backend': gripper_backend,
+                'allow_hardware_motion': ParameterValue(
+                    allow_gripper_motion, value_type=bool),
+                'confirmed_gripper_model': confirmed_gripper_model,
+                'serial_port': gripper_serial_port,
+            }],
+            condition=IfCondition(use_gripper_controller),
         ),
         Node(
             package='limo_cleanup_executor',

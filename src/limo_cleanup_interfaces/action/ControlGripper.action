@@ -1,0 +1,19 @@
+uint8 COMMAND_OPEN=1
+uint8 COMMAND_CLOSE=2
+uint8 COMMAND_SET_POSITION=3
+
+uint8 command
+float32 position
+float32 speed
+bool verify
+---
+bool success
+string final_state
+float32 commanded_position
+float32 measured_position
+string detail
+---
+string state
+float32 commanded_position
+float32 measured_position
+string detail

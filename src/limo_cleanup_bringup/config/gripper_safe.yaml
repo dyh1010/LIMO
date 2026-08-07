@@ -1,0 +1,15 @@
+cleanup_gripper_controller:
+  ros__parameters:
+    backend: dry_run
+    allow_hardware_motion: false
+    confirmed_gripper_model: mycobot_gripper_ag
+    serial_port: /dev/ttyACM0
+    baud: 115200
+    gripper_type: 1
+    closed_value: 0
+    open_value: 100
+    default_speed: 0.25
+    position_tolerance: 0.08
+    command_timeout: 3.0
+    poll_period: 0.10
+    dry_run_initial_position: 1.0

@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CleanupStatus.msg"
   "msg/ObjectDetection.msg"
   "action/ExecuteCleanup.action"
+  "action/ControlGripper.action"
   DEPENDENCIES builtin_interfaces geometry_msgs
 )
 

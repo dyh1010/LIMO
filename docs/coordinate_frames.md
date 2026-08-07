@@ -39,11 +39,14 @@ map
 | camera_link | base_link | 静态 | static_transform / URDF | 待实测 |
 | camera_depth_frame | camera_link | 静态 | 相机驱动 | 待相机型号确认 |
 | camera_depth_optical_frame | camera_depth_frame | 静态 | 相机驱动 | 首版检测输出坐标系 |
-| arm_base_link | base_link | 静态 | static_transform / URDF | 待机械臂配置确认 |
-| gripper_tcp | 机械臂末关节 | 动态 | 机械臂驱动 | 待机械臂配置确认 |
+| arm_base_link | base_link | 静态 | static_transform / URDF | myCobot 280 M5 已确认；安装外参待测 |
+| gripper_tcp | 机械臂末关节 | 动态 | 机械臂驱动 | `mycobot_gripper_ag` 已确认；TCP 待标定 |
 | bin_frame | map | 静态 | 手动标定 / AprilTag | 待垃圾桶方案确认 |
 
-注意：标准版 LIMO Pro 不一定自带机械臂（MyCobot 280 为选配），arm_base_link 与 gripper_tcp 以最终采购配置为准。
+已确认执行机构为大象机器人（Elephant Robotics）myCobot 280 M5，末端执行器为
+myCobot Gripper AG（`mycobot_gripper_ag`）。型号确认不代表运动授权；机械臂安装板、
+独立供电、通信方式、固件/驱动版本、急停方案、`arm_base_link` 安装外参和
+`gripper_tcp` 工具中心点仍须在到货后实测并记录。
 
 官方手册标称深度相机为 ORBBEC DaBai，ROS 2 Foxy 示例使用 `camera_link` 作为
 RViz 固定坐标系。但手册没有给出 Humble 驱动的完整 TF 名称，且不同

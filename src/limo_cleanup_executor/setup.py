@@ -24,6 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'gripper_controller = '
+            'limo_cleanup_executor.gripper_controller:main',
             'mock_executor = limo_cleanup_executor.mock_executor:main',
         ],
     },
