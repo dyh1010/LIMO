@@ -13,6 +13,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 def generate_launch_description():
     use_mock_executor = LaunchConfiguration('use_mock_executor')
     use_mock_perception = LaunchConfiguration('use_mock_perception')
+    use_real_perception = LaunchConfiguration('use_real_perception')
     use_detection_gate = LaunchConfiguration('use_detection_gate')
     mock_step_duration = LaunchConfiguration('mock_step_duration')
     mock_detection_delay = LaunchConfiguration('mock_detection_delay')
@@ -22,6 +23,13 @@ def generate_launch_description():
     min_detection_confidence = LaunchConfiguration(
         'min_detection_confidence')
     max_detection_age = LaunchConfiguration('max_detection_age')
+    bottle_model_path = LaunchConfiguration('bottle_model_path')
+    bin_model_path = LaunchConfiguration('bin_model_path')
+    rgb_topic = LaunchConfiguration('rgb_topic')
+    depth_topic = LaunchConfiguration('depth_topic')
+    camera_info_topic = LaunchConfiguration('camera_info_topic')
+    detector_device = LaunchConfiguration('detector_device')
+    perception_python = LaunchConfiguration('perception_python')
 
     mock_perception_parameters = [{
         'detection_delay': ParameterValue(
@@ -35,6 +43,11 @@ def generate_launch_description():
             'use_mock_perception',
             default_value='true',
             description='Start the mock object perception node',
+        ),
+        DeclareLaunchArgument(
+            'use_real_perception',
+            default_value='false',
+            description='Start the RGB-D dual-model perception node',
         ),
         DeclareLaunchArgument(
             'use_mock_executor',
@@ -76,6 +89,45 @@ def generate_launch_description():
             default_value='1.0',
             description='Maximum detection age accepted by the gate',
         ),
+        DeclareLaunchArgument(
+            'bottle_model_path',
+            default_value=(
+                '/mnt/c/Users/DYH/Desktop/limo_graphtest/models/'
+                'nongfu_yolov8n_best.pt'),
+            description='Bottle detector PT or ONNX path',
+        ),
+        DeclareLaunchArgument(
+            'bin_model_path',
+            default_value=(
+                '/mnt/c/Users/DYH/Desktop/limo_graphtest/models/'
+                'trash_bin_yolov8n_best.pt'),
+            description='Trash-bin detector PT or ONNX path',
+        ),
+        DeclareLaunchArgument(
+            'rgb_topic',
+            default_value='/camera/color/image_raw',
+            description='Aligned RGB image topic',
+        ),
+        DeclareLaunchArgument(
+            'depth_topic',
+            default_value='/camera/depth/image_raw',
+            description='Depth image aligned to RGB',
+        ),
+        DeclareLaunchArgument(
+            'camera_info_topic',
+            default_value='/camera/color/camera_info',
+            description='Camera intrinsics matching the RGB image',
+        ),
+        DeclareLaunchArgument(
+            'detector_device',
+            default_value='0',
+            description='Ultralytics inference device, e.g. 0 or cpu',
+        ),
+        DeclareLaunchArgument(
+            'perception_python',
+            default_value='/home/dyh/robotics/train/venv/bin/python',
+            description='Python interpreter containing Ultralytics and Torch',
+        ),
         Node(
             package='limo_cleanup_perception',
             executable='mock_perception',
@@ -96,6 +148,24 @@ def generate_launch_description():
                 AndSubstitution(
                     use_mock_perception,
                     NotSubstitution(use_detection_gate))),
+        ),
+        Node(
+            package='limo_cleanup_perception',
+            executable='dual_model_detector',
+            name='cleanup_dual_model_detector',
+            output='screen',
+            prefix=[perception_python],
+            parameters=[{
+                'bottle_model_path': bottle_model_path,
+                'bin_model_path': bin_model_path,
+                'rgb_topic': rgb_topic,
+                'depth_topic': depth_topic,
+                'camera_info_topic': camera_info_topic,
+                'device': detector_device,
+                'confidence': ParameterValue(
+                    min_detection_confidence, value_type=float),
+            }],
+            condition=IfCondition(use_real_perception),
         ),
         Node(
             package='limo_cleanup_perception',

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypins="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>limo_cleanup_perception</name>
   <version>0.0.0</version>
@@ -9,6 +9,10 @@
 
   <depend>rclpy</depend>
   <depend>limo_cleanup_interfaces</depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

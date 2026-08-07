@@ -28,6 +28,10 @@ setup(
             'limo_cleanup_perception.mock_perception:main',
             'detection_gate = '
             'limo_cleanup_perception.detection_gate:main',
+            'dual_model_detector = '
+            'limo_cleanup_perception.dual_model_detector:main',
+            'offline_dual_detector = '
+            'limo_cleanup_perception.offline_dual_detector:main',
         ],
     },
 )
