@@ -36,7 +36,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'serial_port',
-            default_value='/dev/ttyACM0',
+            default_value='/dev/elephant',
             description='myCobot serial device',
         ),
         Node(

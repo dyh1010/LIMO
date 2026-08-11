@@ -15,12 +15,14 @@ from std_msgs.msg import String
 DEFAULT_ALLOWED_CLASSES = (
     'plastic_bottle', 'can', 'paper_box', 'generic_waste')
 DEFAULT_ALLOWED_FRAMES = (
-    'camera_depth_optical_frame', 'base_link', 'arm_base_link')
+    'camera_color_optical_frame', 'camera_depth_optical_frame',
+    'base_link', 'arm_base_link')
+CONFIDENCE_EPSILON = 1e-6
 
 
 @dataclass(frozen=True)
 class GateConfig:
-    min_confidence: float = 0.5
+    min_confidence: float = 0.35
     max_detection_age: float = 1.0
     min_range: float = 0.05
     max_range: float = 3.0
@@ -51,7 +53,7 @@ def validate_detection(message, config, now=None):
         reasons.append('confidence_not_finite')
     elif not 0.0 <= message.confidence <= 1.0:
         reasons.append('confidence_out_of_range')
-    elif message.confidence < config.min_confidence:
+    elif message.confidence < config.min_confidence - CONFIDENCE_EPSILON:
         reasons.append(f'low_confidence:{message.confidence:.2f}')
 
     position = (message.position.x, message.position.y, message.position.z)
@@ -90,7 +92,7 @@ class DetectionGate(Node):
     def __init__(self) -> None:
         super().__init__('cleanup_detection_gate')
 
-        self.declare_parameter('min_confidence', 0.5)
+        self.declare_parameter('min_confidence', 0.35)
         self.declare_parameter('max_detection_age', 1.0)
         self.declare_parameter('min_range', 0.05)
         self.declare_parameter('max_range', 3.0)

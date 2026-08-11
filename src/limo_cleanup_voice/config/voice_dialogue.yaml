@@ -1,0 +1,58 @@
+voice_asr:
+  ros__parameters:
+    # text: no microphone dependency; vosk_microphone: offline microphone ASR;
+    # vosk_wav_once: recognize one mono 16-bit PCM WAV file.
+    input_mode: text
+    text_input_topic: /voice/text_input
+    transcript_topic: /voice/transcript
+    status_topic: /voice/asr_status
+    vosk_model_path: /home/agilex/limo_cleanup_ws/models/vosk-model-small-cn-0.22
+    wav_path: ''
+    sample_rate: 16000
+    # 0 selects the microphone's native rate, then resamples to sample_rate.
+    input_sample_rate: 0
+    block_size: 8000
+    microphone_device: ''
+    grammar_phrases:
+      - 小莫 开始 清理
+      - 机器人 开始 清理
+      - 小莫 捡 塑料瓶
+      - 机器人 捡 塑料瓶
+      - 小莫 捡 易拉罐
+      - 机器人 捡 易拉罐
+      - 小莫 捡 纸盒
+      - 机器人 捡 纸盒
+      - 小莫 捡 垃圾
+      - 机器人 捡 垃圾
+      - 小莫 碰 一下 塑料瓶
+      - 机器人 碰 一下 塑料瓶
+      - 小莫 报告 状态
+      - 机器人 报告 状态
+      - 确认
+      - 取消
+      - 停止 任务
+      - 紧急 停止
+      - '[unk]'
+
+voice_dialogue:
+  ros__parameters:
+    transcript_topic: /voice/transcript
+    intent_topic: /voice/intent
+    response_topic: /voice/response_text
+    status_topic: /voice/status
+    natural_language_topic: /cleanup/natural_language
+    cleanup_status_topic: /cleanup/status
+    require_confirmation: true
+    confirmation_timeout_sec: 10.0
+    require_wake_word: false
+    wake_words: [小莫, 利莫, 机器人]
+
+voice_tts:
+  ros__parameters:
+    # Set to espeak_ng only after espeak-ng and a speaker are verified.
+    backend: none
+    response_topic: /voice/response_text
+    status_topic: /voice/tts_status
+    executable: espeak-ng
+    voice: cmn
+    rate: 155

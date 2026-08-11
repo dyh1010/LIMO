@@ -2,9 +2,38 @@
 
 set -eo pipefail
 
-source /home/dyh/robotics/env/ros2_wsl.sh
-source /home/dyh/robotics/workspaces/limo_ws/install/setup.bash
-source /home/dyh/robotics/workspaces/limo_cleanup_ws/install/setup.bash
+workspace="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+ros_setup="${ROS_SETUP:-}"
+underlay_setup="${ROS_UNDERLAY_SETUP:-}"
+perception_python="${PERCEPTION_PYTHON:-python3}"
+bottle_model_path="${BOTTLE_MODEL_PATH:-${workspace}/models/nongfu_yolov8n_best.pt}"
+bin_model_path="${BIN_MODEL_PATH:-${workspace}/models/trash_bin_yolov8n_best.pt}"
+detector_device="${DETECTOR_DEVICE:-cpu}"
+
+if [[ -z "${ros_setup}" ]]; then
+  if [[ -f /opt/ros/foxy/setup.bash ]]; then
+    ros_setup=/opt/ros/foxy/setup.bash
+  else
+    ros_setup=/opt/ros/humble/setup.bash
+  fi
+fi
+
+source "${ros_setup}"
+if [[ -n "${underlay_setup}" ]]; then
+  source "${underlay_setup}"
+elif [[ -f /home/agilex/limo_ros2_ws/install/setup.bash ]]; then
+  source /home/agilex/limo_ros2_ws/install/setup.bash
+fi
+source "${workspace}/install/setup.bash"
+
+export ROS_LOCALHOST_ONLY=1
+export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-137}"
+if [[ -z "${RMW_IMPLEMENTATION:-}" ]]; then
+  export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+fi
+if [[ "${RMW_IMPLEMENTATION}" != rmw_cyclonedds_cpp ]]; then
+  unset CYCLONEDDS_URI
+fi
 
 set -u
 
@@ -32,7 +61,10 @@ trap stop_launch EXIT
 
 setsid ros2 launch limo_cleanup_bringup real_perception_only.launch.py \
   start_camera:=false \
-  detector_device:=cpu >"$launch_log" 2>&1 &
+  perception_python:="${perception_python}" \
+  bottle_model_path:="${bottle_model_path}" \
+  bin_model_path:="${bin_model_path}" \
+  detector_device:="${detector_device}" >"$launch_log" 2>&1 &
 launch_pid=$!
 
 ready=false

@@ -115,7 +115,12 @@ LiDAR。样机到货后需核对 `/scan` 的实际名称、时间戳、frame_id 
 
 Foxy 手册提供以下参考：
 
+> **禁止直接执行以下原厂示例。** 它们仅用于记录手册接口：`limo_base` 启动会发送
+> `0x421` 硬件写入，直接向 `/cmd_vel` 发布会绕过本项目安全网关。当前只能使用分级验收
+> 文档中的私有 `/cleanup/base/safe_cmd_vel` 链和受控 Stage 2 包装 Launch。
+
 ```bash
+# HISTORICAL VENDOR EXAMPLES — DO NOT RUN
 ros2 launch limo_base limo_base.launch.py
 ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "..."
 ros2 launch limo_bringup limo_start.launch.py
@@ -139,4 +144,3 @@ ros2 launch limo_bringup limo_nav2_ackmann.launch.py
 5. 对 `/cmd_vel`、里程计、IMU、底盘状态、电池电压和错误码记录实际接口。
 6. 核对机械臂、夹爪、安装板、独立 12 V 供电、串口设备名和通信模式。
 7. 称量每个抓取物体；超过机械臂安全负载的物体只允许用于视觉测试。
-

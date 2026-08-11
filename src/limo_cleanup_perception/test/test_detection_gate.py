@@ -16,7 +16,7 @@ def make_valid_detection() -> ObjectDetection:
     message.task_id = 'task-0001'
     message.object_class = 'plastic_bottle'
     message.confidence = 0.9
-    message.frame_id = 'camera_depth_optical_frame'
+    message.frame_id = 'camera_color_optical_frame'
     message.position.x = 0.8
     message.position.y = 0.0
     message.position.z = 0.05
@@ -37,6 +37,20 @@ class ValidateDetectionTest(unittest.TestCase):
     def test_valid_detection_is_accepted(self):
         accepted, reasons = validate_detection(
             make_valid_detection(), make_config())
+        self.assertTrue(accepted)
+        self.assertEqual([], reasons)
+
+    def test_candidate_confidence_is_accepted_by_default(self):
+        message = make_valid_detection()
+        message.confidence = 0.35
+        accepted, reasons = validate_detection(message, make_config())
+        self.assertTrue(accepted)
+        self.assertEqual([], reasons)
+
+    def test_float32_candidate_confidence_is_accepted(self):
+        message = make_valid_detection()
+        message.confidence = 0.3499999940395355
+        accepted, reasons = validate_detection(message, make_config())
         self.assertTrue(accepted)
         self.assertEqual([], reasons)
 

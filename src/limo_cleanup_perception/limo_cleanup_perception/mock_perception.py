@@ -5,6 +5,8 @@ import rclpy
 from limo_cleanup_interfaces.msg import CleanupTask, ObjectDetection
 from rclpy.node import Node
 
+from .task_actions import accepts_perception_task
+
 
 class MockPerceptionNode(Node):
     def __init__(self) -> None:
@@ -66,7 +68,7 @@ class MockPerceptionNode(Node):
 
         if (
                 not self.publish_detections
-                or message.action != 'pick_and_dispose'
+                or not accepts_perception_task(message.action)
                 or not message.task_id
                 or not message.object_class):
             return

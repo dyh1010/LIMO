@@ -21,6 +21,9 @@ from limo_cleanup_perception.perception_core import (
     classify_bottles,
     select_target_bottle,
 )
+from limo_cleanup_perception.task_actions import (
+    accepts_perception_task,
+)
 
 
 class DualModelDetector(Node):
@@ -153,7 +156,7 @@ class DualModelDetector(Node):
                 self.active_task = None
             return
         if (
-                message.action == 'pick_and_dispose'
+                accepts_perception_task(message.action)
                 and message.object_class == 'plastic_bottle'
                 and message.task_id):
             self.active_task = message.task_id

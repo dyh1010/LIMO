@@ -17,6 +17,7 @@ CANONICAL_COMMANDS = {
     'paper_box': '捡纸盒',
     'generic_waste': '捡垃圾',
 }
+TOUCH_CANONICAL_COMMAND = '触碰矿泉水瓶'
 
 LOCAL_KEYWORDS = {
     'plastic_bottle': ('塑料瓶', '矿泉水瓶', '饮料瓶', 'plastic bottle', 'bottle'),
@@ -26,14 +27,17 @@ LOCAL_KEYWORDS = {
 }
 
 STOP_KEYWORDS = ('停止', '取消', '终止', 'stop', 'cancel', 'abort')
+TOUCH_KEYWORDS = ('触碰', '碰一下', '轻触', '接触', 'touch', 'tap')
 
 SYSTEM_PROMPT = """You convert a user's cleanup-robot instruction into JSON.
 Return JSON only, without Markdown.
-Allowed actions: pick_and_dispose, stop, unsupported.
+Allowed actions: pick_and_dispose, touch_only, stop, unsupported.
 Allowed object_class values: plastic_bottle, can, paper_box,
 generic_waste, null.
 Schema: {"action":"...","object_class":"... or null","reason":"..."}.
 Never invent an object category. A request to stop or cancel has action stop.
+touch_only is allowed only for plastic_bottle and means one pre-touch,
+light-touch, retreat sequence without a gripper.
 """
 
 
@@ -160,13 +164,32 @@ class LanguageUnderstandingNode(Node):
         if any(keyword in text for keyword in STOP_KEYWORDS):
             return {'action': 'stop', 'object_class': None, 'reason': 'stop keyword'}
 
+        object_class = None
         for object_class, keywords in LOCAL_KEYWORDS.items():
             if any(keyword in text for keyword in keywords):
+                break
+        else:
+            object_class = None
+
+        if any(keyword in text for keyword in TOUCH_KEYWORDS):
+            if object_class == 'plastic_bottle':
                 return {
-                    'action': 'pick_and_dispose',
+                    'action': 'touch_only',
                     'object_class': object_class,
-                    'reason': 'local keyword match',
+                    'reason': 'local touch keyword match',
                 }
+            return {
+                'action': 'unsupported',
+                'object_class': object_class,
+                'reason': 'touch_only supports plastic_bottle only',
+            }
+
+        if object_class is not None:
+            return {
+                'action': 'pick_and_dispose',
+                'object_class': object_class,
+                'reason': 'local object keyword match',
+            }
 
         return {
             'action': 'unsupported',
@@ -183,6 +206,8 @@ class LanguageUnderstandingNode(Node):
             return '停止任务'
         if action == 'pick_and_dispose' and object_class in CANONICAL_COMMANDS:
             return CANONICAL_COMMANDS[object_class]
+        if action == 'touch_only' and object_class == 'plastic_bottle':
+            return TOUCH_CANONICAL_COMMAND
         if action == 'unsupported':
             return raw_text
         raise ValueError('The parsed instruction is not supported or is incomplete')

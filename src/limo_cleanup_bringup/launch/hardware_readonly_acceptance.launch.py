@@ -9,7 +9,7 @@ from launch.substitutions import (
     PathJoinSubstitution,
 )
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import ParameterFile, ParameterValue
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -20,6 +20,9 @@ def generate_launch_description():
     start_camera = LaunchConfiguration('start_camera')
     driver_package = LaunchConfiguration('driver_package')
     driver_launch_file = LaunchConfiguration('driver_launch_file')
+    depth_registration = LaunchConfiguration('depth_registration')
+    enable_depth_scale = LaunchConfiguration('enable_depth_scale')
+    enable_ldp = LaunchConfiguration('enable_ldp')
 
     camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -31,6 +34,9 @@ def generate_launch_description():
         launch_arguments={
             'driver_package': driver_package,
             'driver_launch_file': driver_launch_file,
+            'depth_registration': depth_registration,
+            'enable_depth_scale': enable_depth_scale,
+            'enable_ldp': enable_ldp,
         }.items(),
         condition=IfCondition(start_camera),
     )
@@ -40,7 +46,7 @@ def generate_launch_description():
         name='cleanup_hardware_readiness',
         output='screen',
         parameters=[
-            ParameterFile(config_file, allow_substs=True),
+            config_file,
             {
                 'rgb_topic': LaunchConfiguration('rgb_topic'),
                 'depth_topic': LaunchConfiguration('depth_topic'),
@@ -76,12 +82,27 @@ def generate_launch_description():
             default_value='dabai.launch.py',
         ),
         DeclareLaunchArgument(
+            'depth_registration',
+            default_value='true',
+            description='Register depth to the RGB pixel grid',
+        ),
+        DeclareLaunchArgument(
+            'enable_depth_scale',
+            default_value='true',
+            description='Publish metric depth using the camera depth scale',
+        ),
+        DeclareLaunchArgument(
+            'enable_ldp',
+            default_value='false',
+            description='Disable LDP because it produced zero depth pixels',
+        ),
+        DeclareLaunchArgument(
             'rgb_topic',
             default_value='/camera/color/image_raw',
         ),
         DeclareLaunchArgument(
             'depth_topic',
-            default_value='/camera/depth_registered/image_raw',
+            default_value='/camera/depth/image_raw',
             description='Depth image already registered to RGB pixels',
         ),
         DeclareLaunchArgument(

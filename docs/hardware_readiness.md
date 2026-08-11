@@ -7,12 +7,14 @@
 
 `hardware_readonly_acceptance.launch.py` 只启动可选的相机驱动和订阅型检查节点。它不会启动：
 
-- `limo_base`、导航、`cmd_vel` 发布者；
+- `limo_base`、导航、公开或私有底盘命令端点；
 - 机械臂、MoveIt、轨迹控制器或夹爪控制器；
 - 清理任务管理器或真实/模拟执行器；
 - RViz 或 Gazebo。
 
-检查节点只订阅 RGB、对齐深度、CameraInfo 和 TF，并查询 ROS graph。它还会检查配置中的底盘、机械臂和夹爪命令话题是否存在发布者；发现发布者时验收失败。
+检查节点只订阅 RGB、对齐深度、CameraInfo 和 TF，并查询 ROS graph。它还会检查配置中的
+底盘、机械臂和夹爪命令话题是否存在发布者或订阅者；发现任一命令端点时验收失败。禁止
+列表包含公开 `/cmd_vel*`、`/limo/vel_cmd` 和私有 `/cleanup/base/safe_cmd_vel`。
 
 ## 已确认的机械臂与末端执行器
 
@@ -96,7 +98,7 @@ src/limo_cleanup_bringup/config/dabai_real.yaml
 
 ```yaml
 rgb_topic: /camera/color/image_raw
-depth_topic: /camera/depth_registered/image_raw
+depth_topic: /camera/depth/image_raw
 camera_info_topic: /camera/color/camera_info
 ```
 
@@ -185,7 +187,8 @@ scripts/run_hardware_readonly_acceptance.sh start_camera:=true
 - 深度编码、单位换算和有效距离样本正常；
 - `base_link` 到 RGB 光学 frame 的 TF 连通；
 - 启用外参比对后，TF 与独立实测值一致；
-- 所有配置的执行机构命令话题均无发布者。
+- 所有配置的执行机构命令话题均无发布者和订阅者；报告中的
+  `no_actuation_publishers`、`no_actuation_subscribers` 必须同时为 `PASS`。
 
 只需临时检查相机、尚未提供底盘 TF 时，可以使用 `require_tf:=false`，但这种结果不能作为完整实机验收通过。
 
@@ -200,8 +203,42 @@ ros2 launch limo_cleanup_bringup real_perception_only.launch.py \
   camera_info_topic:=/实际CameraInfo话题
 ```
 
-该入口默认通过训练虚拟环境启动 Ultralytics，并设置 `always_active:=true`，因此不依赖
-任务管理器或 `CleanupTask` 就会处理收到的 RGB-D 帧。若虚拟环境位置变化，使用
-`perception_python:=/实际/python` 覆盖。
+该入口默认使用当前环境的 `python3` 启动，并设置 `always_active:=true`，因此不依赖
+任务管理器或 `CleanupTask` 就会处理收到的 RGB-D 帧。目标 Python 必须包含兼容的
+Torch 和 Ultralytics；使用独立环境时通过 `perception_python:=/实际/python` 覆盖。
 
 该启动文件不包含任务管理器、底盘、机械臂、夹爪或执行器。真实三维误差和安全验收通过前，不要把它与任何真实运动执行节点组合启动。
+
+## 8. Foxy/ARM64 兼容与实机复验状态（2026-08-08）
+
+机器人断电期间已完成以下不依赖硬件的工作：
+
+- 用 `PythonExpression` 替换 Foxy 缺失的 `AndSubstitution` 和 `NotSubstitution`；
+- 直接传入 YAML 参数文件路径，移除 Foxy 缺失的 `ParameterFile`；
+- 真实感知启用时自动压制 mock 感知，防止两类感知节点同时发布；
+- 默认模型目录改为 `/home/agilex/limo_cleanup_ws/models/`，默认解释器改为 `python3`；
+- 新增 Foxy 兼容测试、运行时审计脚本和纯模拟主链路烟测。
+
+离线验证结果：
+
+- bringup 构建通过；
+- bringup 测试 `22 passed / 1 skipped`；
+- Foxy 专项回归 `16 passed`；
+- 全工作区测试汇总 `75 tests / 0 errors / 0 failures / 5 skipped`；
+- 三个 launch 的 `--show-args`、双模型只读启动烟测和默认纯模拟链路均通过；
+- deployable launch 中没有 `/mnt/c/` 默认路径，也没有三个 Foxy 禁用 API。
+
+机器人恢复供电后的复验已经完成：
+
+- 独立工作区 `/home/agilex/limo_cleanup_ws` 完成 Foxy/aarch64 原生构建、测试和 launch
+  参数解析；
+- Python `3.8.10`、Jetson Torch `2.1.0a0+41361538.nv23.06`、Ultralytics `8.3.21`
+  能够导入并加载两份真实 PT 模型；
+- 五张代表图在 CPU、`imgsz=640`、`iou=0.45`、confidence `0.50` 和 `0.35` 下均得到
+  预期结构结果；
+- DaBai 真实 RGB-D、双模型 detector 和 detection gate 的短时只读 ROS 链已经通过，
+  最终 marker 为 `REAL_PERCEPTION_GATE_ACCEPTANCE_PASS`。
+
+Ultralytics 仍会打印 Python 3.8 支持警告，但在上述固定版本和实测矩阵中不是当前阻塞。
+不要因此升级机器人 Jetson Torch 或随意改变 Ultralytics 版本；若版本、模型或推理后端变化，
+必须重新执行离线五图和真实只读感知回归。

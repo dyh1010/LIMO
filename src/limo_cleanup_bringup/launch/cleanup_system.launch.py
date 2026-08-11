@@ -2,12 +2,28 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import (
-    AndSubstitution,
     LaunchConfiguration,
-    NotSubstitution,
+    PythonExpression,
 )
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
+
+
+def _boolean_condition(required_true=(), required_false=()):
+    expression = []
+    for value in required_true:
+        if expression:
+            expression.append(' and ')
+        expression.extend([
+            "'", value, "'.lower() in ('true', '1', 'yes', 'on')",
+        ])
+    for value in required_false:
+        if expression:
+            expression.append(' and ')
+        expression.extend([
+            "'", value, "'.lower() not in ('true', '1', 'yes', 'on')",
+        ])
+    return IfCondition(PythonExpression(expression))
 
 
 def generate_launch_description():
@@ -20,6 +36,8 @@ def generate_launch_description():
     mock_detection_confidence = LaunchConfiguration(
         'mock_detection_confidence')
     detection_timeout = LaunchConfiguration('detection_timeout')
+    executor_dry_run = LaunchConfiguration('executor_dry_run')
+    allow_arm_motion = LaunchConfiguration('allow_arm_motion')
     min_detection_confidence = LaunchConfiguration(
         'min_detection_confidence')
     max_detection_age = LaunchConfiguration('max_detection_age')
@@ -36,6 +54,12 @@ def generate_launch_description():
     confirmed_gripper_model = LaunchConfiguration(
         'confirmed_gripper_model')
     gripper_serial_port = LaunchConfiguration('gripper_serial_port')
+    use_tracked_base_controller = LaunchConfiguration(
+        'use_tracked_base_controller')
+    allow_base_motion = LaunchConfiguration('allow_base_motion')
+    base_output_topic = LaunchConfiguration('base_output_topic')
+    base_max_linear_speed = LaunchConfiguration('base_max_linear_speed')
+    base_max_angular_speed = LaunchConfiguration('base_max_angular_speed')
 
     mock_perception_parameters = [{
         'detection_delay': ParameterValue(
@@ -86,9 +110,19 @@ def generate_launch_description():
             description='Maximum time the executor waits for a detection',
         ),
         DeclareLaunchArgument(
+            'executor_dry_run',
+            default_value='true',
+            description='Keep the cleanup executor in simulation-only mode',
+        ),
+        DeclareLaunchArgument(
+            'allow_arm_motion',
+            default_value='false',
+            description='Reserved gate; real arm backend is not installed',
+        ),
+        DeclareLaunchArgument(
             'min_detection_confidence',
-            default_value='0.5',
-            description='Minimum confidence accepted by the detection gate',
+            default_value='0.35',
+            description='Shared detector and gate confidence threshold',
         ),
         DeclareLaunchArgument(
             'max_detection_age',
@@ -98,14 +132,14 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'bottle_model_path',
             default_value=(
-                '/mnt/c/Users/DYH/Desktop/limo_graphtest/models/'
+                '/home/agilex/limo_cleanup_ws/models/'
                 'nongfu_yolov8n_best.pt'),
             description='Bottle detector PT or ONNX path',
         ),
         DeclareLaunchArgument(
             'bin_model_path',
             default_value=(
-                '/mnt/c/Users/DYH/Desktop/limo_graphtest/models/'
+                '/home/agilex/limo_cleanup_ws/models/'
                 'trash_bin_yolov8n_best.pt'),
             description='Trash-bin detector PT or ONNX path',
         ),
@@ -116,7 +150,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'depth_topic',
-            default_value='/camera/depth_registered/image_raw',
+            default_value='/camera/depth/image_raw',
             description='Depth image registered to the RGB pixel grid',
         ),
         DeclareLaunchArgument(
@@ -131,7 +165,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'perception_python',
-            default_value='/home/dyh/robotics/train/venv/bin/python',
+            default_value='python3',
             description='Python interpreter containing Ultralytics and Torch',
         ),
         DeclareLaunchArgument(
@@ -156,8 +190,33 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'gripper_serial_port',
-            default_value='/dev/ttyACM0',
+            default_value='/dev/elephant',
             description='myCobot serial device',
+        ),
+        DeclareLaunchArgument(
+            'use_tracked_base_controller',
+            default_value='false',
+            description='Start the fail-closed tracked-base motion gateway',
+        ),
+        DeclareLaunchArgument(
+            'allow_base_motion',
+            default_value='false',
+            description='Explicitly authorize tracked-base command output',
+        ),
+        DeclareLaunchArgument(
+            'base_output_topic',
+            default_value='/cleanup/base/safe_cmd_vel',
+            description='Private output consumed by a remapped base driver',
+        ),
+        DeclareLaunchArgument(
+            'base_max_linear_speed',
+            default_value='0.12',
+            description='Maximum tracked-base linear speed in m/s',
+        ),
+        DeclareLaunchArgument(
+            'base_max_angular_speed',
+            default_value='0.35',
+            description='Maximum tracked-base yaw speed in rad/s',
         ),
         Node(
             package='limo_cleanup_perception',
@@ -166,8 +225,9 @@ def generate_launch_description():
             output='screen',
             parameters=mock_perception_parameters,
             remappings=[('/cleanup/detection', '/cleanup/detection/raw')],
-            condition=IfCondition(
-                AndSubstitution(use_mock_perception, use_detection_gate)),
+            condition=_boolean_condition(
+                required_true=(use_mock_perception, use_detection_gate),
+                required_false=(use_real_perception,)),
         ),
         Node(
             package='limo_cleanup_perception',
@@ -175,10 +235,9 @@ def generate_launch_description():
             name='cleanup_mock_perception',
             output='screen',
             parameters=mock_perception_parameters,
-            condition=IfCondition(
-                AndSubstitution(
-                    use_mock_perception,
-                    NotSubstitution(use_detection_gate))),
+            condition=_boolean_condition(
+                required_true=(use_mock_perception,),
+                required_false=(use_real_perception, use_detection_gate)),
         ),
         Node(
             package='limo_cleanup_perception',
@@ -236,8 +295,28 @@ def generate_launch_description():
                     mock_step_duration, value_type=float),
                 'detection_timeout': ParameterValue(
                     detection_timeout, value_type=float),
+                'dry_run': ParameterValue(
+                    executor_dry_run, value_type=bool),
+                'allow_arm_motion': ParameterValue(
+                    allow_arm_motion, value_type=bool),
             }],
             condition=IfCondition(use_mock_executor),
+        ),
+        Node(
+            package='limo_cleanup_base',
+            executable='tracked_base_controller',
+            name='cleanup_tracked_base_controller',
+            output='screen',
+            parameters=[{
+                'output_topic': base_output_topic,
+                'allow_base_motion': ParameterValue(
+                    allow_base_motion, value_type=bool),
+                'max_linear_speed': ParameterValue(
+                    base_max_linear_speed, value_type=float),
+                'max_angular_speed': ParameterValue(
+                    base_max_angular_speed, value_type=float),
+            }],
+            condition=IfCondition(use_tracked_base_controller),
         ),
         Node(
             package='limo_cleanup_core',

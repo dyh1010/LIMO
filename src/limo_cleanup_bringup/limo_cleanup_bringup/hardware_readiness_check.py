@@ -5,6 +5,7 @@ import math
 import os
 import sys
 import time
+from collections import deque
 from pathlib import Path
 
 import numpy as np
@@ -24,6 +25,20 @@ FLOAT_DEPTH_ENCODINGS = {'32FC1'}
 def stamp_seconds(stamp):
     """Convert a ROS builtin time message to floating-point seconds."""
     return float(stamp.sec) + float(stamp.nanosec) / 1e9
+
+
+def nearest_stamped_message(reference, candidates):
+    """Return the candidate nearest to the reference header timestamp."""
+    if not candidates:
+        return None, None
+    reference_stamp = stamp_seconds(reference.header.stamp)
+    nearest = min(
+        candidates,
+        key=lambda message: abs(
+            reference_stamp - stamp_seconds(message.header.stamp)),
+    )
+    return nearest, abs(
+        reference_stamp - stamp_seconds(nearest.header.stamp))
 
 
 def angle_distance(first, second):
@@ -97,6 +112,11 @@ def summarize_depth(message, integer_scale, min_depth, max_depth):
     return summary
 
 
+def aligned_depth_frame_matches_rgb(rgb_frame, depth_frame):
+    """Return whether aligned depth uses the same non-empty frame as RGB."""
+    return bool(rgb_frame) and depth_frame == rgb_frame
+
+
 class HardwareReadinessCheck(Node):
     """Subscribe and inspect only; never publish commands or call actions."""
 
@@ -104,7 +124,7 @@ class HardwareReadinessCheck(Node):
         super().__init__('cleanup_hardware_readiness')
         self.declare_parameters('', [
             ('rgb_topic', '/camera/color/image_raw'),
-            ('depth_topic', '/camera/depth_registered/image_raw'),
+            ('depth_topic', '/camera/depth/image_raw'),
             ('camera_info_topic', '/camera/color/camera_info'),
             ('base_frame', 'base_link'),
             ('camera_frame_override', ''),
@@ -126,6 +146,7 @@ class HardwareReadinessCheck(Node):
             ('translation_tolerance_m', 0.02),
             ('rotation_tolerance_rad', 0.05),
             ('forbidden_actuation_topics', [
+                '/cleanup/base/safe_cmd_vel',
                 '/cmd_vel',
                 '/cmd_vel_nav',
                 '/cmd_vel_teleop',
@@ -143,7 +164,13 @@ class HardwareReadinessCheck(Node):
         self.start_monotonic = time.monotonic()
         self.rgb_message = None
         self.depth_message = None
+        self.latest_rgb_message = None
+        self.latest_depth_message = None
         self.camera_info_message = None
+        self.rgb_candidates = deque(maxlen=60)
+        self.depth_candidates = deque(maxlen=60)
+        self.synchronized_pair = False
+        self.synchronized_delta_sec = None
         self.done = False
         self.exit_code = 1
         self.tf_buffer = Buffer()
@@ -177,11 +204,39 @@ class HardwareReadinessCheck(Node):
 
     def rgb_callback(self, message):
         """Keep the newest RGB image."""
-        self.rgb_message = message
+        self.latest_rgb_message = message
+        self.rgb_candidates.append(message)
+        depth, delta = nearest_stamped_message(
+            message, self.depth_candidates)
+        if depth is not None:
+            self.consider_synchronized_pair(message, depth, delta)
 
     def depth_callback(self, message):
         """Keep the newest aligned depth image."""
-        self.depth_message = message
+        self.latest_depth_message = message
+        self.depth_candidates.append(message)
+        rgb, delta = nearest_stamped_message(message, self.rgb_candidates)
+        if rgb is not None:
+            self.consider_synchronized_pair(rgb, message, delta)
+
+    def consider_synchronized_pair(self, rgb, depth, delta):
+        """Keep the latest acceptable pair or the best failing candidate."""
+        maximum = self.float_parameter('max_sync_delta_sec')
+        accepted = delta <= maximum
+        replace = accepted or (
+            not self.synchronized_pair
+            and (
+                self.synchronized_delta_sec is None
+                or delta < self.synchronized_delta_sec
+            )
+        )
+        if not replace:
+            return
+        self.rgb_message = rgb
+        self.depth_message = depth
+        self.synchronized_delta_sec = delta
+        if accepted:
+            self.synchronized_pair = True
 
     def camera_info_callback(self, message):
         """Keep the newest color CameraInfo message."""
@@ -192,12 +247,12 @@ class HardwareReadinessCheck(Node):
         if self.done:
             return
         elapsed = time.monotonic() - self.start_monotonic
-        have_messages = all((
-            self.rgb_message is not None,
-            self.depth_message is not None,
+        have_synchronized_messages = all((
+            self.synchronized_pair,
             self.camera_info_message is not None,
         ))
-        if have_messages and elapsed >= self.float_parameter('settle_sec'):
+        if (have_synchronized_messages
+                and elapsed >= self.float_parameter('settle_sec')):
             self.finish(timed_out=False)
             return
         if elapsed >= self.float_parameter('timeout_sec'):
@@ -270,9 +325,10 @@ class HardwareReadinessCheck(Node):
     def add_topic_presence_checks(self, checks, timed_out):
         """Check that all three required sensor streams were observed."""
         for name, topic, message in (
-                ('rgb_received', self.rgb_topic, self.rgb_message),
+                ('rgb_received', self.rgb_topic,
+                 self.latest_rgb_message),
                 ('aligned_depth_received', self.depth_topic,
-                 self.depth_message),
+                 self.latest_depth_message),
                 ('camera_info_received', self.camera_info_topic,
                  self.camera_info_message)):
             received = message is not None
@@ -317,14 +373,26 @@ class HardwareReadinessCheck(Node):
                 'cy': float(info.k[5]),
             })
 
-        delta = abs(
-            stamp_seconds(rgb.header.stamp)
-            - stamp_seconds(depth.header.stamp))
+        delta = self.synchronized_delta_sec
+        if delta is None:
+            delta = abs(
+                stamp_seconds(rgb.header.stamp)
+                - stamp_seconds(depth.header.stamp))
         max_delta = self.float_parameter('max_sync_delta_sec')
         self.append_check(
             checks, 'rgb_depth_timestamp_alignment', delta <= max_delta,
             f'RGB/depth timestamp delta must be <= {max_delta:.3f} s',
             measured={'delta_sec': delta})
+
+        depth_frame_consistent = aligned_depth_frame_matches_rgb(
+            rgb.header.frame_id, depth.header.frame_id)
+        self.append_check(
+            checks, 'rgb_depth_frame_consistency', depth_frame_consistent,
+            'aligned depth must use the same non-empty optical frame as RGB',
+            measured={
+                'rgb_frame': rgb.header.frame_id,
+                'depth_frame': depth.header.frame_id,
+            })
 
         frame_consistent = bool(rgb.header.frame_id) and (
             not info.header.frame_id
@@ -364,6 +432,9 @@ class HardwareReadinessCheck(Node):
             return override
         if self.rgb_message and self.rgb_message.header.frame_id:
             return self.rgb_message.header.frame_id
+        if (self.latest_rgb_message
+                and self.latest_rgb_message.header.frame_id):
+            return self.latest_rgb_message.header.frame_id
         return ''
 
     def add_tf_checks(self, checks):
@@ -446,22 +517,35 @@ class HardwareReadinessCheck(Node):
             })
 
     def add_actuator_safety_checks(self, checks):
-        """Fail when any configured actuation topic has a live publisher."""
-        active = {}
+        """Fail when a configured command topic has any live endpoint."""
+        active_publishers = {}
+        active_subscribers = {}
         topics = self.get_parameter('forbidden_actuation_topics').value
         for topic in topics:
             publishers = self.get_publishers_info_by_topic(topic)
             if publishers:
-                active[topic] = sorted({
+                active_publishers[topic] = sorted({
                     f'{item.node_namespace}/{item.node_name}'.replace(
                         '//', '/')
                     for item in publishers
                 })
+            subscribers = self.get_subscriptions_info_by_topic(topic)
+            if subscribers:
+                active_subscribers[topic] = sorted({
+                    f'{item.node_namespace}/{item.node_name}'.replace(
+                        '//', '/')
+                    for item in subscribers
+                })
         self.append_check(
-            checks, 'no_actuation_publishers', not active,
+            checks, 'no_actuation_publishers', not active_publishers,
             'no publisher may be connected to configured base/arm/gripper '
             'command topics during read-only acceptance',
-            measured={'active_publishers': active})
+            measured={'active_publishers': active_publishers})
+        self.append_check(
+            checks, 'no_actuation_subscribers', not active_subscribers,
+            'no subscriber may be connected to configured base/arm/gripper '
+            'command topics during read-only acceptance',
+            measured={'active_subscribers': active_subscribers})
 
 
 def main(args=None):

@@ -16,6 +16,7 @@
   <depend>limo_cleanup_core</depend>
   <depend>limo_cleanup_language</depend>
   <depend>limo_cleanup_executor</depend>
+  <depend>limo_cleanup_base</depend>
   <depend>limo_cleanup_perception</depend>
 
   <test_depend>ament_copyright</test_depend>

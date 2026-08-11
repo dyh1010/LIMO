@@ -51,7 +51,7 @@ class GripperController(Node):
             ('backend', 'dry_run'),
             ('allow_hardware_motion', False),
             ('confirmed_gripper_model', 'mycobot_gripper_ag'),
-            ('serial_port', '/dev/ttyACM0'),
+            ('serial_port', '/dev/elephant'),
             ('baud', 115200),
             ('gripper_type', 1),
             ('closed_value', 0),

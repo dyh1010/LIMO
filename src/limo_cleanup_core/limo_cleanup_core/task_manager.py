@@ -17,6 +17,9 @@ OBJECT_KEYWORDS = {
 }
 
 STOP_KEYWORDS = ('停止', '取消', '终止', 'stop', 'cancel', 'abort')
+TOUCH_KEYWORDS = (
+    '触碰', '碰一下', '轻触', '接触', 'touch', 'tap',
+)
 
 
 class TaskManager(Node):
@@ -77,9 +80,17 @@ class TaskManager(Node):
             )
             return
 
+        action = self.find_action(normalized)
+        if action == 'touch_only' and object_class != 'plastic_bottle':
+            self.publish_status(
+                'rejected',
+                'touch_only currently supports plastic_bottle only',
+            )
+            return
+
         task = {
             'task_id': str(uuid.uuid4()),
-            'action': 'pick_and_dispose',
+            'action': action,
             'object_class': object_class,
             'raw_text': raw_text,
         }
@@ -89,11 +100,11 @@ class TaskManager(Node):
         self.publish_task(task)
         self.publish_status(
             'accepted',
-            f'Accepted cleanup task for {object_class}',
+            f'Accepted {action} task for {object_class}',
             task_id=task['task_id'],
         )
         self.get_logger().info(
-            f"Accepted task {task['task_id']}: {object_class}")
+            f"Accepted task {task['task_id']}: {action}/{object_class}")
 
     def dispatch_active_task(self) -> None:
         if self.active_task is None:
@@ -113,6 +124,7 @@ class TaskManager(Node):
             return
 
         goal = ExecuteCleanup.Goal()
+        goal.action = self.active_task['action']
         goal.task_id = task_id
         goal.object_class = self.active_task['object_class']
         goal.raw_text = self.active_task['raw_text']
@@ -237,6 +249,12 @@ class TaskManager(Node):
             if any(keyword in text for keyword in keywords):
                 return object_class
         return None
+
+    @staticmethod
+    def find_action(text: str) -> str:
+        if any(keyword in text for keyword in TOUCH_KEYWORDS):
+            return 'touch_only'
+        return 'pick_and_dispose'
 
     def publish_task(self, payload: dict) -> None:
         message = CleanupTask()

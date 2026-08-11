@@ -9,16 +9,10 @@ from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
-
-POST_DETECTION_STEPS = (
-    ('approaching_object', 0.25, 'Approaching the detected object'),
-    ('aligning_object', 0.35, 'Aligning the chassis for pickup'),
-    ('grasping', 0.50, 'Closing the gripper around the object'),
-    ('verifying_grasp', 0.60, 'Verifying that the object was grasped'),
-    ('navigating_to_bin', 0.75, 'Navigating to the trash bin'),
-    ('aligning_bin', 0.85, 'Aligning with the trash bin'),
-    ('dropping', 0.93, 'Dropping the object into the bin'),
-    ('verifying_drop', 0.98, 'Verifying that the object was released'),
+from .execution_plan import (
+    execution_steps,
+    validate_goal,
+    validate_mock_safety,
 )
 
 
@@ -27,11 +21,19 @@ class MockCleanupExecutor(Node):
         super().__init__('cleanup_mock_executor')
         self.declare_parameter('step_duration', 0.6)
         self.declare_parameter('detection_timeout', 5.0)
+        self.declare_parameter('dry_run', True)
+        self.declare_parameter('allow_arm_motion', False)
         self.step_duration = float(
             self.get_parameter('step_duration').get_parameter_value().double_value)
         self.detection_timeout = float(
             self.get_parameter(
                 'detection_timeout').get_parameter_value().double_value)
+        self.dry_run = bool(
+            self.get_parameter('dry_run').get_parameter_value().bool_value)
+        self.allow_arm_motion = bool(
+            self.get_parameter(
+                'allow_arm_motion').get_parameter_value().bool_value)
+        validate_mock_safety(self.dry_run, self.allow_arm_motion)
 
         self.callback_group = ReentrantCallbackGroup()
         self.busy_lock = threading.Lock()
@@ -59,7 +61,9 @@ class MockCleanupExecutor(Node):
         self.get_logger().info(
             'Mock executor ready; '
             f'step_duration={self.step_duration:.2f}s; '
-            f'detection_timeout={self.detection_timeout:.2f}s')
+            f'detection_timeout={self.detection_timeout:.2f}s; '
+            f'dry_run={self.dry_run}; '
+            f'allow_arm_motion={self.allow_arm_motion}')
 
     def detection_callback(self, message: ObjectDetection) -> None:
         if not message.task_id:
@@ -76,6 +80,16 @@ class MockCleanupExecutor(Node):
             f'({message.confidence:.0%})')
 
     def goal_callback(self, goal_request):
+        try:
+            action = validate_goal(
+                goal_request.action,
+                goal_request.object_class,
+                goal_request.task_id,
+            )
+        except ValueError as error:
+            self.get_logger().warning(f'Rejecting goal: {error}')
+            return GoalResponse.REJECT
+
         with self.busy_lock:
             if self.busy:
                 self.get_logger().warning('Rejecting goal because executor is busy')
@@ -83,7 +97,8 @@ class MockCleanupExecutor(Node):
             self.busy = True
 
         self.get_logger().info(
-            f'Accepted goal {goal_request.task_id}: {goal_request.object_class}')
+            f'Accepted goal {goal_request.task_id}: '
+            f'{action}/{goal_request.object_class}')
         return GoalResponse.ACCEPT
 
     def cancel_callback(self, goal_handle):
@@ -94,6 +109,11 @@ class MockCleanupExecutor(Node):
     def execute_callback(self, goal_handle):
         result = ExecuteCleanup.Result()
         task_id = goal_handle.request.task_id
+        action = validate_goal(
+            goal_handle.request.action,
+            goal_handle.request.object_class,
+            task_id,
+        )
 
         try:
             self.publish_feedback(
@@ -140,7 +160,7 @@ class MockCleanupExecutor(Node):
                 ),
             )
 
-            for state, progress, detail in POST_DETECTION_STEPS:
+            for state, progress, detail in execution_steps(action):
                 if goal_handle.is_cancel_requested:
                     goal_handle.canceled()
                     result.success = False
@@ -155,7 +175,9 @@ class MockCleanupExecutor(Node):
             goal_handle.succeed()
             result.success = True
             result.final_state = 'succeeded'
-            result.detail = f'Task {task_id} completed successfully'
+            result.detail = (
+                f'Task {task_id} completed {action} successfully in dry-run'
+            )
             self.get_logger().info(result.detail)
             return result
         except Exception as error:  # noqa: BLE001
