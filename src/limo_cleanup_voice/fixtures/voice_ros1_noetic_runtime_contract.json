@@ -1,0 +1,616 @@
+{
+  "schema_version": 2,
+  "runtime_baseline": "ros1_noetic",
+  "implementation_status": "BLOCKED_ROS1_ADAPTER_OFFLINE_ONLY",
+  "field_delivery_ready": false,
+  "offline_evidence_is_field_evidence": false,
+  "safety": {
+    "ordinary_intents_default": "confirmed_mock_topics_only",
+    "live_ros_authorized": false,
+    "microphone_authorized": false,
+    "hardware_authorized": false,
+    "voice_owns_motion_interfaces": false,
+    "software_stop_replaces_physical_estop": false
+  },
+  "ros_independence": {
+    "pure_modules": [
+      "command_parser.py",
+      "semantic_agent.py",
+      "voice_contract.py",
+      "voice_grammar.py",
+      "voice_corpus_readiness.py",
+      "voice_model_intake.py",
+      "voice_wav_transcription_run.py",
+      "voice_acceptance_fixture.py",
+      "ros1_noetic_adapter.py",
+      "ros1_audio_input.py",
+      "tts_prompt_contract.py"
+    ],
+    "legacy_wrappers_require_ros2_import_stubs_for_offline_tests": [
+      "voice_asr_node.py",
+      "voice_priority_stop_node.py",
+      "voice_semantic_agent_node.py",
+      "voice_dialogue_node.py",
+      "voice_tts_node.py",
+      "voice_smoke_probe.py",
+      "voice_v2_report.py"
+    ],
+    "claim": "pure modules only; the retained rclpy wrappers are not ROS-independent"
+  },
+  "adapter_implementation": {
+    "core_path": "limo_cleanup_voice/ros1_noetic_adapter.py",
+    "wrapper_path": "limo_cleanup_voice/ros1_noetic_adapter_node.py",
+    "core_status": "IMPLEMENTED_ROS_FREE",
+    "wrapper_status": "CATKIN_TARGET_BUILD_VALIDATED_OFFLINE_ONLY",
+    "catkin_preview_package_path": "ros1_overlay_src/limo_cleanup_ros1_voice",
+    "catkin_preview_default_enabled": false,
+    "catkin_preview_build_validated": true,
+    "catkin_preview_live_ros_validated": false,
+    "default_profile": "offline_text_mock",
+    "require_wake_word_locked_true": true,
+    "canonical_wake_word": "小莫小莫",
+    "asr_boundary_wake_aliases": ["小沫小沫"],
+    "asr_aliases_are_user_facing_commands": false,
+    "asr_alias_match_policy": "complete_command_prefix_only",
+    "production_outputs_enabled": false,
+    "ordinary_output_mode": "in_memory_mock_plan_only",
+    "stop_output_mode": "in_memory_priority_event_only",
+    "actual_publish_count": 0,
+    "publishers": [],
+    "subscribers": ["/voice/text_input"],
+    "services": [],
+    "actions": [],
+    "explicit_lock": true,
+    "stop_epoch_barrier": true,
+    "ros_free_contract_tested": true,
+    "ack_source_allowlist": ["cleanup_ros1_stop_gate"],
+    "ack_source_allowlist_locked": true,
+    "ack_future_wall_tolerance_sec": 5.0,
+    "ack_future_wall_tolerance_locked": true,
+    "stop_request_schema_version": 3,
+    "stop_ack_schema_version": 2,
+    "process_instance_id_is_inside_json": true,
+    "process_instance_id_uses_public_wire_validator": true,
+    "audio_input_boundary": {
+      "status": "IMPLEMENTED_PLAN_ONLY_NO_EXECUTION",
+      "capture_device": "hw:0,0",
+      "sample_format": "S16_LE",
+      "native_sample_rate_hz": 48000,
+      "native_channels": 2,
+      "asr_sample_rate_hz": 16000,
+      "asr_channels": 1,
+      "selected_channel": 1,
+      "max_capture_duration_sec": 10,
+      "conversion_tool": "sox",
+      "online_plughw_downmix_allowed": false,
+      "microphone_opened_by_adapter": false,
+      "actual_process_count": 0,
+      "actual_publish_count": 0,
+      "live_ros_graph_used": false,
+      "field_runtime_ready": false
+    },
+    "source_sha256": {
+      "core": "d7637ae11fed5350ce299cdea6bc0a8d8ea6084ae0abd1722b9961eab865919e",
+      "wrapper": "cc53070c3d7611c9e410cf14b95a405d06b3cf81d8f08ccabac06611005c67d5",
+      "voice_contract": "07ec3890d4d3a1a1b69823bfd4cb5b1da1d0fb3b848afca49746ee37e8aacfd9",
+      "audio_input": "6a828e0d38a905b2e461cac509fb3e60edb72e978b50b38850b5675ae611d607"
+    },
+    "catkin_preview_source_sha256": {
+      "package_xml": "c95ad83f51be032dc0a712da8a4bdbb1c4eef6e624f15d54210e79b51d27e285",
+      "cmake": "858d097fa673cae93dcd11bbf6126aed1b05e18405004bf20a8e99808c953804",
+      "setup": "f687079d9306477dd699417d541ad424584ad040360358008a8204dc17e291ad",
+      "entrypoint": "c289cfcd0cbab0c885e9e238af918742406376d1ad8bb34b583b7bafa642f9a7",
+      "launch": "d824e7b3da9ff5d6f955870c8bd636dc95f8508cd5314feb80bd0f3ad43709fa",
+      "source_contract_test": "b28037be18fcf55d5ffe26bc0074d2ee0618db8577ae77ec0dee51a79fa9d060"
+    },
+    "catkin_target_build_evidence": {
+      "path": "voice_model_lab_20260814/reports/noetic_target_build_20260820_v4.json",
+      "sha256": "c55d9c92801bd30a2bd7b229c6ba4707e9c9519118633b7c6f848651d7a7002c",
+      "collector_path": "voice_model_lab_20260814/source/collect_noetic_target_build_evidence.py",
+      "collector_sha256": "3be2fc402551cef0f19c1ae6386a980807c103cdb071d3a835fbe7e78b5128f1",
+      "current_collector_sha256": "3be2fc402551cef0f19c1ae6386a980807c103cdb071d3a835fbe7e78b5128f1",
+      "target_architecture": "aarch64",
+      "source_contract_passed": "4/4",
+      "historical_build_passed": true,
+      "current_source_identity_exact": true,
+      "current_collector_identity_exact": true,
+      "actual_publish_count": 0,
+      "live_ros_graph_used": false,
+      "field_runtime_ready": false
+    }
+  },
+  "legacy_marker": "LEGACY_ROS2_OFFLINE_ONLY",
+  "legacy_ros2_entrypoints": [
+    "README.md",
+    "package.xml",
+    "setup.py",
+    "config/voice_dialogue.yaml",
+    "launch/voice_dialogue.launch.py",
+    "launch/full_system_with_voice.launch.py",
+    "limo_cleanup_voice/voice_asr_node.py",
+    "limo_cleanup_voice/voice_priority_stop_node.py",
+    "limo_cleanup_voice/voice_semantic_agent_node.py",
+    "limo_cleanup_voice/voice_dialogue_node.py",
+    "limo_cleanup_voice/voice_tts_node.py",
+    "limo_cleanup_voice/voice_smoke_probe.py",
+    "limo_cleanup_voice/voice_preflight.py",
+    "limo_cleanup_voice/voice_regression_aggregate.py",
+    "limo_cleanup_voice/voice_v2_report.py",
+    "scripts/smoke_test_voice_text.sh",
+    "scripts/preflight_voice_deployment.sh",
+    "docs/VOICE_DEPLOYMENT_ROLLBACK.md",
+    "test/test_copyright.py",
+    "test/test_flake8.py",
+    "test/test_pep257.py"
+  ],
+  "legacy_ros2_assumptions": [
+    "package.xml and setup.py are ament packaging",
+    "runtime wrappers import rclpy and ROS2 QoS APIs",
+    "voice_dialogue_node imports the ROS2 CleanupStatus message",
+    "launch files use launch_ros and ROS2 Python launch descriptions",
+    "voice_dialogue.yaml uses ros__parameters",
+    "README and smoke/regression material retains legacy ros2 and colcon commands",
+    "voice_preflight resolves the package through ament_index_python",
+    "voice_v2_report imports ROS2 wrapper classes and std_msgs",
+    "the existing ROS1 base topology verifier forbids ROS1 endpoints on /cleanup/navigation_intent",
+    "the existing ROS1 base topology fixes /dynamic_bridge as /cleanup/navigation/bridge_command publisher"
+  ],
+  "profiles": {
+    "offline_text_mock": {
+      "authorized": true,
+      "ros_master_used": false,
+      "input": "/voice/text_input",
+      "input_enable_gate": "/voice/mock_input_enable",
+      "ordinary_remaps": {
+        "/cleanup/natural_language": "/voice_mock/cleanup/natural_language",
+        "/cleanup/navigation_intent": "/voice_mock/cleanup/navigation_intent",
+        "/cleanup/perception_intent": "/voice_mock/cleanup/perception_intent"
+      },
+      "production_topics_must_have_zero_endpoints": [
+        "/cleanup/natural_language",
+        "/cleanup/navigation_intent",
+        "/cleanup/perception_intent"
+      ]
+    },
+    "offline_wav_mock": {
+      "authorized": true,
+      "ros_master_used": false,
+      "microphone_used": false,
+      "ordinary_intents_published": false,
+      "stop_is_internal_contract_only": true
+    },
+    "production_noetic": {
+      "authorized": false,
+      "status": "BLOCKED_ROS1_ADAPTER_OFFLINE_ONLY",
+      "required_before_authorization": [
+        "catkin-installed and reviewed rospy adapter",
+        "continuous exact-owner topology guard",
+        "independent stop consumer and real navigation cancel ACK contract",
+        "cross-package ROS1 navigation topology revision",
+        "separately authorized zero-motion graph acceptance"
+      ]
+    }
+  },
+  "planned_nodes": [
+    {
+      "name": "/voice_text_fixture",
+      "owner": "limo_cleanup_ros1_voice_test",
+      "profiles": ["offline_text_mock"],
+      "role": "explicit_mock_text_input_only",
+      "services": [],
+      "actions": []
+    },
+    {
+      "name": "/voice_mock_topology_guard",
+      "owner": "limo_cleanup_ros1_voice",
+      "profiles": ["offline_text_mock"],
+      "role": "continuous_exact_owner_guard_and_input_enable",
+      "services": [],
+      "actions": []
+    },
+    {
+      "name": "/voice_asr",
+      "owner": "limo_cleanup_ros1_voice",
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "role": "text_or_local_vosk_to_transcript_only",
+      "services": [],
+      "actions": []
+    },
+    {
+      "name": "/voice_priority_stop",
+      "owner": "limo_cleanup_ros1_voice",
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "role": "independent_stop_event_debounce_repeat_ack_observer",
+      "services": [],
+      "actions": []
+    },
+    {
+      "name": "/voice_semantic_agent",
+      "owner": "limo_cleanup_ros1_voice",
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "role": "non_stop_candidate_normalization_only",
+      "services": [],
+      "actions": []
+    },
+    {
+      "name": "/voice_dialogue",
+      "owner": "limo_cleanup_ros1_voice",
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "role": "wake_confirmation_timeout_cancel_and_mock_intent_gate",
+      "services": [],
+      "actions": []
+    },
+    {
+      "name": "/voice_tts",
+      "owner": "limo_cleanup_ros1_voice",
+      "profiles": ["production_noetic"],
+      "role": "optional_feedback_only_disabled_by_default",
+      "services": [],
+      "actions": []
+    }
+  ],
+  "external_nodes": [
+    {
+      "name": "/cleanup_ros1_stop_gate",
+      "owner": "future_ros1_navigation_integration_package",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "role": "direct_high_level_stop_consumer_idempotent_per_event",
+      "allowed_action_clients": [],
+      "required_navigation_cancel_relay": {
+        "target_node": "/cleanup_ros1_navigation_adapter",
+        "interface_status": "NOT_IMPLEMENTED",
+        "identity_fields": ["process_instance_id", "event_id"],
+        "side_effects_max_once_per_event": true,
+        "transport_retries_do_not_repeat_side_effect": true
+      }
+    },
+    {
+      "name": "/cleanup_ros1_status_adapter",
+      "owner": "future_ros1_cleanup_integration_package",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "role": "read_only_cleanup_status_owner",
+      "allowed_action_clients": []
+    },
+    {
+      "name": "/move_base",
+      "owner": "ROS1_navigation_stack",
+      "implementation_status": "EXTERNAL",
+      "role": "move_base_action_server",
+      "allowed_action_clients": []
+    }
+  ],
+  "topics": [
+    {
+      "name": "/voice/text_input",
+      "type": "std_msgs/String",
+      "encoding": "utf8_text",
+      "publishers": [{"node": "/voice_text_fixture", "queue_size": 1, "latch": false}],
+      "subscribers": [{"node": "/voice_asr", "queue_size": 1, "tcp_nodelay": true}],
+      "profiles": ["offline_text_mock"],
+      "boundary": "mock_text_input_only"
+    },
+    {
+      "name": "/voice/mock_input_enable",
+      "type": "std_msgs/Bool",
+      "encoding": "boolean_gate",
+      "publishers": [{"node": "/voice_mock_topology_guard", "queue_size": 1, "latch": true}],
+      "subscribers": [{"node": "/voice_asr", "queue_size": 1, "tcp_nodelay": true}],
+      "profiles": ["offline_text_mock"],
+      "boundary": "false_on_any_topology_violation"
+    },
+    {
+      "name": "/voice/transcript",
+      "type": "std_msgs/String",
+      "encoding": "utf8_text",
+      "publishers": [{"node": "/voice_asr", "queue_size": 1, "latch": false}],
+      "subscribers": [
+        {"node": "/voice_priority_stop", "queue_size": 1, "tcp_nodelay": true},
+        {"node": "/voice_semantic_agent", "queue_size": 1, "tcp_nodelay": true}
+      ],
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "boundary": "high_level_text_only"
+    },
+    {
+      "name": "/voice/semantic_candidate",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_semantic_candidate_v1",
+      "publishers": [{"node": "/voice_semantic_agent", "queue_size": 1, "latch": false}],
+      "subscribers": [{"node": "/voice_dialogue", "queue_size": 1, "tcp_nodelay": true}],
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "boundary": "non_executable_candidate_schema"
+    },
+    {
+      "name": "/voice/priority_broadcast",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_stop_broadcast_v3",
+      "publishers": [{"node": "/voice_priority_stop", "queue_size": 1, "latch": false}],
+      "subscribers": [{"node": "/voice_dialogue", "queue_size": 1, "tcp_nodelay": true}],
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "boundary": "pending_confirmation_preemption_only"
+    },
+    {
+      "name": "/voice/priority_stop_request",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_stop_request_v3",
+      "publishers": [{"node": "/voice_priority_stop", "queue_size": 1, "latch": false}],
+      "subscribers": [{"node": "/cleanup_ros1_stop_gate", "queue_size": 1, "tcp_nodelay": true}],
+      "profiles": ["production_noetic"],
+      "boundary": "direct_high_level_stop_request_bypasses_dialogue"
+    },
+    {
+      "name": "/voice/stop_ack",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_stop_ack_v2",
+      "publishers": [{"node": "/cleanup_ros1_stop_gate", "queue_size": 1, "latch": false}],
+      "subscribers": [{"node": "/voice_priority_stop", "queue_size": 1, "tcp_nodelay": true}],
+      "profiles": ["production_noetic"],
+      "boundary": "event_correlated_navigation_cancel_observability"
+    },
+    {
+      "name": "/voice/intent",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_audit_v1",
+      "publishers": [{"node": "/voice_dialogue", "queue_size": 10, "latch": false}],
+      "subscribers": [],
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "boundary": "non_executable_audit_only_never_latched"
+    },
+    {
+      "name": "/voice/response_text",
+      "type": "std_msgs/String",
+      "encoding": "utf8_text",
+      "publishers": [{"node": "/voice_dialogue", "queue_size": 1, "latch": false}],
+      "subscribers": [{"node": "/voice_tts", "queue_size": 1, "tcp_nodelay": true}],
+      "profiles": ["production_noetic"],
+      "boundary": "optional_feedback_only"
+    },
+    {
+      "name": "/voice_mock/cleanup/natural_language",
+      "type": "std_msgs/String",
+      "encoding": "utf8_high_level_intent",
+      "publishers": [{"node": "/voice_dialogue", "queue_size": 1, "latch": false}],
+      "subscribers": [],
+      "profiles": ["offline_text_mock"],
+      "boundary": "confirmed_ordinary_intent_mock_sink"
+    },
+    {
+      "name": "/voice_mock/cleanup/navigation_intent",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_navigation_intent_v1",
+      "publishers": [{"node": "/voice_dialogue", "queue_size": 1, "latch": false}],
+      "subscribers": [],
+      "profiles": ["offline_text_mock"],
+      "boundary": "confirmed_navigation_candidate_mock_sink"
+    },
+    {
+      "name": "/voice_mock/cleanup/perception_intent",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_perception_intent_v1",
+      "publishers": [{"node": "/voice_dialogue", "queue_size": 1, "latch": false}],
+      "subscribers": [],
+      "profiles": ["offline_text_mock"],
+      "boundary": "confirmed_perception_candidate_mock_sink"
+    },
+    {
+      "name": "/cleanup/natural_language",
+      "type": "std_msgs/String",
+      "encoding": "utf8_high_level_intent",
+      "publishers": [],
+      "subscribers": [],
+      "profiles": ["offline_text_mock"],
+      "boundary": "production_name_must_have_zero_endpoints"
+    },
+    {
+      "name": "/cleanup/navigation_intent",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_navigation_intent_v1",
+      "publishers": [],
+      "subscribers": [],
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "boundary": "production_blocked_cross_package_topology_conflict"
+    },
+    {
+      "name": "/cleanup/perception_intent",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_perception_intent_v1",
+      "publishers": [],
+      "subscribers": [],
+      "profiles": ["offline_text_mock"],
+      "boundary": "production_name_must_have_zero_endpoints"
+    },
+    {
+      "name": "/cleanup/status",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_cleanup_status_v1",
+      "publishers": [{"node": "/cleanup_ros1_status_adapter", "queue_size": 1, "latch": true}],
+      "subscribers": [{"node": "/voice_dialogue", "queue_size": 1, "tcp_nodelay": true}],
+      "profiles": ["production_noetic"],
+      "boundary": "read_only_status_replaces_ros2_custom_message"
+    },
+    {
+      "name": "/voice/asr_status",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_diagnostic_v1",
+      "publishers": [{"node": "/voice_asr", "queue_size": 1, "latch": true}],
+      "subscribers": [],
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "boundary": "diagnostic_only"
+    },
+    {
+      "name": "/voice/status",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_diagnostic_v1",
+      "publishers": [{"node": "/voice_dialogue", "queue_size": 1, "latch": true}],
+      "subscribers": [],
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "boundary": "diagnostic_only"
+    },
+    {
+      "name": "/voice/stop_status",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_stop_status_v1",
+      "publishers": [{"node": "/voice_priority_stop", "queue_size": 1, "latch": true}],
+      "subscribers": [],
+      "profiles": ["offline_text_mock", "production_noetic"],
+      "boundary": "diagnostic_only_not_stop_delivery"
+    },
+    {
+      "name": "/voice/tts_status",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_diagnostic_v1",
+      "publishers": [{"node": "/voice_tts", "queue_size": 1, "latch": true}],
+      "subscribers": [],
+      "profiles": ["production_noetic"],
+      "boundary": "optional_diagnostic_only"
+    },
+    {
+      "name": "/voice/mock_topology_status",
+      "type": "std_msgs/String",
+      "encoding": "strict_json_topology_guard_v1",
+      "publishers": [{"node": "/voice_mock_topology_guard", "queue_size": 1, "latch": true}],
+      "subscribers": [],
+      "profiles": ["offline_text_mock"],
+      "boundary": "continuous_guard_heartbeat_and_failure_reason"
+    }
+  ],
+  "stop_delivery_contract": {
+    "first_publish_waits_for_agent": false,
+    "repeat_count": 3,
+    "repeat_attempts_are_transport_retries": true,
+    "downstream_side_effects_max_once_per_event": true,
+    "debounce_sec": 0.75,
+    "ack_timeout_sec": 1.5,
+    "ack_correlation": ["event_id", "process_instance_id"],
+    "identity_fields_are_inside_json": true,
+    "stop_request_schema_version": 3,
+    "stop_ack_schema_version": 2,
+    "ack_source_allowlist": ["cleanup_ros1_stop_gate"],
+    "ack_source_allowlist_locked": true,
+    "ack_future_wall_tolerance_sec": 5.0,
+    "ack_future_wall_tolerance_locked": true,
+    "ack_freshness_clock": "receiver_local_monotonic_deadline",
+    "payload_monotonic_timestamp_use": "source_audit_only_not_cross_host_comparison",
+    "reject_ack": ["wrong_event", "wrong_process_instance", "inactive_event", "stale_receive_time", "future_wall_time_beyond_tolerance", "error_state"],
+    "dialogue_failure_must_not_block_stop_consumer": true
+  },
+  "concurrency_contract": {
+    "required_strategy": "single_serialized_event_loop_or_explicit_lock",
+    "stop_epoch_barrier": true,
+    "confirmation_commit_requires_unchanged_stop_epoch": true,
+    "stop_clears_pending_before_any_later_confirmation_commit": true
+  },
+  "ordinary_intent_contract": {
+    "wake_word": "小莫小莫",
+    "require_wake_word_locked_true": true,
+    "confirmation_required": true,
+    "timeout_or_cancel_publishes_ordinary_intent": false,
+    "unwoken_request_creates_pending": false,
+    "default_outputs": [
+      "/voice_mock/cleanup/natural_language",
+      "/voice_mock/cleanup/navigation_intent",
+      "/voice_mock/cleanup/perception_intent"
+    ],
+    "default_output_subscriber_count": 0
+  },
+  "asr_evidence_contract": {
+    "recommended_current_mode": "unrestricted_first_complete_endpoint",
+    "stop_endpoint_candidate": {
+      "status": "OFFLINE_SAFE_ENDPOINT_FALLBACK_PASS_FAST_PATH_BLOCKED",
+      "isolated_from_general_asr": true,
+      "general_asr_mode_unchanged": true,
+      "field_default": false,
+      "live_ros_validated": false,
+      "model": "vosk-model-small-cn-0.22",
+      "grammar": "stop_disambiguation_grammar",
+      "endpoint_rule2_min_trailing_silence_sec": 0.1,
+      "chunk_duration_ms": 100,
+      "real_human_stop_detected": "4/4",
+      "real_human_negative_false_triggers": "0/80",
+      "endpoint_after_word_ms_p50": 375.0,
+      "endpoint_after_word_ms_p95_nearest_rank": 430.0,
+      "endpoint_after_word_ms_max": 430.0,
+      "partial_stop_detected": "0/4",
+      "partial_negative_false_triggers": "1/80",
+      "actual_publish_count": 0,
+      "production_publish_count": 0,
+      "software_timing_is_robot_end_to_end_evidence": false,
+      "ros_free_ingress_status": "IMPLEMENTED_NOT_CATKIN_INSTALLED_NOT_ROS_OWNER",
+      "ros_free_ingress_endpoint_only": true,
+      "ros_free_ingress_rejects_partial": true,
+      "ros_free_ingress_preserves_same_stream_context": true,
+      "ros_free_ingress_ordinary_text_never_enters_dialogue": true,
+      "ros_free_ingress": {
+        "path": "limo_cleanup_ws/src/limo_cleanup_voice/limo_cleanup_voice/ros1_stop_endpoint_ingress.py",
+        "sha256": "ba7927be6d75255cc4bb060051d90544f7d184be7f5d98acad6dfc37673f4154"
+      },
+      "candidate_manifest": {
+        "path": "voice_model_lab_20260814/trained_candidates/small_cn_endpoint_rule2_0_1_v1/candidate.json",
+        "sha256": "c4640394a21a57e939b2c6767f769d576633413bc0b36b10e2819ebd1a34c541"
+      },
+      "streaming_report": {
+        "path": "voice_model_lab_20260814/reports/streaming_stop_candidate_v35/report.json",
+        "sha256": "04e328665c27fd54e840b0cc7019921bda005d8a1b7f7a268402f0ba9876bff3"
+      },
+      "runner": {
+        "path": "voice_model_lab_20260814/source/evaluate_streaming_stop_candidate.py",
+        "sha256": "32a6bd287776135368125bade4ff434cc432d0577e4b65c1243c0a155675012d"
+      },
+      "model_config": {
+        "path": "voice_model_lab_20260814/trained_candidates/small_cn_endpoint_rule2_0_1_v1/conf/model.conf",
+        "sha256": "b285360498aac23f9fcccb96297db3813783128f541a7975c0d76951888cd208"
+      },
+      "promotion_requires": [
+        "implemented independent ROS1 stop recognizer owner",
+        "implemented cleanup_ros1_stop_gate with exact ACK owner",
+        "live ROS1 topology acceptance without ordinary intent outputs",
+        "physical robot stop latency evidence under supervised authorization"
+      ]
+    },
+    "legacy_default_use_restricted_grammar": false,
+    "restricted_grammar_requires_explicit_boolean_true": true,
+    "legacy_artifact_sha256": {
+      "voice_asr_node": "44d7561f0e92903e7c6c0113982c22549e818547972a6f724a7f86265fbe59d9",
+      "voice_dialogue_config": "3132a653d0cc93d0c6511dd11519641d5ec5762e266c62d4811ca40252d00883"
+    },
+    "small_cn_first_complete_real_wav_exact": "4/4",
+    "small_cn_first_complete_micro_cer": 0.0,
+    "small_cn_first_complete_independent_runs": 2,
+    "small_cn_first_complete_field_default": false,
+    "frozen_all_endpoints_baseline_exact": "2/4",
+    "frozen_all_endpoints_baseline_micro_cer": 0.357143,
+    "bottle_restricted_grammar_status": "BLOCKED_ACCURACY_REGRESSION",
+    "existing_bottle_recording_ground_truth": "捡矿泉水瓶",
+    "spoken_bottle_only_ground_truth_available": false,
+    "canonical_alias_preserved": true,
+    "full_cn_candidate_real_voice_exact": "29/37",
+    "full_cn_candidate_micro_cer": 0.069498,
+    "full_cn_candidate_semantic_pass": "37/37",
+    "full_cn_candidate_public_negative_pass": "80/80",
+    "full_cn_candidate_noise_negative_pass": "14/14",
+    "full_cn_candidate_dynamic_grammar_supported": false,
+    "full_cn_candidate_field_default": false,
+    "safety_pass_cannot_override_accuracy_failure": true
+  },
+  "services": [],
+  "actions": [],
+  "external_action_ownership": {
+    "/move_base": {
+      "server_node": "/move_base",
+      "only_allowed_client": "/cleanup_ros1_navigation_adapter",
+      "voice_clients": []
+    },
+    "voice_action_clients": [],
+    "voice_action_servers": []
+  },
+  "production_blockers": [
+    "The current disabled-by-default Catkin package and audio-plan source identity pass on Noetic/aarch64, but no live ROS launch or topology acceptance was run",
+    "Existing ROS1 topology rejects /cleanup/navigation_intent and fixes bridge_command ownership",
+    "No independent ROS1 stop gate, idempotent navigation-adapter cancel relay, or real navigation cancel ACK exists",
+    "No continuous exact-owner mock topology guard exists",
+    "No ROS1 owner implementation exists for confirmed cleanup, perception, or status contracts",
+    "Dialogue/stop concurrency and event idempotency are not implemented in rospy",
+    "The 0.1 second STOP endpoint candidate is offline-only; partial fast-path recall is 0/4 with 1/80 false triggers and no ROS1 stop recognizer owner exists",
+    "Bottle-only restricted grammar regresses real-WAV exact match and CER",
+    "Full Chinese model improves the 37-WAV offline candidate but lacks dynamic grammar, uses about 5 GB resident memory, and is not validated on the target aarch64 runtime"
+  ]
+}

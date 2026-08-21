@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "mode": "deterministic_offline_mock_no_ros_no_hardware",
+  "safety": {
+    "ordinary_intents": "mock_only",
+    "live_ros": false,
+    "hardware": false
+  },
+  "thresholds": {
+    "max_false_activation_rate": 0.0,
+    "max_confirmation_timeout_forwarded": 0,
+    "max_stop_first_publish_latency_ms": 10.0,
+    "max_stop_ack_observed_latency_ms": 500.0
+  },
+  "transcript_cases": [
+    {
+      "id": "noise-silence",
+      "category": "noise",
+      "transcript": "",
+      "expected_intent": "empty",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "noise-background-speech",
+      "category": "noise",
+      "transcript": "今天风有点大",
+      "expected_intent": "ignored",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "near-wake-homophone",
+      "category": "near_soundalike",
+      "transcript": "小魔小魔，到垃圾桶旁边去",
+      "expected_intent": "ignored",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "near-stop-homophone",
+      "category": "near_soundalike",
+      "transcript": "亭下",
+      "expected_intent": "ignored",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "negated-stop",
+      "category": "negated",
+      "transcript": "我不想你停下",
+      "expected_intent": "ignored",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "meta-stop",
+      "category": "negated",
+      "transcript": "我正在学说停下",
+      "expected_intent": "ignored",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "unwoken-waypoint",
+      "category": "unwoken",
+      "transcript": "到垃圾桶旁边去",
+      "expected_intent": "ignored",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "unwoken-bottle",
+      "category": "unwoken",
+      "transcript": "识别矿泉水瓶",
+      "expected_intent": "ignored",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "mock-waypoint-pending",
+      "category": "ordinary_mock",
+      "transcript": "小莫小莫，到垃圾桶旁边去",
+      "expected_intent": "navigate_to_bin",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": true
+    },
+    {
+      "id": "mock-bottle-pending",
+      "category": "ordinary_mock",
+      "transcript": "小莫小莫，识别矿泉水瓶",
+      "expected_intent": "inspect_bottle",
+      "expect_priority_stop": false,
+      "expect_pending_confirmation": true
+    },
+    {
+      "id": "priority-stop",
+      "category": "priority_stop",
+      "transcript": "停下",
+      "expected_intent": "stop_task",
+      "expect_priority_stop": true,
+      "expect_pending_confirmation": false
+    },
+    {
+      "id": "priority-emergency-stop",
+      "category": "priority_stop",
+      "transcript": "紧急停止",
+      "expected_intent": "stop_task",
+      "expect_priority_stop": true,
+      "expect_pending_confirmation": false
+    }
+  ],
+  "semantic_sequence_fixture": {
+    "mode": "user_labeled_vosk_transcripts_mock_only",
+    "wake_timeout_ms": 5000,
+    "provenance": {
+      "ground_truth_sha256": "3264d6a340dbc96991388d35d0239f527865f033e263e70b494ffd7a793c971b",
+      "asr_evidence_sha256": "ed85b76a520d91df64cffbcf03113277ed0b3d34996e92ab1df6a9ff791a20b0",
+      "filename_inference_used": false
+    },
+    "steps": [
+      {
+        "id": "wake-before-cleanup",
+        "offset_ms": 1,
+        "transcript": "小莫 小莫",
+        "expected_intent": "empty",
+        "expected_state": "wake_armed"
+      },
+      {
+        "id": "user-cleanup-asr-repeat",
+        "offset_ms": 1001,
+        "transcript": "丢 垃圾 丢 垃圾",
+        "expected_intent": "start_cleanup",
+        "expected_state": "pending_confirmation"
+      },
+      {
+        "id": "priority-stop-preempts-cleanup",
+        "offset_ms": 1501,
+        "transcript": "停下 停下",
+        "expected_intent": "stop_task",
+        "expected_state": "idle"
+      },
+      {
+        "id": "wake-before-bottle",
+        "offset_ms": 2501,
+        "transcript": "小莫 小莫",
+        "expected_intent": "empty",
+        "expected_state": "wake_armed"
+      },
+      {
+        "id": "user-bottle-asr",
+        "offset_ms": 3501,
+        "transcript": "捡 矿泉 水瓶",
+        "expected_intent": "start_cleanup",
+        "expected_state": "pending_confirmation"
+      },
+      {
+        "id": "mock-confirm-bottle",
+        "offset_ms": 4001,
+        "transcript": "确认",
+        "expected_intent": "confirm",
+        "expected_state": "idle"
+      },
+      {
+        "id": "wake-before-cancel",
+        "offset_ms": 5001,
+        "transcript": "小莫 小莫",
+        "expected_intent": "empty",
+        "expected_state": "wake_armed"
+      },
+      {
+        "id": "cleanup-before-cancel",
+        "offset_ms": 6001,
+        "transcript": "丢 垃圾 丢 垃圾",
+        "expected_intent": "start_cleanup",
+        "expected_state": "pending_confirmation"
+      },
+      {
+        "id": "cancel-pending-cleanup",
+        "offset_ms": 6501,
+        "transcript": "取消",
+        "expected_intent": "stop_task",
+        "expected_state": "idle"
+      }
+    ]
+  },
+  "confirmation_timeout_fixture": {
+    "pending_intent": "navigate_to_bin",
+    "command_text": "到垃圾桶旁边",
+    "timeout_ms": 10000,
+    "confirm_offset_ms": 10001
+  },
+  "stop_fixture": {
+    "transcript": "停下",
+    "event_id": "voice-stop-fixture-00000001",
+    "process_instance_id": "voice-stop-process-fixture-00000001",
+    "trigger_wall_time_unix_ns": 2000000000000000000,
+    "trigger_monotonic_ns": 10000000000,
+    "first_publish_offset_ns": 2000000,
+    "repeat_interval_ns": 75000000,
+    "repeat_count": 3,
+    "debounce_ns": 750000000,
+    "duplicate_offsets_ns": [749999999, 750000000],
+    "ack_delay_ns": 120000000,
+    "ack_timeout_ns": 1500000000
+  }
+}

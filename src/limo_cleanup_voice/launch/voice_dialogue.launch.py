@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""LEGACY_ROS2_OFFLINE_ONLY launch; not a ROS1/Noetic field entry point."""
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
@@ -28,7 +30,11 @@ def generate_launch_description():
     input_sample_rate = LaunchConfiguration('input_sample_rate')
     block_size = LaunchConfiguration('block_size')
     require_confirmation = LaunchConfiguration('require_confirmation')
+    confirmation_timeout_sec = LaunchConfiguration(
+        'confirmation_timeout_sec')
     require_wake_word = LaunchConfiguration('require_wake_word')
+    trash_bin_waypoint = LaunchConfiguration('trash_bin_waypoint')
+    enable_semantic_agent = LaunchConfiguration('enable_semantic_agent')
     enable_tts = LaunchConfiguration('enable_tts')
     tts_backend = LaunchConfiguration('tts_backend')
 
@@ -42,7 +48,12 @@ def generate_launch_description():
         DeclareLaunchArgument('input_sample_rate', default_value='0'),
         DeclareLaunchArgument('block_size', default_value='8000'),
         DeclareLaunchArgument('require_confirmation', default_value='true'),
-        DeclareLaunchArgument('require_wake_word', default_value='false'),
+        DeclareLaunchArgument(
+            'confirmation_timeout_sec', default_value='10.0'),
+        DeclareLaunchArgument('require_wake_word', default_value='true'),
+        DeclareLaunchArgument(
+            'trash_bin_waypoint', default_value='trash_bin_staging'),
+        DeclareLaunchArgument('enable_semantic_agent', default_value='true'),
         DeclareLaunchArgument('enable_tts', default_value='false'),
         DeclareLaunchArgument('tts_backend', default_value='espeak_ng'),
         Node(
@@ -62,14 +73,32 @@ def generate_launch_description():
         ),
         Node(
             package='limo_cleanup_voice',
+            executable='voice_priority_stop',
+            name='voice_priority_stop',
+            output='screen',
+        ),
+        Node(
+            package='limo_cleanup_voice',
+            executable='voice_semantic_agent',
+            name='voice_semantic_agent',
+            output='screen',
+            condition=IfCondition(enable_semantic_agent),
+        ),
+        Node(
+            package='limo_cleanup_voice',
             executable='voice_dialogue',
             name='voice_dialogue',
             output='screen',
             parameters=[{
                 'require_confirmation': ParameterValue(
                     require_confirmation, value_type=bool),
+                'confirmation_timeout_sec': ParameterValue(
+                    confirmation_timeout_sec, value_type=float),
                 'require_wake_word': ParameterValue(
                     require_wake_word, value_type=bool),
+                'trash_bin_waypoint': trash_bin_waypoint,
+                'semantic_candidate_topic': '/voice/semantic_candidate',
+                'priority_broadcast_topic': '/voice/priority_broadcast',
             }],
         ),
         Node(

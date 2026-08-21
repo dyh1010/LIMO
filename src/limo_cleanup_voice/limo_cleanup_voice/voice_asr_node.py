@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Text fallback and optional offline Vosk speech recognition adapter."""
+"""LEGACY_ROS2_OFFLINE_ONLY ASR wrapper; not a Noetic field node."""
 
 import audioop
 import json
@@ -25,17 +25,7 @@ from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from std_msgs.msg import String
 
-
-DEFAULT_GRAMMAR = [
-    '小莫 开始 清理', '机器人 开始 清理',
-    '小莫 捡 塑料瓶', '机器人 捡 塑料瓶',
-    '小莫 捡 易拉罐', '机器人 捡 易拉罐',
-    '小莫 捡 纸盒', '机器人 捡 纸盒',
-    '小莫 捡 垃圾', '机器人 捡 垃圾',
-    '小莫 碰 一下 塑料瓶', '机器人 碰 一下 塑料瓶',
-    '小莫 报告 状态', '机器人 报告 状态',
-    '确认', '取消', '停止 任务', '紧急 停止', '[unk]',
-]
+from .voice_grammar import DEFAULT_GRAMMAR
 
 UNKNOWN_TRANSCRIPTS = {'[unk]', '<unk>'}
 
@@ -43,6 +33,24 @@ UNKNOWN_TRANSCRIPTS = {'[unk]', '<unk>'}
 def is_unknown_transcript(text: str) -> bool:
     """Return true for Vosk's explicit out-of-vocabulary markers."""
     return text.strip().lower() in UNKNOWN_TRANSCRIPTS
+
+
+def require_boolean_parameter(name: str, value) -> bool:
+    """Reject non-boolean safety/configuration values instead of coercing."""
+    if type(value) is not bool:
+        raise ValueError('{} must be a boolean'.format(name))
+    return value
+
+
+def resample_pcm16_mono(
+        audio_bytes: bytes, input_rate: int, output_rate: int, state=None):
+    """Resample mono signed 16-bit PCM while preserving streaming state."""
+    if input_rate <= 0 or output_rate <= 0:
+        raise ValueError('Audio sample rates must be positive')
+    if input_rate == output_rate:
+        return audio_bytes, state
+    return audioop.ratecv(
+        audio_bytes, 2, 1, input_rate, output_rate, state)
 
 
 class VoiceAsrNode(Node):
@@ -60,6 +68,7 @@ class VoiceAsrNode(Node):
         self.declare_parameter('input_sample_rate', 0)
         self.declare_parameter('block_size', 8000)
         self.declare_parameter('microphone_device', '')
+        self.declare_parameter('use_restricted_grammar', False)
         self.declare_parameter('grammar_phrases', DEFAULT_GRAMMAR)
 
         self.mode = str(self.get_parameter('input_mode').value)
@@ -108,7 +117,13 @@ class VoiceAsrNode(Node):
         model_path = str(self.get_parameter('vosk_model_path').value).strip()
         if not model_path:
             raise RuntimeError('vosk_model_path is required for Vosk modes')
+        use_restricted_grammar = require_boolean_parameter(
+            'use_restricted_grammar',
+            self.get_parameter('use_restricted_grammar').value,
+        )
         model = Model(model_path)
+        if not use_restricted_grammar:
+            return KaldiRecognizer(model, float(sample_rate))
         grammar = list(self.get_parameter('grammar_phrases').value)
         return KaldiRecognizer(
             model, float(sample_rate), json.dumps(grammar, ensure_ascii=False))
@@ -149,15 +164,12 @@ class VoiceAsrNode(Node):
             if status:
                 self.get_logger().warning(str(status))
             audio_bytes = bytes(indata)
-            if self.capture_sample_rate != self.recognizer_sample_rate:
-                audio_bytes, self.resample_state = audioop.ratecv(
-                    audio_bytes,
-                    2,
-                    1,
-                    self.capture_sample_rate,
-                    self.recognizer_sample_rate,
-                    self.resample_state,
-                )
+            audio_bytes, self.resample_state = resample_pcm16_mono(
+                audio_bytes,
+                self.capture_sample_rate,
+                self.recognizer_sample_rate,
+                self.resample_state,
+            )
             try:
                 self.audio_queue.put_nowait(audio_bytes)
             except queue.Full:

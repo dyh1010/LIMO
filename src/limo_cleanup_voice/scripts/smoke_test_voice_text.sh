@@ -15,6 +15,13 @@
 
 set -eo pipefail
 
+# LEGACY_ROS2_OFFLINE_ONLY: this script starts an isolated ROS2 mock graph and
+# is never a ROS1/Noetic field entry point.
+if [[ "${LIMO_ALLOW_LEGACY_ROS2_OFFLINE:-}" != '1' ]]; then
+  echo 'BLOCKED_LEGACY_ROS2_OFFLINE_ONLY: set LIMO_ALLOW_LEGACY_ROS2_OFFLINE=1 only for an isolated mock graph.' >&2
+  exit 2
+fi
+
 workspace="${1:-/home/dyh/robotics/workspaces/limo_cleanup_ws}"
 temp_dir="$(mktemp -d)"
 launch_pid=''
@@ -52,10 +59,11 @@ source "${ros_setup}"
 source "${workspace}/install/setup.bash"
 set -u
 export ROS_LOCALHOST_ONLY=1
-export ROS_DOMAIN_ID=137
+export ROS_DOMAIN_ID="${VOICE_SMOKE_DOMAIN_ID:-137}"
 
 timeout 35s ros2 launch limo_cleanup_voice full_system_with_voice.launch.py \
-  mock_step_duration:=0.4 require_wake_word:=true \
+  voice_input_mode:=text mock_step_duration:=0.4 \
+  require_wake_word:=true enable_tts:=false \
   > "${temp_dir}/launch.log" 2>&1 &
 launch_pid=$!
 sleep 2

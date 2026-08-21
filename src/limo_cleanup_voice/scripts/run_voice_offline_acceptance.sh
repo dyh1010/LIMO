@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Copyright 2026 DYH
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""LEGACY_ROS2_OFFLINE_ONLY ament linter wrapper."""
+set -euo pipefail
 
-from ament_pep257.main import main
-import pytest
+manifest="${1:-}"
+report_path="${2:-}"
+arguments=()
+if [[ -n "${manifest}" ]]; then
+  arguments+=(--manifest "${manifest}")
+fi
+if [[ -n "${report_path}" ]]; then
+  arguments+=(--json-output "${report_path}")
+fi
 
+python3 -m limo_cleanup_voice.voice_acceptance_fixture "${arguments[@]}"
 
-@pytest.mark.linter
-@pytest.mark.pep257
-def test_pep257():
-    rc = main(argv=['.', 'test'])
-    assert rc == 0, 'Found code style errors / warnings'
+echo 'SAFETY: deterministic fixtures only; no ROS graph, microphone, or hardware.'

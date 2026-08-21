@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""LEGACY_ROS2_OFFLINE_ONLY ament linter wrapper."""
+
 from ament_copyright.main import main
 import pytest
 

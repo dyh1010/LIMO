@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Copyright 2026 DYH
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""LEGACY_ROS2_OFFLINE_ONLY ament linter wrapper."""
+set -euo pipefail
 
-from ament_pep257.main import main
-import pytest
+manifest="${1:?usage: check_voice_corpus_readiness.sh MANIFEST [MODEL_PATH] [REPORT_JSON]}"
+model_path="${2:-/home/agilex/limo_cleanup_ws/models/vosk-model-small-cn-0.22}"
+report_path="${3:-}"
 
+arguments=(--manifest "${manifest}" --model-path "${model_path}")
+if [[ -n "${report_path}" ]]; then
+  arguments+=(--json-output "${report_path}")
+fi
 
-@pytest.mark.linter
-@pytest.mark.pep257
-def test_pep257():
-    rc = main(argv=['.', 'test'])
-    assert rc == 0, 'Found code style errors / warnings'
+python3 -m limo_cleanup_voice.voice_corpus_readiness "${arguments[@]}"
+
+echo 'SAFETY: audited prerecorded files only; no ASR, microphone, ROS, or hardware was opened.'

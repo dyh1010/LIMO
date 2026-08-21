@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""LEGACY_ROS2_OFFLINE_ONLY launch; not a ROS1/Noetic field entry point."""
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -35,7 +37,11 @@ def generate_launch_description():
     microphone_device = LaunchConfiguration('microphone_device')
     input_sample_rate = LaunchConfiguration('input_sample_rate')
     block_size = LaunchConfiguration('block_size')
+    mock_step_duration = LaunchConfiguration('mock_step_duration')
+    confirmation_timeout_sec = LaunchConfiguration(
+        'confirmation_timeout_sec')
     require_wake_word = LaunchConfiguration('require_wake_word')
+    trash_bin_waypoint = LaunchConfiguration('trash_bin_waypoint')
     enable_tts = LaunchConfiguration('enable_tts')
 
     return LaunchDescription([
@@ -46,10 +52,28 @@ def generate_launch_description():
         DeclareLaunchArgument('microphone_device', default_value=''),
         DeclareLaunchArgument('input_sample_rate', default_value='0'),
         DeclareLaunchArgument('block_size', default_value='8000'),
-        DeclareLaunchArgument('require_wake_word', default_value='false'),
+        DeclareLaunchArgument('mock_step_duration', default_value='0.6'),
+        DeclareLaunchArgument(
+            'confirmation_timeout_sec', default_value='10.0'),
+        DeclareLaunchArgument('require_wake_word', default_value='true'),
+        DeclareLaunchArgument(
+            'trash_bin_waypoint', default_value='trash_bin_staging'),
         DeclareLaunchArgument('enable_tts', default_value='false'),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(cleanup_launch),
+            launch_arguments={
+                'use_mock_perception': 'true',
+                'use_real_perception': 'false',
+                'use_mock_executor': 'true',
+                'use_detection_gate': 'true',
+                'mock_step_duration': mock_step_duration,
+                'executor_dry_run': 'true',
+                'allow_arm_motion': 'false',
+                'use_gripper_controller': 'false',
+                'allow_gripper_motion': 'false',
+                'use_tracked_base_controller': 'false',
+                'allow_base_motion': 'false',
+            }.items(),
         ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(voice_launch),
@@ -59,7 +83,9 @@ def generate_launch_description():
                 'microphone_device': microphone_device,
                 'input_sample_rate': input_sample_rate,
                 'block_size': block_size,
+                'confirmation_timeout_sec': confirmation_timeout_sec,
                 'require_wake_word': require_wake_word,
+                'trash_bin_waypoint': trash_bin_waypoint,
                 'enable_tts': enable_tts,
             }.items(),
         ),

@@ -20,11 +20,15 @@ from setuptools import find_packages, setup
 
 package_name = 'limo_cleanup_voice'
 
+# LEGACY_ROS2_OFFLINE_ONLY: this ament package is not a ROS1/Noetic field
+# entry point.  ROS-independent modules remain valid for offline tests.
+
 
 setup(
     name=package_name,
     version='0.1.0',
     packages=find_packages(exclude=['test']),
+    package_data={package_name: ['schemas/*.json']},
     data_files=[
         (
             'share/ament_index/resource_index/packages',
@@ -41,7 +45,15 @@ setup(
         ),
         (
             os.path.join('share', package_name, 'scripts'),
-            glob('scripts/*.sh'),
+            glob('scripts/*.sh') + glob('scripts/*.ps1'),
+        ),
+        (
+            os.path.join('share', package_name, 'docs'),
+            glob('docs/*.md'),
+        ),
+        (
+            os.path.join('share', package_name, 'fixtures'),
+            glob('fixtures/*.json'),
         ),
     ],
     install_requires=['setuptools'],
@@ -57,10 +69,28 @@ setup(
     entry_points={
         'console_scripts': [
             'voice_asr = limo_cleanup_voice.voice_asr_node:main',
+            'voice_acceptance_fixture = '
+            'limo_cleanup_voice.voice_acceptance_fixture:main',
+            'voice_corpus_readiness = '
+            'limo_cleanup_voice.voice_corpus_readiness:main',
             'voice_dialogue = limo_cleanup_voice.voice_dialogue_node:main',
+            'voice_offline_eval = '
+            'limo_cleanup_voice.voice_offline_eval:main',
+            'voice_model_intake = '
+            'limo_cleanup_voice.voice_model_intake:main',
+            'voice_preflight = limo_cleanup_voice.voice_preflight:main',
+            'voice_regression_aggregate = '
+            'limo_cleanup_voice.voice_regression_aggregate:main',
+            'voice_priority_stop = '
+            'limo_cleanup_voice.voice_priority_stop_node:main',
+            'voice_semantic_agent = '
+            'limo_cleanup_voice.voice_semantic_agent_node:main',
             'voice_smoke_probe = '
             'limo_cleanup_voice.voice_smoke_probe:main',
             'voice_tts = limo_cleanup_voice.voice_tts_node:main',
+            'voice_v2_report = limo_cleanup_voice.voice_v2_report:main',
+            'voice_wav_transcription_run = '
+            'limo_cleanup_voice.voice_wav_transcription_run:main',
         ],
     },
 )

@@ -1,3 +1,5 @@
+# LEGACY_ROS2_OFFLINE_ONLY: ros__parameters syntax is retained only for
+# isolated ROS2 evidence.  It is not a ROS1/Noetic field configuration.
 voice_asr:
   ros__parameters:
     # text: no microphone dependency; vosk_microphone: offline microphone ASR;
@@ -13,23 +15,26 @@ voice_asr:
     input_sample_rate: 0
     block_size: 8000
     microphone_device: ''
+    # BOTTLE_ONLY_EXPERIMENT_BLOCKED_ACCURACY_REGRESSION. Retained only to
+    # reproduce the requested A/B; unrestricted/no-grammar is the current
+    # evidence baseline and the ROS1 adapter is still not implemented.
+    # This switch must remain false for the default/offline deployment path.
+    use_restricted_grammar: false
     grammar_phrases:
-      - 小莫 开始 清理
-      - 机器人 开始 清理
-      - 小莫 捡 塑料瓶
-      - 机器人 捡 塑料瓶
-      - 小莫 捡 易拉罐
-      - 机器人 捡 易拉罐
-      - 小莫 捡 纸盒
-      - 机器人 捡 纸盒
-      - 小莫 捡 垃圾
-      - 机器人 捡 垃圾
-      - 小莫 碰 一下 塑料瓶
-      - 机器人 碰 一下 塑料瓶
-      - 小莫 报告 状态
-      - 机器人 报告 状态
+      - 小莫 小莫 开始 清理
+      - 小莫 小莫 捡 塑料瓶
+      - 小莫 小莫 捡 瓶子
+      - 小莫 小莫 处理 瓶子
+      - 小莫 小莫 识别 瓶子
+      - 小莫 小莫 捡 易拉罐
+      - 小莫 小莫 捡 纸盒
+      - 小莫 小莫 捡 垃圾
+      - 小莫 小莫 碰 一下 塑料瓶
+      - 小莫 小莫 报告 状态
+      - 小莫 小莫 到 垃圾桶 旁边 去
       - 确认
       - 取消
+      - 停下
       - 停止 任务
       - 紧急 停止
       - '[unk]'
@@ -37,15 +42,40 @@ voice_asr:
 voice_dialogue:
   ros__parameters:
     transcript_topic: /voice/transcript
+    semantic_candidate_topic: /voice/semantic_candidate
+    priority_broadcast_topic: /voice/priority_broadcast
+    priority_stop_request_topic: /voice/priority_stop_request
+    stop_ack_topic: /voice/stop_ack
     intent_topic: /voice/intent
     response_topic: /voice/response_text
     status_topic: /voice/status
     natural_language_topic: /cleanup/natural_language
+    navigation_intent_topic: /cleanup/navigation_intent
+    perception_intent_topic: /cleanup/perception_intent
     cleanup_status_topic: /cleanup/status
     require_confirmation: true
     confirmation_timeout_sec: 10.0
-    require_wake_word: false
-    wake_words: [小莫, 利莫, 机器人]
+    require_wake_word: true
+    wake_words: [小莫小莫]
+    wake_command_timeout_sec: 5.0
+    trash_bin_waypoint: trash_bin_staging
+
+voice_priority_stop:
+  ros__parameters:
+    transcript_topic: /voice/transcript
+    priority_topic: /voice/priority_broadcast
+    stop_request_topic: /voice/priority_stop_request
+    ack_topic: /voice/stop_ack
+    status_topic: /voice/stop_status
+    debounce_sec: 0.75
+    repeat_count: 3
+    repeat_interval_sec: 0.075
+    ack_timeout_sec: 1.5
+
+voice_semantic_agent:
+  ros__parameters:
+    transcript_topic: /voice/transcript
+    candidate_topic: /voice/semantic_candidate
 
 voice_tts:
   ros__parameters:

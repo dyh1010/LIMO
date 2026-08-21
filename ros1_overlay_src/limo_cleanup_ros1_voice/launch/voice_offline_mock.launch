@@ -1,0 +1,18 @@
+<launch>
+  <!-- Source-preview only.  The node is absent unless explicitly enabled. -->
+  <arg name="enable_offline_adapter" default="false"/>
+  <arg name="text_input_topic" default="/voice_mock/text_input"/>
+
+  <group if="$(arg enable_offline_adapter)">
+    <node pkg="limo_cleanup_ros1_voice"
+          type="voice_ros1_noetic_adapter.py"
+          name="voice_ros1_noetic_adapter"
+          output="screen"
+          required="true">
+      <param name="profile" value="offline_text_mock"/>
+      <param name="allow_ros_publish" value="false"/>
+      <param name="allow_production_outputs" value="false"/>
+      <remap from="/voice/text_input" to="$(arg text_input_topic)"/>
+    </node>
+  </group>
+</launch>

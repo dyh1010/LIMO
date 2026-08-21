@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Optional offline text-to-speech adapter using espeak-ng."""
+"""LEGACY_ROS2_OFFLINE_ONLY TTS wrapper; not a Noetic field node."""
 
 import json
 import queue

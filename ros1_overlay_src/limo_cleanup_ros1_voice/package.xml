@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>limo_cleanup_ros1_voice</name>
+  <version>0.1.0</version>
+  <description>Offline-only fail-closed ROS1 voice adapter preview.</description>
+  <maintainer email="dyh@todo.todo">dyh</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+
+  <export>
+    <build_type>catkin</build_type>
+  </export>
+</package>
