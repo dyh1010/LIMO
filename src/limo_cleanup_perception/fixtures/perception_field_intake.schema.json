@@ -1,0 +1,784 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://limo.local/schemas/perception_field_intake.schema.json",
+  "title": "LIMO V2 formal four-scene RGB-D field intake",
+  "description": "Fail-closed intake manifest. This is not a perception readiness bundle and cannot claim delivery readiness.",
+  "type": "object",
+  "oneOf": [
+    {"$ref": "#/definitions/emptyAuthoringState"},
+    {"$ref": "#/definitions/completedFieldState"}
+  ],
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "intake_scope",
+    "read_only",
+    "authorizes_motion",
+    "publishes_control_messages",
+    "delivery_ready",
+    "intake_id",
+    "created_at_unix_sec",
+    "authorization",
+    "release_binding",
+    "frozen_topic_manifest",
+    "capture_policy",
+    "global_artifacts",
+    "scenes"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "intake_scope": {"const": "limo_v2_formal_four_scene_rgbd_field_intake"},
+    "read_only": {"const": true},
+    "authorizes_motion": {"const": false},
+    "publishes_control_messages": {"const": false},
+    "delivery_ready": {"const": false},
+    "intake_id": {"$ref": "#/definitions/nullableNonEmptyString"},
+    "created_at_unix_sec": {"$ref": "#/definitions/nullableTimestamp"},
+    "authorization": {"$ref": "#/definitions/authorization"},
+    "release_binding": {"$ref": "#/definitions/releaseBinding"},
+    "frozen_topic_manifest": {"$ref": "#/definitions/frozenTopicManifest"},
+    "capture_policy": {"$ref": "#/definitions/capturePolicy"},
+    "global_artifacts": {"$ref": "#/definitions/globalArtifacts"},
+    "scenes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["background", "bin_only", "bottle_in_bin", "bottle_outside"],
+      "properties": {
+        "background": {"$ref": "#/definitions/backgroundScene"},
+        "bin_only": {"$ref": "#/definitions/binOnlyScene"},
+        "bottle_in_bin": {"$ref": "#/definitions/bottleInBinScene"},
+        "bottle_outside": {"$ref": "#/definitions/bottleOutsideScene"}
+      }
+    }
+  },
+  "definitions": {
+    "emptyAuthoringState": {
+      "properties": {
+        "intake_id": {"type": "null"},
+        "created_at_unix_sec": {"type": "null"},
+        "authorization": {"$ref": "#/definitions/emptyAuthorization"},
+        "release_binding": {"$ref": "#/definitions/emptyReleaseBinding"},
+        "global_artifacts": {"$ref": "#/definitions/emptyGlobalArtifacts"},
+        "capture_policy": {
+          "properties": {
+            "planned_exclusive_output_paths": {"maxItems": 0}
+          }
+        },
+        "scenes": {
+          "properties": {
+            "background": {"$ref": "#/definitions/emptySceneState"},
+            "bin_only": {"$ref": "#/definitions/emptySceneState"},
+            "bottle_in_bin": {"$ref": "#/definitions/emptySceneState"},
+            "bottle_outside": {"$ref": "#/definitions/emptySceneState"}
+          }
+        }
+      }
+    },
+    "completedFieldState": {
+      "properties": {
+        "intake_id": {"type": "string", "minLength": 1},
+        "created_at_unix_sec": {"type": "number", "minimum": 0},
+        "authorization": {"$ref": "#/definitions/completedAuthorization"},
+        "release_binding": {"$ref": "#/definitions/completedReleaseBinding"},
+        "global_artifacts": {"$ref": "#/definitions/completedGlobalArtifacts"},
+        "capture_policy": {
+          "properties": {
+            "planned_exclusive_output_paths": {
+              "minItems": 52,
+              "maxItems": 52
+            }
+          }
+        },
+        "scenes": {
+          "properties": {
+            "background": {"$ref": "#/definitions/completedSceneState"},
+            "bin_only": {"$ref": "#/definitions/completedSceneState"},
+            "bottle_in_bin": {"$ref": "#/definitions/completedSceneState"},
+            "bottle_outside": {"$ref": "#/definitions/completedSceneState"}
+          }
+        }
+      }
+    },
+    "emptyAuthorization": {
+      "properties": {
+        "authorization_id": {"type": "null"},
+        "authorized_by": {"type": "null"},
+        "authorized_at_unix_sec": {"type": "null"},
+        "expires_at_unix_sec": {"type": "null"},
+        "preconditions": {
+          "properties": {
+            "physical_estop_available": {"type": "null"},
+            "ros1_control_graph_confirmed_inactive": {"type": "null"},
+            "ros2_control_graph_confirmed_inactive": {"type": "null"},
+            "actuator_uart_owner_confirmed_absent": {"type": "null"}
+          }
+        }
+      }
+    },
+    "completedAuthorization": {
+      "properties": {
+        "authorization_id": {"type": "string", "minLength": 1},
+        "authorized_by": {"type": "string", "minLength": 1},
+        "authorized_at_unix_sec": {"type": "number", "minimum": 0},
+        "expires_at_unix_sec": {"type": "number", "minimum": 0},
+        "preconditions": {
+          "properties": {
+            "physical_estop_available": {"const": true},
+            "ros1_control_graph_confirmed_inactive": {"const": true},
+            "ros2_control_graph_confirmed_inactive": {"const": true},
+            "actuator_uart_owner_confirmed_absent": {"const": true}
+          }
+        }
+      }
+    },
+    "emptyReleaseBinding": {
+      "properties": {
+        "release_id": {"type": "null"},
+        "source_manifest": {"type": "null"},
+        "source_set_sha256": {"type": "null"},
+        "models": {
+          "properties": {
+            "plastic_bottle": {"type": "null"},
+            "trash_bin": {"type": "null"}
+          }
+        }
+      }
+    },
+    "completedReleaseBinding": {
+      "properties": {
+        "release_id": {"type": "string", "minLength": 1},
+        "source_manifest": {"$ref": "#/definitions/artifactIdentity"},
+        "source_set_sha256": {"$ref": "#/definitions/sha256"},
+        "models": {
+          "properties": {
+            "plastic_bottle": {"$ref": "#/definitions/artifactIdentity"},
+            "trash_bin": {"$ref": "#/definitions/artifactIdentity"}
+          }
+        }
+      }
+    },
+    "emptyGlobalArtifacts": {
+      "properties": {
+        "runtime_preflight": {"type": "null"},
+        "ros_build_validation": {"type": "null"},
+        "ros1_field_install_validation": {"type": "null"},
+        "hardware_readiness": {"type": "null"},
+        "extrinsics_measurement_reference": {"type": "null"},
+        "authorization_record": {"type": "null"}
+      }
+    },
+    "completedGlobalArtifacts": {
+      "properties": {
+        "runtime_preflight": {"$ref": "#/definitions/artifactIdentity"},
+        "ros_build_validation": {"$ref": "#/definitions/artifactIdentity"},
+        "ros1_field_install_validation": {"$ref": "#/definitions/artifactIdentity"},
+        "hardware_readiness": {"$ref": "#/definitions/artifactIdentity"},
+        "extrinsics_measurement_reference": {"$ref": "#/definitions/artifactIdentity"},
+        "authorization_record": {"$ref": "#/definitions/artifactIdentity"}
+      }
+    },
+    "emptySceneState": {
+      "properties": {
+        "capture_id": {"type": "null"},
+        "task_id": {"type": "null"},
+        "arrangement": {
+          "properties": {
+            "operator": {"type": "null"},
+            "reviewer": {"type": "null"},
+            "started_unix_sec": {"type": "null"},
+            "ended_unix_sec": {"type": "null"}
+          }
+        },
+        "capture_window": {
+          "properties": {
+            "started_unix_sec": {"type": "null"},
+            "ended_unix_sec": {"type": "null"}
+          }
+        },
+        "artifacts": {"$ref": "#/definitions/emptySceneArtifacts"},
+        "capture_provenance": {"$ref": "#/definitions/emptyCaptureProvenance"}
+      }
+    },
+    "completedSceneState": {
+      "properties": {
+        "capture_id": {"type": "string", "minLength": 1},
+        "task_id": {"type": "string", "minLength": 1},
+        "arrangement": {
+          "properties": {
+            "operator": {"type": "string", "minLength": 1},
+            "reviewer": {"type": "string", "minLength": 1},
+            "started_unix_sec": {"type": "number", "minimum": 0},
+            "ended_unix_sec": {"type": "number", "minimum": 0}
+          }
+        },
+        "capture_window": {
+          "properties": {
+            "started_unix_sec": {"type": "number", "minimum": 0},
+            "ended_unix_sec": {"type": "number", "minimum": 0}
+          }
+        },
+        "artifacts": {"$ref": "#/definitions/completedSceneArtifacts"},
+        "capture_provenance": {"$ref": "#/definitions/completedCaptureProvenance"}
+      }
+    },
+    "emptySceneArtifacts": {
+      "properties": {
+        "raw_capture": {"type": "null"},
+        "raw_inspection": {"type": "null"},
+        "typed_frames": {"type": "null"},
+        "collector_manifest": {"type": "null"},
+        "typed_raw_binding": {"type": "null"},
+        "rgbd_artifact": {"type": "null"},
+        "ground_truth": {"type": "null"},
+        "tf_artifact": {"type": "null"},
+        "xyz_ground_truth": {"type": "null"},
+        "depth_measurement_reference": {"type": "null"},
+        "depth_quality": {"type": "null"},
+        "latency_evidence": {"type": "null"},
+        "scene_evidence_binding": {"type": "null"}
+      }
+    },
+    "completedSceneArtifacts": {
+      "properties": {
+        "raw_capture": {"$ref": "#/definitions/artifactIdentity"},
+        "raw_inspection": {"$ref": "#/definitions/artifactIdentity"},
+        "typed_frames": {"$ref": "#/definitions/artifactIdentity"},
+        "collector_manifest": {"$ref": "#/definitions/artifactIdentity"},
+        "typed_raw_binding": {"$ref": "#/definitions/artifactIdentity"},
+        "rgbd_artifact": {"$ref": "#/definitions/artifactIdentity"},
+        "ground_truth": {"$ref": "#/definitions/artifactIdentity"},
+        "tf_artifact": {"$ref": "#/definitions/artifactIdentity"},
+        "xyz_ground_truth": {"$ref": "#/definitions/artifactIdentity"},
+        "depth_measurement_reference": {"$ref": "#/definitions/artifactIdentity"},
+        "depth_quality": {"$ref": "#/definitions/artifactIdentity"},
+        "latency_evidence": {"$ref": "#/definitions/artifactIdentity"},
+        "scene_evidence_binding": {"$ref": "#/definitions/artifactIdentity"}
+      }
+    },
+    "emptyCaptureProvenance": {
+      "properties": {
+        "capture_binding_id": {"type": "null"},
+        "capture_id": {"type": "null"},
+        "task_id": {"type": "null"},
+        "capture_window": {
+          "properties": {
+            "started_unix_sec": {"type": "null"},
+            "ended_unix_sec": {"type": "null"}
+          }
+        },
+        "release_id": {"type": "null"},
+        "source_set_sha256": {"type": "null"},
+        "model_sha256": {
+          "properties": {
+            "plastic_bottle": {"type": "null"},
+            "trash_bin": {"type": "null"}
+          }
+        },
+        "raw_capture_sha256": {"type": "null"},
+        "raw_inspection_sha256": {"type": "null"},
+        "expected_topic_manifest": {"type": "null"}
+      }
+    },
+    "completedCaptureProvenance": {
+      "properties": {
+        "capture_binding_id": {"$ref": "#/definitions/sha256"},
+        "capture_id": {"type": "string", "minLength": 1},
+        "task_id": {"type": "string", "minLength": 1},
+        "capture_window": {
+          "properties": {
+            "started_unix_sec": {"type": "number", "minimum": 0},
+            "ended_unix_sec": {"type": "number", "minimum": 0}
+          }
+        },
+        "release_id": {"type": "string", "minLength": 1},
+        "source_set_sha256": {"$ref": "#/definitions/sha256"},
+        "model_sha256": {
+          "properties": {
+            "plastic_bottle": {"$ref": "#/definitions/sha256"},
+            "trash_bin": {"$ref": "#/definitions/sha256"}
+          }
+        },
+        "raw_capture_sha256": {"$ref": "#/definitions/sha256"},
+        "raw_inspection_sha256": {"$ref": "#/definitions/sha256"},
+        "expected_topic_manifest": {"$ref": "#/definitions/expectedTopicManifestBinding"}
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableSha256": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/definitions/sha256"}
+      ]
+    },
+    "nullableNonEmptyString": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "minLength": 1}
+      ]
+    },
+    "nullableTimestamp": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "number", "minimum": 0}
+      ]
+    },
+    "artifactIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "size_bytes", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "sha256": {"$ref": "#/definitions/sha256"}
+      }
+    },
+    "nullableArtifactIdentity": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/definitions/artifactIdentity"}
+      ]
+    },
+    "modelHashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plastic_bottle", "trash_bin"],
+      "properties": {
+        "plastic_bottle": {"$ref": "#/definitions/nullableSha256"},
+        "trash_bin": {"$ref": "#/definitions/nullableSha256"}
+      }
+    },
+    "captureWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["started_unix_sec", "ended_unix_sec"],
+      "properties": {
+        "started_unix_sec": {"$ref": "#/definitions/nullableTimestamp"},
+        "ended_unix_sec": {"$ref": "#/definitions/nullableTimestamp"}
+      }
+    },
+    "expectedTopicManifestBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_id", "schema_version", "size_bytes", "sha256"],
+      "properties": {
+        "manifest_id": {"const": "limo-dabai-rgbd-six-topics-v1"},
+        "schema_version": {"const": 1},
+        "size_bytes": {"const": 1969},
+        "sha256": {"const": "0e56197a7ca2bb01675d7894c79ff89fbcc2e45c5fad1c969ce97471c07dc8f4"}
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_id",
+        "authorized_by",
+        "authorized_at_unix_sec",
+        "expires_at_unix_sec",
+        "scope",
+        "allow",
+        "deny",
+        "preconditions"
+      ],
+      "properties": {
+        "authorization_id": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "authorized_by": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "authorized_at_unix_sec": {"$ref": "#/definitions/nullableTimestamp"},
+        "expires_at_unix_sec": {"$ref": "#/definitions/nullableTimestamp"},
+        "scope": {"const": "camera_read_capture_and_offline_evaluation_only"},
+        "allow": {
+          "const": [
+            "start_preapproved_rgbd_camera_driver",
+            "subscribe_rgb_depth_camera_info_tf",
+            "record_exact_frozen_six_topic_bag",
+            "run_dual_model_inference",
+            "publish_perception_only_outputs",
+            "subscribe_typed_perception_frame",
+            "write_exclusive_new_evidence_files",
+            "run_offline_index_binding_and_readiness"
+          ]
+        },
+        "deny": {
+          "const": [
+            "publish_or_subscribe_actuation_commands",
+            "send_navigation_goals",
+            "start_base_navigation_teleop_bridge_watchdog",
+            "start_arm_gripper_moveit_or_executor",
+            "open_actuator_uart_or_serial",
+            "rosbag_play",
+            "record_extra_or_alias_topics",
+            "frame_id_override_or_placeholder_tf",
+            "overwrite_existing_evidence",
+            "use_sim_time",
+            "connect_perception_to_motion_consumers"
+          ]
+        },
+        "preconditions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "physical_estop_available",
+            "ros1_control_graph_confirmed_inactive",
+            "ros2_control_graph_confirmed_inactive",
+            "actuator_uart_owner_confirmed_absent"
+          ],
+          "properties": {
+            "physical_estop_available": {"type": ["boolean", "null"]},
+            "ros1_control_graph_confirmed_inactive": {"type": ["boolean", "null"]},
+            "ros2_control_graph_confirmed_inactive": {"type": ["boolean", "null"]},
+            "actuator_uart_owner_confirmed_absent": {"type": ["boolean", "null"]}
+          }
+        }
+      }
+    },
+    "releaseBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release_id",
+        "source_manifest",
+        "source_set_sha256",
+        "models"
+      ],
+      "properties": {
+        "release_id": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "source_manifest": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "source_set_sha256": {"$ref": "#/definitions/nullableSha256"},
+        "models": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["plastic_bottle", "trash_bin"],
+          "properties": {
+            "plastic_bottle": {"$ref": "#/definitions/nullableArtifactIdentity"},
+            "trash_bin": {"$ref": "#/definitions/nullableArtifactIdentity"}
+          }
+        }
+      }
+    },
+    "frozenTopicManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_id", "schema_version", "path", "size_bytes", "sha256", "topics"],
+      "properties": {
+        "manifest_id": {"const": "limo-dabai-rgbd-six-topics-v1"},
+        "schema_version": {"const": 1},
+        "path": {"const": "fixtures/rgbd_expected_topics.json"},
+        "size_bytes": {"const": 1969},
+        "sha256": {"const": "0e56197a7ca2bb01675d7894c79ff89fbcc2e45c5fad1c969ce97471c07dc8f4"},
+        "topics": {
+          "const": [
+            "/camera/color/image_raw",
+            "/camera/depth/image_raw",
+            "/camera/color/camera_info",
+            "/camera/depth/camera_info",
+            "/tf",
+            "/tf_static"
+          ]
+        }
+      }
+    },
+    "capturePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenes_exact",
+        "min_unique_typed_frames_per_scene",
+        "target_unique_typed_frames_per_scene",
+        "duration_sec",
+        "raw_storage_identifier",
+        "exclusive_new_files",
+        "raw_topics_exact",
+        "planned_exclusive_output_paths",
+        "max_sync_span_sec",
+        "max_dynamic_tf_age_sec",
+        "max_typed_raw_unpaired_rate"
+      ],
+      "properties": {
+        "scenes_exact": {
+          "const": ["background", "bin_only", "bottle_in_bin", "bottle_outside"]
+        },
+        "min_unique_typed_frames_per_scene": {
+          "const": 30
+        },
+        "target_unique_typed_frames_per_scene": {
+          "const": 120
+        },
+        "duration_sec": {"type": "number", "exclusiveMinimum": 0},
+        "raw_storage_identifier": {"const": "sqlite3"},
+        "exclusive_new_files": {"const": true},
+        "raw_topics_exact": {
+          "const": [
+            "/camera/color/image_raw",
+            "/camera/depth/image_raw",
+            "/camera/color/camera_info",
+            "/camera/depth/camera_info",
+            "/tf",
+            "/tf_static"
+          ]
+        },
+        "planned_exclusive_output_paths": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true,
+          "oneOf": [
+            {"maxItems": 0},
+            {"minItems": 52, "maxItems": 52}
+          ]
+        },
+        "max_sync_span_sec": {"const": 0.15},
+        "max_dynamic_tf_age_sec": {"const": 0.15},
+        "max_typed_raw_unpaired_rate": {"const": 0.05}
+      }
+    },
+    "globalArtifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_preflight",
+        "ros_build_validation",
+        "ros1_field_install_validation",
+        "hardware_readiness",
+        "extrinsics_measurement_reference",
+        "authorization_record"
+      ],
+      "properties": {
+        "runtime_preflight": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "ros_build_validation": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "ros1_field_install_validation": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "hardware_readiness": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "extrinsics_measurement_reference": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "authorization_record": {"$ref": "#/definitions/nullableArtifactIdentity"}
+      }
+    },
+    "arrangement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "independently_arranged",
+        "operator",
+        "reviewer",
+        "started_unix_sec",
+        "ended_unix_sec"
+      ],
+      "properties": {
+        "independently_arranged": {"const": true},
+        "operator": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "reviewer": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "started_unix_sec": {"$ref": "#/definitions/nullableTimestamp"},
+        "ended_unix_sec": {"$ref": "#/definitions/nullableTimestamp"}
+      }
+    },
+    "sceneArtifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_capture",
+        "raw_inspection",
+        "typed_frames",
+        "collector_manifest",
+        "typed_raw_binding",
+        "rgbd_artifact",
+        "ground_truth",
+        "tf_artifact",
+        "xyz_ground_truth",
+        "depth_measurement_reference",
+        "depth_quality",
+        "latency_evidence",
+        "scene_evidence_binding"
+      ],
+      "properties": {
+        "raw_capture": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "raw_inspection": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "typed_frames": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "collector_manifest": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "typed_raw_binding": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "rgbd_artifact": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "ground_truth": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "tf_artifact": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "xyz_ground_truth": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "depth_measurement_reference": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "depth_quality": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "latency_evidence": {"$ref": "#/definitions/nullableArtifactIdentity"},
+        "scene_evidence_binding": {"$ref": "#/definitions/nullableArtifactIdentity"}
+      }
+    },
+    "captureProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capture_binding_id",
+        "capture_id",
+        "scene",
+        "task_id",
+        "capture_window",
+        "release_id",
+        "source_set_sha256",
+        "model_sha256",
+        "raw_capture_sha256",
+        "raw_inspection_sha256",
+        "expected_topic_manifest"
+      ],
+      "properties": {
+        "capture_binding_id": {"$ref": "#/definitions/nullableSha256"},
+        "capture_id": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "scene": {"enum": [null, "background", "bin_only", "bottle_in_bin", "bottle_outside"]},
+        "task_id": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "capture_window": {"$ref": "#/definitions/captureWindow"},
+        "release_id": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "source_set_sha256": {"$ref": "#/definitions/nullableSha256"},
+        "model_sha256": {"$ref": "#/definitions/modelHashes"},
+        "raw_capture_sha256": {"$ref": "#/definitions/nullableSha256"},
+        "raw_inspection_sha256": {"$ref": "#/definitions/nullableSha256"},
+        "expected_topic_manifest": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/expectedTopicManifestBinding"}
+          ]
+        }
+      }
+    },
+    "evidenceRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exhaustive_ground_truth",
+        "truth_classes_exact",
+        "real_tf_and_tf_static_chain",
+        "base_frame",
+        "camera_frame",
+        "independent_xyz_reference",
+        "independent_depth_reference",
+        "clock_domain",
+        "sensor_stamp_clock",
+        "receipt_clock",
+        "synchronization_status",
+        "processing_and_transport_latency"
+      ],
+      "properties": {
+        "exhaustive_ground_truth": {"const": true},
+        "truth_classes_exact": {"const": ["plastic_bottle", "trash_bin"]},
+        "real_tf_and_tf_static_chain": {"const": true},
+        "base_frame": {"const": "base_link"},
+        "camera_frame": {"const": "camera_color_optical_frame"},
+        "independent_xyz_reference": {"const": true},
+        "independent_depth_reference": {"const": true},
+        "clock_domain": {"const": "system_time_unix"},
+        "sensor_stamp_clock": {"const": "CLOCK_REALTIME"},
+        "receipt_clock": {"const": "CLOCK_REALTIME"},
+        "synchronization_status": {"const": "synchronized"},
+        "processing_and_transport_latency": {"const": true}
+      }
+    },
+    "sceneBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scene", "expected_presence", "expected_bottle_relation",
+        "capture_id", "task_id", "min_unique_typed_frames",
+        "target_unique_typed_frames", "exclusive_new_files", "arrangement",
+        "capture_window", "artifacts", "capture_provenance",
+        "evidence_requirements"
+      ],
+      "properties": {
+        "scene": {"enum": ["background", "bin_only", "bottle_in_bin", "bottle_outside"]},
+        "expected_presence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["plastic_bottle", "trash_bin"],
+          "properties": {
+            "plastic_bottle": {"type": "boolean"},
+            "trash_bin": {"type": "boolean"}
+          }
+        },
+        "expected_bottle_relation": {
+          "enum": [
+            "absent",
+            "inside_trash_bin_non_actionable",
+            "outside_trash_bin_actionable"
+          ]
+        },
+        "capture_id": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "task_id": {"$ref": "#/definitions/nullableNonEmptyString"},
+        "min_unique_typed_frames": {"const": 30},
+        "target_unique_typed_frames": {"const": 120},
+        "exclusive_new_files": {"const": true},
+        "arrangement": {"$ref": "#/definitions/arrangement"},
+        "capture_window": {"$ref": "#/definitions/captureWindow"},
+        "artifacts": {"$ref": "#/definitions/sceneArtifacts"},
+        "capture_provenance": {"$ref": "#/definitions/captureProvenance"},
+        "evidence_requirements": {"$ref": "#/definitions/evidenceRequirements"}
+      }
+    },
+    "backgroundScene": {
+      "allOf": [
+        {"$ref": "#/definitions/sceneBase"},
+        {
+          "properties": {
+            "scene": {"const": "background"},
+            "expected_presence": {
+              "const": {"plastic_bottle": false, "trash_bin": false}
+            },
+            "expected_bottle_relation": {"const": "absent"},
+            "capture_provenance": {
+              "properties": {"scene": {"const": "background"}}
+            }
+          }
+        }
+      ]
+    },
+    "binOnlyScene": {
+      "allOf": [
+        {"$ref": "#/definitions/sceneBase"},
+        {
+          "properties": {
+            "scene": {"const": "bin_only"},
+            "expected_presence": {
+              "const": {"plastic_bottle": false, "trash_bin": true}
+            },
+            "expected_bottle_relation": {"const": "absent"},
+            "capture_provenance": {
+              "properties": {"scene": {"const": "bin_only"}}
+            }
+          }
+        }
+      ]
+    },
+    "bottleInBinScene": {
+      "allOf": [
+        {"$ref": "#/definitions/sceneBase"},
+        {
+          "properties": {
+            "scene": {"const": "bottle_in_bin"},
+            "expected_presence": {
+              "const": {"plastic_bottle": true, "trash_bin": true}
+            },
+            "expected_bottle_relation": {"const": "inside_trash_bin_non_actionable"},
+            "capture_provenance": {
+              "properties": {"scene": {"const": "bottle_in_bin"}}
+            }
+          }
+        }
+      ]
+    },
+    "bottleOutsideScene": {
+      "allOf": [
+        {"$ref": "#/definitions/sceneBase"},
+        {
+          "properties": {
+            "scene": {"const": "bottle_outside"},
+            "expected_presence": {
+              "const": {"plastic_bottle": true, "trash_bin": true}
+            },
+            "expected_bottle_relation": {"const": "outside_trash_bin_actionable"},
+            "capture_provenance": {
+              "properties": {"scene": {"const": "bottle_outside"}}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

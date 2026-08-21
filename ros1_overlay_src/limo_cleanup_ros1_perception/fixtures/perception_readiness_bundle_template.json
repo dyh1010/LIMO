@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "bundle_id": null,
+  "runtime_family": "ROS1",
+  "ros_distro": "noetic",
+  "evidence_scope": "formal_four_scene_rosbag1_rgbd_acceptance",
+  "read_only": true,
+  "authorizes_motion": false,
+  "publishes_ros_messages": false,
+  "delivery_ready": false,
+  "source_binding": null,
+  "model_binding": null,
+  "output_contract": null,
+  "ros1_field_install_validation": null,
+  "hardware_readiness": null,
+  "expected_topic_manifest": "dabai_ros1_formal_four_scene_six_topics_v1.json",
+  "scenes": {
+    "background": null,
+    "bin_only": null,
+    "bottle_in_bin": null,
+    "bottle_outside": null
+  },
+  "required_gates": {
+    "minimum_unique_frames_per_scene": 30,
+    "rosbag1_connection_and_header_decode": true,
+    "camera_info_intrinsics_bound": true,
+    "old_latched_camera_info_rejected": true,
+    "unique_four_stream_pairing": true,
+    "camera_only_tf_chain": true,
+    "typed_raw_binding": true,
+    "ground_truth_and_measurement_reference": true,
+    "depth_xyz_and_latency_metrics": true
+  }
+}

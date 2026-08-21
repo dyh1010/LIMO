@@ -1,0 +1,212 @@
+{
+  "schema_version": 2,
+  "contract_id": "limo-v2-ros1-noetic-dabai-runtime-v2",
+  "runtime": {
+    "ros_major": 1,
+    "ros_distro": "noetic",
+    "on_robot_middleware": "roscpp_tcpros",
+    "ros2_field_runtime_allowed": false
+  },
+  "authorization": {
+    "camera_only_active": true,
+    "read_only": true,
+    "authorizes_motion": false,
+    "publishes_control_messages": false,
+    "may_stop_non_camera_nodes": false
+  },
+  "startup": {
+    "commands": [
+      ["source", "/opt/ros/noetic/setup.bash"],
+      ["source", "/home/agilex/agilex_ws/devel/setup.bash"],
+      ["roslaunch", "astra_camera", "dabai_u3.launch"]
+    ],
+    "launch_source": "/home/agilex/agilex_ws/src/ros_astra_camera/launch/dabai_u3.launch",
+    "launch_sha256": "75f9ada995ac961d0b4dddb7d86d591f57dc5392165663f4a905709a24231b2e",
+    "node": "/camera/camera",
+    "node_pid_observed": 86818,
+    "package": "astra_camera",
+    "executable": "astra_camera_node",
+    "includes": [],
+    "node_count": 1
+  },
+  "evidence_sources": [
+    {"path": "evidence/perception_v2_field_20260814/user_startup_screenshots/01_roslaunch_dabai_u3.png", "size_bytes": 250085, "sha256": "64e0132c70931f179d2fd70ff49821e5e24bb16f8ecfdb3ad79054a3d353e7eb"},
+    {"path": "evidence/perception_v2_field_20260814/user_startup_screenshots/02_rqt_image_view_command.png", "size_bytes": 121298, "sha256": "b7905a55dd7ca3476549988990569d7d56c0c633e4f5ba81a906c9544cfbcf28"},
+    {"path": "evidence/perception_v2_field_20260814/user_startup_screenshots/03_rqt_color_stream.png", "size_bytes": 653709, "sha256": "d7c85560946b2aa8938b10214f8d7cab29bd6a016cb1823cc1cb3a2bf2e78188"},
+    {"path": "evidence/perception_v2_field_20260814/ros1_launch_source/dabai_u3.launch", "size_bytes": 6446, "sha256": "75f9ada995ac961d0b4dddb7d86d591f57dc5392165663f4a905709a24231b2e"}
+  ],
+  "current_parameters": {
+    "depth_align": false,
+    "color_depth_synchronization": false,
+    "serial_number": "",
+    "enable_ir": true,
+    "enable_point_cloud": true,
+    "enable_point_cloud_xyzrgb": false,
+    "publish_tf": true,
+    "tf_publish_rate": 10.0,
+    "color": {"width": 640, "height": 480, "fps": 30, "format": "RGB"},
+    "depth": {"width": 640, "height": 400, "fps": 30, "format": "Y11"}
+  },
+  "streams": [
+    {"role": "rgb", "topic": "/camera/color/image_raw", "type": "sensor_msgs/Image", "publisher": "/camera/camera", "live_probe_frame_id": "camera_color_optical_frame", "diagnostic_bag_frame_ids": ["camera_color_optical_frame"], "width": 640, "height": 480, "encoding": "rgb8"},
+    {"role": "raw_depth", "topic": "/camera/depth/image_raw", "type": "sensor_msgs/Image", "publisher": "/camera/camera", "live_probe_frame_id": "camera_depth_optical_frame", "diagnostic_bag_frame_ids": ["camera_depth_optical_frame"], "width": 640, "height": 400, "encoding": "16UC1"},
+    {"role": "rgb_camera_info", "topic": "/camera/color/camera_info", "type": "sensor_msgs/CameraInfo", "publisher": "/camera/camera", "live_probe_frame_id": "camera_color_optical_frame", "diagnostic_bag_frame_ids": ["camera_color_optical_frame"], "width": 640, "height": 480, "distortion_model": "plumb_bob"},
+    {"role": "depth_camera_info", "topic": "/camera/depth/camera_info", "type": "sensor_msgs/CameraInfo", "publisher": "/camera/camera", "live_probe_frame_id": "camera_depth_optical_frame", "diagnostic_bag_frame_ids": [""], "width": 640, "height": 400, "distortion_model": "plumb_bob"}
+  ],
+  "tf_runtime": {
+    "live_owner_probe": {
+      "tf_publishers": ["/base_link_to_camera_link", "/base_link_to_imu_link", "/base_link_to_laser_link", "/camera/camera", "/limo_base_node"],
+      "tf_static_publishers": ["/camera/camera"]
+    },
+    "camera_only_tf_pass": false,
+    "mixed_tf": true
+  },
+  "diagnostic_bag": {
+    "remote_path": "/home/agilex/camera_evidence/v2_ros1_shared_graph_diagnostic_20260814T052442Z.bag",
+    "local_path": "evidence/perception_v2_field_20260814/diagnostic_shared_graph/v2_ros1_shared_graph_diagnostic_20260814T052442Z.bag",
+    "format": "rosbag_v2",
+    "storage_identifier": "rosbag1-v2",
+    "compression": "lz4",
+    "duration_sec": 2.939682,
+    "size_bytes": 81634393,
+    "sha256": "31a9c280aaa8d1ce6f1836bb9a445eafd87fbc5b096967932484c2f4c6982168",
+    "capture_id": "v2-ros1-shared-diagnostic-20260814T052442Z",
+    "capture_window": {
+      "header_start_ns": 1786685126610713067,
+      "header_end_ns": 1786685129515326307,
+      "record_start_ns": 1786685126613321411,
+      "record_end_ns": 1786685129516907608
+    },
+    "manifest": {
+      "path": "evidence/perception_v2_field_20260814/diagnostic_shared_graph/v2_ros1_shared_graph_diagnostic_20260814T052442Z.diagnostic-manifest-v3.json",
+      "size_bytes": 6989444,
+      "sha256": "4683b682b908a2325232aa604a3b7e6367dd0404a84baf0013d159ab8da7e08f",
+      "schema_version": 1,
+      "report_kind": "ros1_shared_graph_diagnostic_manifest",
+      "inspection_scope": "diagnostic_shared_graph",
+      "mode": "diagnostic_shared_graph"
+    },
+    "formal_gate_history": {
+      "path": "evidence/perception_v2_field_20260814/diagnostic_shared_graph/v2_ros1_shared_graph_diagnostic_20260814T052442Z.formal-gate-v3.json",
+      "size_bytes": 1661,
+      "sha256": "678e51ac185605471f4ec68d2ce67ffcf680f65704aba6567ec12d6014c63966",
+      "diagnostic_completed": false,
+      "failure": "connection_latching_mismatch",
+      "use": "historical_strict_first_failure_only",
+      "not_full_field_evidence": true,
+      "not_in_four_scene_denominator": true
+    },
+    "indexer_source": {
+      "path_suffix": "rosbag1_rgbd_indexer.py",
+      "size_bytes": 88414,
+      "sha256": "4b541369995076cbb588ec53854a8f22edec99d71a0a96629b5252f896046037"
+    },
+    "expected_topic_manifest": {
+      "manifest_id": "limo-dabai-ros1-raw-rgbd-six-topics-v1",
+      "schema_version": 1,
+      "size_bytes": 2243,
+      "sha256": "88771fcdac6770da49dc7ed75179c1b82243ca30e63f3e88d26a04ae70b59b2b"
+    },
+    "connection_count": 8,
+    "observed_unique_topics": [
+      "/camera/color/camera_info",
+      "/camera/color/image_raw",
+      "/camera/depth/camera_info",
+      "/camera/depth/image_raw",
+      "/tf"
+    ],
+    "missing_expected_topics": ["/tf_static"],
+    "message_count": 1248,
+    "topic_message_counts": {
+      "/camera/color/camera_info": 89,
+      "/camera/color/image_raw": 88,
+      "/camera/depth/camera_info": 87,
+      "/camera/depth/image_raw": 86,
+      "/tf": 898,
+      "/tf_static": 0
+    },
+    "tf_connection_count": 4,
+    "formal_acceptance": false,
+    "shared_graph": true,
+    "mixed_tf": true,
+    "exact_six_topics_present": false,
+    "not_in_four_scene_denominator": true,
+    "scene": "diagnostic_shared_graph",
+    "inspection_passed": false,
+    "diagnostic_completed": true,
+    "delivery_ready": false,
+    "formal_tf_pass": false,
+    "formal_3d_pass": false,
+    "formal_scene_frame_contribution": {
+      "background": 0,
+      "bin_only": 0,
+      "bottle_in_bin": 0,
+      "bottle_outside": 0
+    },
+    "pairing_metrics": {
+      "rgb_candidate_count": 88,
+      "unique_header_pair_count": 86,
+      "formal_contract_valid_pair_count": 0,
+      "diagnostic_accepted_bundle_count": 86,
+      "rejected_rgb_count": 2,
+      "total_stream_message_count": 349,
+      "total_unpaired_message_count": 5,
+      "total_unpaired_rate": 0.014326647564469915,
+      "unmatched_message_count_by_stream": {
+        "rgb": 2,
+        "raw_depth": 0,
+        "rgb_camera_info": 3,
+        "depth_camera_info": 0
+      }
+    },
+    "camera_info_evidence": {
+      "rgb_camera_info": {
+        "fresh_message_count": 89,
+        "connection_latching": true,
+        "header_frame_ids": ["camera_color_optical_frame"],
+        "width": 640,
+        "height": 480,
+        "distortion_model": "plumb_bob",
+        "calibration_sha256": "150c6ded8cadae050dbf00437414947a8463a01a74576a625d53721b60f513f4"
+      },
+      "depth_camera_info": {
+        "fresh_message_count": 86,
+        "isolated_old_latched_count": 1,
+        "connection_latching": true,
+        "header_frame_ids": [""],
+        "width": 640,
+        "height": 400,
+        "distortion_model": "plumb_bob",
+        "calibration_sha256": "a523469b9ec1824923cb6228f048106ac105f83aa538417ee3c0723a15f2d6a2"
+      }
+    },
+    "tf_evidence": {
+      "camera_only": false,
+      "mixed_tf": true,
+      "base_chain_required": false,
+      "transform_count": 1043,
+      "edge_summary_count": 9,
+      "bag_tf_callers": ["/base_link_to_camera_link", "/base_link_to_imu_link", "/base_link_to_laser_link", "/camera/camera"],
+      "edge_summary": [
+        {"connection_id": 2, "topic": "/tf", "callerid": "/base_link_to_imu_link", "parent_frame_id": "/base_link", "child_frame_id": "/imu_link", "transform_count": 290},
+        {"connection_id": 3, "topic": "/tf", "callerid": "/base_link_to_camera_link", "parent_frame_id": "/base_link", "child_frame_id": "/camera_link", "transform_count": 290},
+        {"connection_id": 4, "topic": "/tf", "callerid": "/base_link_to_laser_link", "parent_frame_id": "/base_link", "child_frame_id": "/laser_link", "transform_count": 289},
+        {"connection_id": 6, "topic": "/tf", "callerid": "/camera/camera", "parent_frame_id": "camera_color_frame", "child_frame_id": "camera_color_optical_frame", "transform_count": 29},
+        {"connection_id": 6, "topic": "/tf", "callerid": "/camera/camera", "parent_frame_id": "camera_depth_frame", "child_frame_id": "camera_depth_optical_frame", "transform_count": 29},
+        {"connection_id": 6, "topic": "/tf", "callerid": "/camera/camera", "parent_frame_id": "camera_ir_frame", "child_frame_id": "camera_ir_optical_frame", "transform_count": 29},
+        {"connection_id": 6, "topic": "/tf", "callerid": "/camera/camera", "parent_frame_id": "camera_link", "child_frame_id": "camera_color_frame", "transform_count": 29},
+        {"connection_id": 6, "topic": "/tf", "callerid": "/camera/camera", "parent_frame_id": "camera_link", "child_frame_id": "camera_depth_frame", "transform_count": 29},
+        {"connection_id": 6, "topic": "/tf", "callerid": "/camera/camera", "parent_frame_id": "camera_link", "child_frame_id": "camera_ir_frame", "transform_count": 29}
+      ]
+    }
+  },
+  "blocking_conditions": [
+    "current depth stream is raw and not aligned to the RGB grid",
+    "driver color/depth synchronization is disabled",
+    "both CameraInfo connections are latched while the frozen formal manifest expects non-latched CameraInfo",
+    "the bounded bag has an empty depth CameraInfo Header.frame_id",
+    "shared /tf has non-camera publishers and the bounded bag has no /tf_static message",
+    "ROS1 rosbag1 evidence is diagnostic-only and is not admitted by the formal DB3 readiness path",
+    "formal four-scene truth, TF, depth, XYZ and latency evidence is missing"
+  ]
+}

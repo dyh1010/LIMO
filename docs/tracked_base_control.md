@@ -7,6 +7,28 @@ LIMO 履带模式使用与四轮差速相同的滑移转向模型。当前控制
 
 任何横移、升降、滚转或俯仰速度请求都会被拒绝，而不是静默转换。
 
+## 当前实机架构（2026-08-11）
+
+现场已经通过机器人原生 ROS1 Noetic 工作区的 `limo_base_node` 成功驱动履带；该节点使用
+`ttyTHS0`、`use_mcnamu=false`。同日 ROS2 Foxy 受控链虽然在软件图中输出了
+`linear.x=0.03 m/s`、持续 `0.5 s`，但用户确认履带物理上完全没有动作，因此不能记为
+Stage 3 或真实运动通过。
+
+当前权威架构是：
+
+- ROS1 `limo_base_node` 是 `/dev/ttyTHS0` 的唯一硬件 owner；
+- ROS2 `limo_base` 不再是默认实机入口，禁止与 ROS1 driver 并发；
+- ROS2 清理系统保留本页安全网关，但必须经受限 `ros1_bridge` 和 ROS1 侧 fail-closed
+  timeout/watchdog 适配器后再进入私有 driver 命令话题；ROS1 `limo_base_node` 的原
+  `/cmd_vel` 订阅必须 remap 到该私有话题；
+- bridge、独立 Catkin wrapper 与 ROS1 watchdog 已本地实现并通过离线检查，但尚未完成
+  Catkin、跨图或机器人验收；最新只读安全审计还发现 ROS2 源端 owner、导航结果闭环、
+  epoch/nonce 防重放、vendor 前连续零证明和退出/UART 清理阻塞。状态为
+  `ROS1_ROS2_BASE_BRIDGE_IMPLEMENTED_LOCALLY_UNVERIFIED`，在关闭全部阻塞前禁止 ROS2 清理
+  任务驱动真实底盘。
+
+完整所有权、断链停车和分级验收要求见 `docs/ros1_ros2_base_bridge_contract.md`。
+
 ## 安全网关
 
 节点：`limo_cleanup_base/tracked_base_controller`
@@ -21,8 +43,11 @@ LIMO 履带模式使用与四轮差速相同的滑移转向模型。当前控制
 
 - `/cleanup/base/safe_cmd_vel`：经过轴约束、限速、加速度限制和超时保护后的私有底盘命令。
 
-原厂 `limo_base` 的绝对订阅 `/cmd_vel` 必须由专用 Stage 2 包装 Launch 重映射到该私有
-话题。Nav2、teleop 或调试节点即使发布普通 `/cmd_vel`，也不得直接连接原厂驱动。
+默认实机路径不得把该话题直接交给 ROS2 vendor driver，也不得让 bridge 直接发布 ROS1
+公开 `/cmd_vel` 或私有 driver 话题。目标链为：ROS2 `/cleanup/base/safe_cmd_vel` → 受限
+bridge → ROS1 `/cleanup/base/safe_cmd_vel` → ROS1 timeout/watchdog 适配器 → ROS1
+`/cleanup/base/driver_cmd_vel` → ROS1 `limo_base_node`。ROS1 driver 的原 `/cmd_vel` 订阅必须
+remap 到该私有话题；自动模式下公开 ROS1 `/cmd_vel` 必须零端点。
 
 默认值：
 
@@ -42,53 +67,39 @@ heartbeat_timeout=0.50 s
 恢复连接后重放积压速度。授权或安全许可变为 `false`、以及收到非法轴时会在回调中立即
 发布零速并清除旧速度请求，重新放行后必须收到新的速度请求。
 
-本节点不是导航规划器，也不启动原厂底盘节点。首次实机测试前仍需验证履带安装、黄色模式
-指示灯、遥控急停/物理断电、私有安全话题唯一发布者以及原厂底盘的命令超时行为。
+本节点不是导航规划器，也不启动任何底盘 driver。首次 bridge 实机验收前仍需验证履带安装、
+黄色模式灯、主开关物理断电、双图唯一命令所有权，以及两层断链停车：
 
-原厂 `limo_base` 不是只读驱动：目标机源码确认其启动时会打开默认 `/dev/ttyTHS0`，随后
-立即发送 `MSG_CTRL_MODE_CONFIG_ID (0x421)` 进入 commanded mode。任何启动原厂驱动的步骤
-都属于第 2 级硬件写入验收，禁止用于第 1 级只读检查。
+1. bridge、ROS2 网关或授权心跳丢失时，ROS1 watchdog 必须在不超过 `0.25 s` 的 lease 内
+   向私有 `/cleanup/base/driver_cmd_vel` 持续输出零；
+2. ROS1 watchdog 自身退出时，ROS1 `limo_base_node`/底盘必须在已测得的有界时间内停车。
 
-第 2 级之前使用 `scripts/tracked_base_stage2_preflight.sh` 做 fail-closed 预检。它要求三个
-现场确认、固定 `/dev/ttyTHS0`、串口无占用、用户属于 `dialout`、没有 kernel console/
-serial-getty 冲突、无运动进程/节点且所有公开/私有命令话题无发布者；任意一项无法证明安全时输出
-`STAGE2_PREFLIGHT_BLOCKED`。所需检查工具缺失，以及 `fuser`、`grep` 或 `systemctl` 无法
-给出可判定结果时同样阻塞。预检本身不启动节点、不打开串口、不发布消息。
+ROS1 watchdog 还必须默认禁动、订阅 queue=1，并拒绝非有限值和非平面轴。生产 bridge 只允许
+白名单话题与单向数据流，禁止 `--bridge-all-topics`、命令双向桥接和回环；`/cmd_vel` 与
+`/cleanup/base/driver_cmd_vel` 均不得跨桥。
 
-由于板载 UART 没有 `/dev/limo*` 稳定别名，预检还要求把第 1 级审计得到的 sysfs 设备
-路径和内核驱动路径作为期望值传入并精确匹配。预检固定使用集成 Domain 137，并要求
-`ROS_LOCALHOST_ONLY=0`；`ROS_DISCOVERY_SERVER`、`CYCLONEDDS_URI` 或
-`FASTRTPS_DEFAULT_PROFILES_FILE` 等自定义发现覆盖必须清除。ROS 图/话题查询超时或失败
-同样直接阻塞，不能按“没有发现节点”处理。
+第二项目前没有现场证据。在该行为完成源码确认和现场断链验证前，不得经 bridge 发送非零速度。
+所有权检查必须同时覆盖进程、ROS1 图、ROS2 图与 UART 占用；任一系统查询失败或超时都不能
+按“没有节点”处理。
 
-第 2 级使用 `tracked_base_zero_output.launch.py`。该专用 launch 只启动自研安全网关，将
-`allow_base_motion` 直接硬编码为 `false`，不暴露运行时放行参数，也不启动原厂底盘节点。
-它用于在架空或托轮条件下先建立唯一、持续的零速
-`/cleanup/base/safe_cmd_vel` 发布者，同时保持真实 `/cmd_vel` 无发布者。
+## 冻结的 ROS2 vendor 实验路径
 
-原厂驱动启动前先运行 `scripts/verify_tracked_zero_output.py`。该观察器只订阅私有安全话题，
-要求恰好一个名为 `cleanup_tracked_base_zero_output` 的发布者、只有观察器自身一个订阅者、
-至少 10 条六轴全零有限 Twist，并确认四个公开速度话题均无任何端点；输出
-`ZERO_OUTPUT_GUARD_PASS` 才能继续。
+目标机上的 ROS2 `limo_base` 启动会打开 `/dev/ttyTHS0`，并立即发送
+`MSG_CTRL_MODE_CONFIG_ID (0x421)` 进入 commanded mode。项目曾为它准备
+`tracked_base_stage2_preflight.sh`、`tracked_base_zero_output.launch.py`、
+`verify_tracked_zero_output.py`、`tracked_base_vendor_stage2.launch.py` 与
+`verify_tracked_stage2_topology.py`，并完成严格 fail-closed 软件加固。
 
-`tracked_base_vendor_stage2.launch.py` 默认不启动原厂驱动；只有显式设置
-`stage2_hardware_write_authorized:=true` 才会执行硬件写入。授权后串口固定为 `ttyTHS0`，原厂
-`/cmd_vel` 订阅固定重映射到 `/cleanup/base/safe_cmd_vel`，两项均不提供命令行覆盖入口。
+该路径现在只保留为历史诊断和离线回归资产，不是默认实机入口。2026-08-11 的 ROS2 诊断
+路径曾取得 vendor Stage 2 topology PASS；该结果不构成新生产架构验收。随后 Stage 3 软件
+短脉冲完成 UART 打开、命令观测和最终归零，但履带没有物理动作，因此 Stage 3 未通过。
+ROS1 `limo_base_node` 活跃时禁止启动上述 vendor launch。
+任何未来独立诊断都必须先证明 ROS1 driver 已停止、UART 已释放，并取得与生产路径相互独立的
+现场授权；不能把它作为 bridge 的替代方案。
 
-原厂驱动启动后使用 `scripts/verify_tracked_stage2_topology.py` 做只订阅复核，验证私有话题
-恰好 1 个零速网关发布端点和恰好 2 个订阅端点（原厂驱动与验证器各 1 个）、公开速度话题
-隔离、状态话题精确所有权和连续全轴零速样本。
-退出时先停原厂驱动、后停零速网关。
-
-机器人第 1 级审计已记录 `/dev/ttyTHS0` 的精确 sysfs 身份为
-`/sys/devices/platform/3100000.serial`，驱动为
-`/sys/bus/platform/drivers/serial-tegra`。Foxy/aarch64 8 包构建与全量测试为
-`193 tests / 0 errors / 0 failures / 6 skipped`；未签署三项现场确认时 preflight 保持
-`STAGE2_PREFLIGHT_BLOCKED`。该结果不是 Stage 2 硬件验收通过。
-
-离线运行时回归将该 launch 的输出重映射到
-`/test/cleanup/tracked_zero_output`，再持续注入授权、安全许可和非零速度请求；通过标准是
-所有输出仍为零，并且测试期间真实 `/cmd_vel` 没有发布者。
+纯软件零输出 launch 与观察器仍可用于不接 UART 的回归：持续注入授权、安全许可和非零请求时，
+硬禁用网关必须只输出零，且不得创建真实 ROS1 或 ROS2 `/cmd_vel` 硬件链。该测试只证明 ROS2
+安全网关，不证明 bridge、ROS1 watchdog、ROS1 driver 或真实底盘已经通过。
 
 ## 离线话题级 smoke
 

@@ -1,0 +1,5 @@
+TARGET_V3_START root=/tmp/arm_foxy_dryrun_20260813_v3 bundle=/tmp/arm_foxy_dryrun_20260813_v3.tar.gz sha256=1fbd5d6cefbbe8abb6f009ed89faae34670704c8f93396f20540a16a976ab72e domain=219 timeout=600
+ERROR: required command missing: ros2
+TARGET_V3_RUN_EXIT status=2
+TARGET_V3_CLEANUP status=0 root_removed=true bundle_removed=true evidence=/tmp/arm_foxy_dryrun_20260813_v3_evidence summary=/tmp/arm_foxy_dryrun_20260813_v3_summary.log
+TARGET_FOXY_ARM_DRY_RUN_FAIL status=2 sha256=1fbd5d6cefbbe8abb6f009ed89faae34670704c8f93396f20540a16a976ab72e evidence=/tmp/arm_foxy_dryrun_20260813_v3_evidence summary=/tmp/arm_foxy_dryrun_20260813_v3_summary.log

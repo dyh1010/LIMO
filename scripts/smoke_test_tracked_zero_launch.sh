@@ -1,29 +1,94 @@
 #!/usr/bin/env bash
 
-set -o pipefail
+set -euo pipefail
 
-if [[ -f /opt/ros/foxy/setup.bash ]]; then
-  source /opt/ros/foxy/setup.bash
-elif [[ -f /opt/ros/humble/setup.bash ]]; then
-  source /opt/ros/humble/setup.bash
-else
-  echo 'FAIL: no supported ROS2 setup was found' >&2
+readonly LEGACY_EXIT=64
+readonly OFFLINE_DOMAIN_ID=222
+readonly OFFLINE_RMW=rmw_cyclonedds_cpp
+readonly TEST_PREFIX=/test/legacy_ros2_offline/tracked_zero_launch
+readonly TEST_OUTPUT_TOPIC=/test/cleanup/tracked_zero_output
+
+echo 'FIELD_RUNTIME_AUTHORITY=ROS1_NOETIC'
+echo 'LEGACY_ROS2_OFFLINE_ONLY'
+echo 'NOT_NOETIC_FIELD_OR_DELIVERY_EVIDENCE'
+
+if [[ "${LIMO_ALLOW_LEGACY_ROS2_OFFLINE-}" != '1' ]]; then
+  echo 'BLOCKED: set LIMO_ALLOW_LEGACY_ROS2_OFFLINE=1 for this isolated historical zero smoke only.' >&2
+  exit "${LEGACY_EXIT}"
+fi
+if [[ "$#" -ne 0 ]]; then
+  echo 'BLOCKED: legacy offline zero smoke accepts no command-line overrides.' >&2
+  exit "${LEGACY_EXIT}"
+fi
+
+reject_set_environment() {
+  local variable
+  for variable in "$@"; do
+    if [[ -v "${variable}" ]]; then
+      echo "BLOCKED: environment override is forbidden: ${variable}" >&2
+      exit "${LEGACY_EXIT}"
+    fi
+  done
+}
+
+if [[ -v ROS_LOCALHOST_ONLY && "${ROS_LOCALHOST_ONLY}" != '1' ]]; then
+  echo 'BLOCKED: ROS_LOCALHOST_ONLY must be exactly 1.' >&2
+  exit "${LEGACY_EXIT}"
+fi
+if [[ -v ROS_DOMAIN_ID && "${ROS_DOMAIN_ID}" != "${OFFLINE_DOMAIN_ID}" ]]; then
+  echo "BLOCKED: ROS_DOMAIN_ID must be the dedicated offline domain ${OFFLINE_DOMAIN_ID}." >&2
+  exit "${LEGACY_EXIT}"
+fi
+if [[ -v RMW_IMPLEMENTATION && "${RMW_IMPLEMENTATION}" != "${OFFLINE_RMW}" ]]; then
+  echo "BLOCKED: RMW_IMPLEMENTATION must be ${OFFLINE_RMW}." >&2
+  exit "${LEGACY_EXIT}"
+fi
+reject_set_environment \
+  ROS_DISCOVERY_SERVER CYCLONEDDS_URI FASTRTPS_DEFAULT_PROFILES_FILE \
+  FASTDDS_DEFAULT_PROFILES_FILE ROS_SETUP TRACKED_SMOKE_SETUP \
+  USE_TRACKED_BASE_CONTROLLER ALLOW_BASE_MOTION USE_REAL_PERCEPTION \
+  USE_MOCK_PERCEPTION USE_MOCK_EXECUTOR EXECUTOR_DRY_RUN \
+  USE_GRIPPER_CONTROLLER ALLOW_GRIPPER_MOTION ALLOW_ARM_MOTION \
+  TRACKED_BASE_PORT BASE_OUTPUT_TOPIC INPUT_TOPIC OUTPUT_TOPIC \
+  AUTHORIZATION_TOPIC SAFETY_TOPIC TOPOLOGY_READY_TOPIC RGB_TOPIC \
+  DEPTH_TOPIC CAMERA_INFO_TOPIC DETECTOR_DEVICE PERCEPTION_PYTHON
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+workspace_root="$(cd "${script_dir}/.." && pwd)"
+ros_setup=''
+for candidate in /opt/ros/foxy/setup.bash /opt/ros/humble/setup.bash; do
+  if [[ -f "${candidate}" ]]; then
+    ros_setup="${candidate}"
+    break
+  fi
+done
+if [[ -z "${ros_setup}" ]]; then
+  echo 'BLOCKED: no fixed legacy ROS2 setup was found.' >&2
+  exit 2
+fi
+if [[ ! -f "${workspace_root}/install/setup.bash" ]]; then
+  echo 'BLOCKED: built workspace setup is missing.' >&2
   exit 2
 fi
 
-if [[ -f install/setup.bash ]]; then
-  source install/setup.bash
-else
-  echo 'FAIL: run this script from a built workspace root' >&2
-  exit 2
-fi
-
-set -u
-
-export ROS_DOMAIN_ID=137
-export ROS_LOCALHOST_ONLY=0
+export ROS_LOCALHOST_ONLY=1
+export ROS_DOMAIN_ID=222
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-export CYCLONEDDS_URI='<CycloneDDS><Domain><General><Interfaces><NetworkInterface name="lo"/></Interfaces></General></Domain></CycloneDDS>'
+source "${ros_setup}"
+source "${workspace_root}/install/setup.bash"
+
+export ROS_LOCALHOST_ONLY=1
+export ROS_DOMAIN_ID=222
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+reject_set_environment \
+  ROS_DISCOVERY_SERVER CYCLONEDDS_URI FASTRTPS_DEFAULT_PROFILES_FILE \
+  FASTDDS_DEFAULT_PROFILES_FILE
+if [[ "${ROS_LOCALHOST_ONLY}" != '1' \
+    || "${ROS_DOMAIN_ID}" != '222' \
+    || "${RMW_IMPLEMENTATION}" != 'rmw_cyclonedds_cpp' ]]; then
+  echo 'BLOCKED: legacy offline isolation could not be proven.' >&2
+  exit "${LEGACY_EXIT}"
+fi
 
 zero_launch_log="$(mktemp)"
 zero_launch_pid=''
@@ -33,7 +98,7 @@ stop_zero_launch() {
     return
   fi
   kill -TERM -- "-${zero_launch_pid}" 2>/dev/null || true
-  for shutdown_attempt in {1..30}; do
+  for _ in {1..30}; do
     if ! kill -0 "${zero_launch_pid}" 2>/dev/null; then
       break
     fi
@@ -48,17 +113,21 @@ stop_zero_launch() {
 
 cleanup_zero_launch() {
   stop_zero_launch
-  rm -f "${zero_launch_log}"
+  rm -f -- "${zero_launch_log}"
 }
 trap cleanup_zero_launch EXIT INT TERM
 
 setsid ros2 launch limo_cleanup_bringup tracked_base_zero_output.launch.py \
-  output_topic:=/test/cleanup/tracked_zero_output \
+  input_topic:="${TEST_PREFIX}/request" \
+  output_topic:="${TEST_OUTPUT_TOPIC}" \
+  authorization_topic:="${TEST_PREFIX}/authorized" \
+  safety_topic:="${TEST_PREFIX}/safety" \
+  topology_ready_topic:="${TEST_PREFIX}/topology_ready" \
   >"${zero_launch_log}" 2>&1 &
 zero_launch_pid=$!
 
-if ! python3 scripts/smoke_test_tracked_zero_launch.py; then
-  echo '===== zero-output launch log =====' >&2
+if ! python3 "${script_dir}/smoke_test_tracked_zero_launch.py"; then
+  echo '===== isolated legacy zero-output launch log =====' >&2
   sed -n '1,240p' "${zero_launch_log}" >&2
   exit 1
 fi
@@ -68,8 +137,9 @@ stop_zero_launch
 remaining_nodes="$(ros2 node list --no-daemon --spin-time 1.0 2>&1)"
 if echo "${remaining_nodes}" | grep -Eq \
     'cleanup_tracked_base_zero_output|cleanup_tracked_zero_launch_probe'; then
-  echo "FAIL: zero-output smoke left a ROS node: ${remaining_nodes}" >&2
+  echo "BLOCKED: zero-output smoke left a ROS node: ${remaining_nodes}" >&2
   exit 1
 fi
 
-echo 'PASS: zero-output launch smoke completed without a real /cmd_vel publisher'
+echo 'LEGACY_ROS2_OFFLINE_ONLY_MOCK_PASS'
+echo 'NOT_NOETIC_FIELD_OR_DELIVERY_EVIDENCE'

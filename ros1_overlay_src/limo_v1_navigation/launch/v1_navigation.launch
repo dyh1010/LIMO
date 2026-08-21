@@ -1,0 +1,53 @@
+<launch>
+  <!--
+    Navigation is inert by default. map_file has no default and no vendor map
+    fallback exists. Nonzero output also requires driver timeout proof.
+  -->
+  <arg name="enable_navigation" default="false" />
+  <arg name="preflight_token" />
+  <arg name="map_file" />
+  <arg name="active_map_id" />
+  <arg name="allow_nonzero" default="false" />
+  <arg name="driver_timeout_verified" default="false" />
+  <arg name="enable_goal_gateway" default="false" />
+  <arg name="allow_goal_forwarding" default="false" />
+  <arg name="enable_rviz" default="false" />
+
+  <group if="$(eval arg('enable_navigation') == 'true' and arg('preflight_token') == 'V1_SCAN_ODOM_TF_PREFLIGHT_PASS')">
+    <param name="/v1/navigation_mode" value="native" />
+    <include file="$(find limo_v1_navigation)/launch/v1_navigation_core.launch">
+      <arg name="map_file" value="$(arg map_file)" />
+      <arg name="active_map_id" value="$(arg active_map_id)" />
+      <arg name="preflight_token" value="$(arg preflight_token)" />
+    </include>
+  </group>
+
+  <group if="$(eval arg('enable_navigation') == 'true' and arg('preflight_token') == 'V1_SCAN_ODOM_TF_PREFLIGHT_PASS')">
+    <!-- Sole publisher to the private driver command topic. -->
+    <node pkg="limo_v1_navigation" type="v1_cmd_guard.py" name="v1_cmd_guard"
+          output="screen" required="true">
+      <param name="profile_file" value="$(find limo_v1_navigation)/config/v1_navigation_profile.yaml" />
+      <param name="allow_nonzero" value="$(arg allow_nonzero)" />
+      <param name="driver_timeout_verified" value="$(arg driver_timeout_verified)" />
+    </node>
+    <node pkg="limo_v1_navigation" type="v1_localization_manager.py"
+          name="v1_localization_manager" output="screen" required="true">
+      <param name="profile_file" value="$(find limo_v1_navigation)/config/v1_navigation_profile.yaml" />
+      <param name="map_file" value="$(arg map_file)" />
+      <param name="active_map_id" value="$(arg active_map_id)" />
+      <rosparam file="$(find limo_v1_navigation)/config/localization_manager.yaml" command="load" />
+    </node>
+    <node pkg="limo_v1_navigation" type="v1_navigation_gateway.py"
+          name="v1_navigation_gateway" output="screen" required="true">
+      <param name="enabled" value="$(arg enable_goal_gateway)" />
+      <param name="allow_goal_forwarding" value="$(arg allow_goal_forwarding)" />
+      <param name="localization_timeout_s" value="0.5" />
+      <param name="guard_timeout_s" value="0.5" />
+    </node>
+  </group>
+
+  <group if="$(eval arg('enable_navigation') == 'true' and arg('preflight_token') == 'V1_SCAN_ODOM_TF_PREFLIGHT_PASS')">
+    <node if="$(arg enable_rviz)" pkg="rviz" type="rviz" name="v1_navigation_rviz"
+          args="-d $(find limo_bringup)/rviz/navigation_diff.rviz" />
+  </group>
+</launch>

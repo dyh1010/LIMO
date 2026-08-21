@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "matrix_id": "limo-v2-ros1-noetic-required-capabilities-v1",
+  "scope": "install_contract_not_runtime_or_field_acceptance",
+  "read_only": true,
+  "authorizes_motion": false,
+  "delivery_ready": false,
+  "implementation_validated": false,
+  "capabilities": {
+    "bottle_inside_bin_filter": true,
+    "depth_projection_xyz": true,
+    "dual_class_detection": true,
+    "formal_readiness_rosbag1_admission": true,
+    "legacy_bottle_compat": true,
+    "rgbd_four_stream_sync": true,
+    "rosbag1_indexing": true,
+    "source_core_binding": false,
+    "tf_provenance_no_frame_relabel": true,
+    "typed_perception_frame": true,
+    "typed_raw_binding": true
+  },
+  "acceptance_policy": {
+    "all_capabilities_require_installed_python_implementation": true,
+    "source_declaration_does_not_prove_runtime": true,
+    "field_delivery_requires_independent_build_runtime_and_four_scene_evidence": true
+  }
+}

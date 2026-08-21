@@ -1,0 +1,248 @@
+{
+  "schema_version": "limo_legacy_ros2_operational_script_inventory/v1",
+  "inventory_id": "legacy-ros2-operational-script-demotion-20260815-v1",
+  "field_runtime_authority": {
+    "ros_version": "ROS1",
+    "ros_distro": "Noetic",
+    "authority_label": "ROS1_NOETIC",
+    "legacy_ros2_is_field_authority": false,
+    "historical_mock_pass_is_noetic_evidence": false,
+    "historical_mock_pass_is_field_evidence": false,
+    "historical_mock_pass_is_delivery_evidence": false
+  },
+  "safety_boundary": {
+    "read_only_inventory": true,
+    "authorizes_ros_start": false,
+    "authorizes_hardware_access": false,
+    "authorizes_motion": false,
+    "authorizes_goal": false,
+    "authorizes_nonzero_twist": false,
+    "authorizes_recovery": false,
+    "release_pin_may_be_updated": false
+  },
+  "legacy_guard": {
+    "environment_variable": "LIMO_ALLOW_LEGACY_ROS2_OFFLINE",
+    "only_accepted_value": "1",
+    "default_exit_code": 64,
+    "rejected_examples": [
+      "UNSET",
+      "",
+      "0",
+      "true"
+    ],
+    "required_markers": [
+      "FIELD_RUNTIME_AUTHORITY=ROS1_NOETIC",
+      "LEGACY_ROS2_OFFLINE_ONLY",
+      "NOT_NOETIC_FIELD_OR_DELIVERY_EVIDENCE"
+    ]
+  },
+  "legacy_ros2_scripts": [
+    {
+      "path": "scripts/smoke_test_touch_only.sh",
+      "static_contract_identity": {
+        "size_bytes": 5428,
+        "sha256": "dbe6eeb1eb812d38b7f90eaf3663209b65ff7e18faabd24d744ddd3ac4de711d"
+      },
+      "mode": "LEGACY_ROS2_OFFLINE_MOCK_ZERO_ONLY",
+      "offline_execution_permitted": true,
+      "ros_localhost_only": 1,
+      "ros_domain_id": 221,
+      "required_test_topic": null,
+      "required_topic_bindings": {
+        "base_output_topic": "/test/legacy_ros2_offline/touch_only/base_output"
+      },
+      "allowed_ros2_cli_operations": [
+        "launch:limo_cleanup_bringup/cleanup_system.launch.py",
+        "node:list"
+      ],
+      "allowed_python_probe": "scripts/touch_only_smoke_probe.py",
+      "hardware_or_vendor_access_permitted": false,
+      "field_or_delivery_evidence": false
+    },
+    {
+      "path": "scripts/tracked_base_stage2_preflight.sh",
+      "static_contract_identity": {
+        "size_bytes": 476,
+        "sha256": "ae370a8c4acd631100ea0a27d4b773a54e8323f9e4a29b976095637c2cb3dcc6"
+      },
+      "mode": "RETIRED_FAIL_CLOSED_SHIM",
+      "offline_execution_permitted": false,
+      "ros_localhost_only": null,
+      "ros_domain_id": null,
+      "required_test_topic": null,
+      "required_topic_bindings": {},
+      "allowed_ros2_cli_operations": [],
+      "allowed_python_probe": null,
+      "hardware_or_vendor_access_permitted": false,
+      "field_or_delivery_evidence": false
+    },
+    {
+      "path": "scripts/robot_tracked_readonly_audit.sh",
+      "static_contract_identity": {
+        "size_bytes": 457,
+        "sha256": "de74309d2a22f5c13eb2454d9d64eaa00cb904ae5143354210e488df1415285f"
+      },
+      "mode": "RETIRED_FAIL_CLOSED_SHIM",
+      "offline_execution_permitted": false,
+      "ros_localhost_only": null,
+      "ros_domain_id": null,
+      "required_test_topic": null,
+      "required_topic_bindings": {},
+      "allowed_ros2_cli_operations": [],
+      "allowed_python_probe": null,
+      "hardware_or_vendor_access_permitted": false,
+      "field_or_delivery_evidence": false
+    },
+    {
+      "path": "scripts/smoke_test_tracked_zero_launch.sh",
+      "static_contract_identity": {
+        "size_bytes": 4714,
+        "sha256": "d7b5888248f5b762cbe6f8070f16b6ba9c5ddd7bb046c158eec55c3840750605"
+      },
+      "mode": "LEGACY_ROS2_OFFLINE_MOCK_ZERO_ONLY",
+      "offline_execution_permitted": true,
+      "ros_localhost_only": 1,
+      "ros_domain_id": 222,
+      "required_test_topic": "/test/cleanup/tracked_zero_output",
+      "required_topic_bindings": {
+        "input_topic": "/test/legacy_ros2_offline/tracked_zero_launch/request",
+        "output_topic": "/test/cleanup/tracked_zero_output",
+        "authorization_topic": "/test/legacy_ros2_offline/tracked_zero_launch/authorized",
+        "safety_topic": "/test/legacy_ros2_offline/tracked_zero_launch/safety",
+        "topology_ready_topic": "/test/legacy_ros2_offline/tracked_zero_launch/topology_ready"
+      },
+      "allowed_ros2_cli_operations": [
+        "launch:limo_cleanup_bringup/tracked_base_zero_output.launch.py",
+        "node:list"
+      ],
+      "allowed_python_probe": "scripts/smoke_test_tracked_zero_launch.py",
+      "hardware_or_vendor_access_permitted": false,
+      "field_or_delivery_evidence": false
+    },
+    {
+      "path": "scripts/smoke_test_tracked_zero_guard.sh",
+      "static_contract_identity": {
+        "size_bytes": 4734,
+        "sha256": "168755413c578c10d85ed334c0d7e4cf1694f8029c20edb7e173ccb90503e61d"
+      },
+      "mode": "LEGACY_ROS2_OFFLINE_MOCK_ZERO_ONLY",
+      "offline_execution_permitted": true,
+      "ros_localhost_only": 1,
+      "ros_domain_id": 223,
+      "required_test_topic": "/test/cleanup/tracked_zero_output",
+      "required_topic_bindings": {
+        "input_topic": "/test/legacy_ros2_offline/tracked_zero_guard/request",
+        "output_topic": "/test/cleanup/tracked_zero_output",
+        "authorization_topic": "/test/legacy_ros2_offline/tracked_zero_guard/authorized",
+        "safety_topic": "/test/legacy_ros2_offline/tracked_zero_guard/safety",
+        "topology_ready_topic": "/test/legacy_ros2_offline/tracked_zero_guard/topology_ready"
+      },
+      "allowed_ros2_cli_operations": [
+        "launch:limo_cleanup_bringup/tracked_base_zero_output.launch.py"
+      ],
+      "allowed_python_probe": "scripts/verify_tracked_zero_output.py",
+      "hardware_or_vendor_access_permitted": false,
+      "field_or_delivery_evidence": false
+    }
+  ],
+  "ros1_bridge_allowlist": [
+    {
+      "path": "scripts/ros1_base_bridge_preflight.sh",
+      "static_contract_identity": {
+        "size_bytes": 14042,
+        "sha256": "44990908ad2c60724ce12d5e103e4074c8a513c9a0ca7cbb017e82cf2328ec96"
+      },
+      "mode": "ROS1_NOETIC_TO_ROS2_BRIDGE_EXCEPTION",
+      "generic_legacy_guard_applies": false,
+      "field_execution_authorized_by_inventory": false,
+      "requires_existing_one_time_authorization_boundary": true,
+      "zero_chain_required": true,
+      "release_blockers_unchanged": true
+    },
+    {
+      "path": "scripts/run_ros1_base_bridge_zero_stage.sh",
+      "static_contract_identity": {
+        "size_bytes": 19045,
+        "sha256": "19bd961ca37e6550dd789df1653c98ec8c36b103b7a196ab82a9aac680677f5d"
+      },
+      "mode": "ROS1_NOETIC_TO_ROS2_BRIDGE_EXCEPTION",
+      "generic_legacy_guard_applies": false,
+      "field_execution_authorized_by_inventory": false,
+      "requires_existing_one_time_authorization_boundary": true,
+      "zero_chain_required": true,
+      "release_blockers_unchanged": true
+    }
+  ],
+  "companion_static_contracts": [
+    {
+      "path": "src/limo_cleanup_bringup/launch/tracked_base_zero_output.launch.py",
+      "static_contract_identity": {
+        "size_bytes": 2785,
+        "sha256": "9bb7328e9bb68b974a16e18e977869fc2691145a405ac4814e5ad74e961d012e"
+      },
+      "role": "PRODUCTION_BRIDGE_DEFAULT_ZERO_OUTPUT_LAUNCH",
+      "execution_authorized_by_inventory": false,
+      "offline_legacy_shells_must_override_all_five_topics": true,
+      "allow_base_motion_must_be_literal_false": true
+    },
+    {
+      "path": "scripts/smoke_test_tracked_zero_launch.py",
+      "static_contract_identity": {
+        "size_bytes": 3016,
+        "sha256": "a4e5efc4dcdba57c623bb81d85a20884a08e740ca2fe9a1c46545916fd1ef060"
+      },
+      "role": "LEGACY_OFFLINE_TEST_TOPIC_ZERO_LATCH_PROBE",
+      "execution_authorized_by_inventory": false,
+      "publishers_must_be_test_topics_only": true,
+      "field_or_delivery_evidence": false
+    },
+    {
+      "path": "scripts/verify_tracked_zero_output.py",
+      "static_contract_identity": {
+        "size_bytes": 6958,
+        "sha256": "f72950492e42762c7fba55bf0c16c078b3d3f20652d4998d93927ff3cb9068dd"
+      },
+      "role": "LEGACY_OFFLINE_TEST_TOPIC_READ_ONLY_VERIFIER",
+      "execution_authorized_by_inventory": false,
+      "publisher_count": 0,
+      "field_or_delivery_evidence": false
+    },
+    {
+      "path": "scripts/touch_only_smoke_probe.py",
+      "static_contract_identity": {
+        "size_bytes": 4469,
+        "sha256": "82256195cf9a08756004aeb5c7768020a8b4f9f28339a2586ca96bdfaf72d801"
+      },
+      "role": "LEGACY_OFFLINE_ORDINARY_MOCK_INTENT_PROBE",
+      "execution_authorized_by_inventory": false,
+      "motion_command_publishers_permitted": false,
+      "field_or_delivery_evidence": false
+    },
+    {
+      "path": "src/limo_cleanup_bringup/launch/cleanup_system.launch.py",
+      "static_contract_identity": {
+        "size_bytes": 13231,
+        "sha256": "9d9d7120e0eea57170d4ba2f559db455ef0fd578da022dc10d331340e07b3e22"
+      },
+      "role": "LEGACY_TOUCH_MOCK_SYSTEM_SOURCE_LAUNCH_DEPENDENCY",
+      "execution_authorized_by_inventory": false,
+      "safe_defaults_must_remain_fail_closed": true,
+      "field_or_delivery_evidence": false
+    }
+  ],
+  "runtime_resolution_boundary": {
+    "source_tree_contract_only": true,
+    "installed_runtime_resolution_verified": false,
+    "runtime_execution_ready": false,
+    "unresolved_runtime_bindings": [
+      "ros2_pkg_prefix_and_installed_launch_identity_not_checked"
+    ]
+  },
+  "bridge_exception_policy": {
+    "path_exact": true,
+    "content_copy_does_not_inherit_exception": true,
+    "generic_legacy_ros2_guard_must_not_be_added": true,
+    "bridge_all_topics_forbidden": true,
+    "existing_authorization_and_zero_chain_controls_must_not_be_weakened": true
+  }
+}

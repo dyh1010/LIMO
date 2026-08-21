@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "allowlist_id": "limo-dabai-camera-single-path-readonly-v1",
+  "read_only": true,
+  "authorizes_motion": false,
+  "authorizes_ros_start": false,
+  "remote_query_state": "frozen_not_executed_after_scope_correction",
+  "camera": {
+    "model": "Dabai DC1",
+    "serial_number": "CC1WC520183",
+    "rgb_usb_identity": "2bc5:0557",
+    "depth_usb_identity": "2bc5:0657"
+  },
+  "allowed_device_links": [
+    {
+      "path": "/dev/dabai",
+      "role": "rgb_usb_device",
+      "expected_usb_identity": "2bc5:0557",
+      "expected_serial_number": "CC1WC520183",
+      "required_udev_properties": {
+        "ID_VENDOR_ID": "2bc5",
+        "ID_MODEL_ID": "0557",
+        "ID_MODEL": "Dabai_DC1",
+        "ID_SERIAL_SHORT": "CC1WC520183"
+      }
+    },
+    {
+      "path": "/dev/dc1_rgb",
+      "role": "rgb_usb_device_alias",
+      "expected_usb_identity": "2bc5:0557",
+      "expected_serial_number": "CC1WC520183",
+      "required_udev_properties": {
+        "ID_VENDOR_ID": "2bc5",
+        "ID_MODEL_ID": "0557",
+        "ID_MODEL": "Dabai_DC1",
+        "ID_SERIAL_SHORT": "CC1WC520183"
+      }
+    },
+    {
+      "path": "/dev/dabai_dc1_",
+      "role": "depth_usb_device",
+      "expected_usb_identity": "2bc5:0657",
+      "expected_serial_number": null,
+      "required_udev_properties": {
+        "ID_VENDOR_ID": "2bc5",
+        "ID_MODEL_ID": "0657",
+        "ID_MODEL": "ORBBEC_Depth_Sensor"
+      }
+    }
+  ],
+  "allowed_commands": [
+    ["readlink", "-f", "--", "/dev/dabai"],
+    ["stat", "--dereference", "--format=%F,%a,%U,%G,%n", "--", "/dev/dabai"],
+    ["udevadm", "info", "--query=property", "--name=/dev/dabai"],
+    ["readlink", "-f", "--", "/dev/dc1_rgb"],
+    ["stat", "--dereference", "--format=%F,%a,%U,%G,%n", "--", "/dev/dc1_rgb"],
+    ["udevadm", "info", "--query=property", "--name=/dev/dc1_rgb"],
+    ["readlink", "-f", "--", "/dev/dabai_dc1_"],
+    ["stat", "--dereference", "--format=%F,%a,%U,%G,%n", "--", "/dev/dabai_dc1_"],
+    ["udevadm", "info", "--query=property", "--name=/dev/dabai_dc1_"]
+  ],
+  "output_policy": {
+    "readlink_line_count": 1,
+    "readlink_target_regex": "^/dev/bus/usb/[0-9]{3}/[0-9]{3}$",
+    "stat_line_count": 1,
+    "stat_field_count": 5,
+    "udevadm_record_count": 1,
+    "udevadm_requires_link_identity_properties": true,
+    "unexpected_device_path_is_failure": true,
+    "unexpected_property_record_is_failure": true,
+    "empty_output_is_failure": true
+  },
+  "forbidden_tokens": [
+    "find",
+    "-L",
+    "--recursive",
+    "/sys",
+    "lsusb",
+    "v4l2-ctl",
+    "pgrep",
+    "ps",
+    "rosnode",
+    "rostopic",
+    "roscore",
+    "roslaunch",
+    "rosrun",
+    "rosbag",
+    "rosparam",
+    "rosservice",
+    "ros2",
+    "/dev/tty",
+    "/cmd_vel",
+    "move_base",
+    "navigate",
+    "arm",
+    "gripper"
+  ]
+}

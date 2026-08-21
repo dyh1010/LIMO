@@ -26,8 +26,12 @@ class PermissionInputs:
     authorization_time: float = -1.0
     safety_clear: bool = False
     safety_time: float = -1.0
+    require_topology_ready: bool = False
+    topology_ready: bool = False
+    topology_time: float = -1.0
     command_timeout: float = 0.25
     heartbeat_timeout: float = 0.50
+    topology_timeout: float = 0.25
 
 
 def _bounded(value: float, limit: float) -> float:
@@ -143,4 +147,12 @@ def permission_reason(inputs: PermissionInputs) -> str:
     if not _is_fresh(
             inputs.now, inputs.safety_time, inputs.heartbeat_timeout):
         return 'safety_heartbeat_stale'
+    if inputs.require_topology_ready:
+        if not inputs.topology_ready:
+            return 'topology_not_ready'
+        if not _is_fresh(
+                inputs.now,
+                inputs.topology_time,
+                inputs.topology_timeout):
+            return 'topology_heartbeat_stale'
     return 'allowed'

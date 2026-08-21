@@ -1,6 +1,7 @@
 """Run bottle/bin perception on images without requiring ROS or hardware."""
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -14,9 +15,21 @@ from limo_cleanup_perception.perception_core import (
     select_target_bin,
     select_target_bottle,
 )
+from limo_cleanup_perception.target_contract import (
+    EXPECTED_MODEL_SHA256,
+    require_single_class_model,
+)
 
 
 IMAGE_SUFFIXES = {'.jpg', '.jpeg', '.png', '.bmp'}
+
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def parse_args():
@@ -89,12 +102,23 @@ def collect_images(cfg):
 
 def main():
     cfg = parse_args()
+    for label, path in (
+            ('plastic_bottle', cfg.bottle_model),
+            ('trash_bin', cfg.bin_model)):
+        if _sha256_file(path) != EXPECTED_MODEL_SHA256[label]:
+            raise SystemExit(label + ' model SHA-256 mismatch')
     images = collect_images(cfg)
     if not images:
         raise RuntimeError('No input images found')
     cfg.output_dir.mkdir(parents=True, exist_ok=True)
     bottle_model = YOLO(str(cfg.bottle_model))
     bin_model = YOLO(str(cfg.bin_model))
+    try:
+        require_single_class_model(
+            bottle_model.names, 'plastic_bottle')
+        require_single_class_model(bin_model.names, 'trash_bin')
+    except ValueError as error:
+        raise RuntimeError(str(error)) from error
     summary = []
 
     for index, image_path in enumerate(images, start=1):

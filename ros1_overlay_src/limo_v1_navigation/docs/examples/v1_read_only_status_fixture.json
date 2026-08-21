@@ -1,0 +1,289 @@
+{
+  "interface_schema": "limo_v1_software_interface/v1",
+  "mock_only": true,
+  "motion_commanded": false,
+  "real_machine_evidence": false,
+  "scenarios": [
+    {
+      "mode": "native",
+      "name": "native_ready_true",
+      "observations": [
+        {
+          "data": true,
+          "interface_id": "localization_ready",
+          "ros_type": "std_msgs/Bool"
+        },
+        {
+          "data": false,
+          "interface_id": "native_stop_latched",
+          "ros_type": "std_msgs/Bool"
+        },
+        {
+          "interface_id": "localization_status",
+          "json": {
+            "active_map_id": "v1_frozen_room",
+            "chain_ok": true,
+            "chain_reason": "ok",
+            "motion_commanded": false,
+            "ready": true,
+            "reason": "localization_ready",
+            "schema": "limo_v1_localization_status/v1",
+            "state": "READY"
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "native",
+      "name": "native_ready_false",
+      "observations": [
+        {
+          "data": false,
+          "interface_id": "localization_ready",
+          "ros_type": "std_msgs/Bool"
+        },
+        {
+          "interface_id": "localization_status",
+          "json": {
+            "active_map_id": "v1_frozen_room",
+            "chain_ok": true,
+            "chain_reason": "ok",
+            "motion_commanded": false,
+            "ready": false,
+            "reason": "waiting_for_explicit_initial_pose",
+            "schema": "limo_v1_localization_status/v1",
+            "state": "WAIT_INITIAL_POSE"
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "native",
+      "name": "native_ready_stale",
+      "observations": [
+        {
+          "interface_id": "navigation_status",
+          "json": {
+            "action_server_ready": true,
+            "allow_goal_forwarding": true,
+            "armed": false,
+            "cancel_required": true,
+            "gateway_enabled": true,
+            "guard_health": "healthy",
+            "guard_latched": false,
+            "localization_ready": true,
+            "reason": "localization_ready_stale",
+            "schema": "limo_v1_navigation_status/v1",
+            "state": "BLOCKED"
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "native",
+      "name": "native_stop_latched",
+      "observations": [
+        {
+          "data": true,
+          "interface_id": "native_stop_latched",
+          "ros_type": "std_msgs/Bool"
+        },
+        {
+          "interface_id": "navigation_status",
+          "json": {
+            "action_server_ready": true,
+            "allow_goal_forwarding": false,
+            "armed": false,
+            "cancel_required": true,
+            "gateway_enabled": false,
+            "guard_health": "command_guard_stop_latched",
+            "guard_latched": true,
+            "localization_ready": true,
+            "reason": "command_guard_stop_latched",
+            "schema": "limo_v1_navigation_status/v1",
+            "state": "BLOCKED"
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "native",
+      "name": "native_request_accepted_status",
+      "observations": [
+        {
+          "interface_id": "navigation_status",
+          "json": {
+            "action_server_ready": true,
+            "allow_goal_forwarding": true,
+            "armed": true,
+            "cancel_required": false,
+            "gateway_enabled": true,
+            "guard_health": "healthy",
+            "guard_latched": false,
+            "localization_ready": true,
+            "reason": "goal_accepted",
+            "schema": "limo_v1_navigation_status/v1",
+            "state": "ACTIVE"
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "native",
+      "name": "native_request_rejected_error",
+      "observations": [
+        {
+          "interface_id": "navigation_error",
+          "json": {
+            "monotonic": 42.0,
+            "reason": "invalid_goal:goal forwarding is disabled",
+            "schema": "limo_v1_navigation_error/v1"
+          },
+          "ros_type": "std_msgs/String"
+        },
+        {
+          "interface_id": "navigation_status",
+          "json": {
+            "action_server_ready": true,
+            "allow_goal_forwarding": false,
+            "armed": false,
+            "cancel_required": false,
+            "gateway_enabled": false,
+            "guard_health": "healthy",
+            "guard_latched": false,
+            "localization_ready": false,
+            "reason": "startup_latched",
+            "schema": "limo_v1_navigation_status/v1",
+            "state": "BLOCKED",
+            "event": "goal_rejected"
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "native",
+      "name": "native_cancel_observed",
+      "observations": [
+        {
+          "interface_id": "navigation_status",
+          "json": {
+            "action_server_ready": true,
+            "allow_goal_forwarding": true,
+            "armed": false,
+            "cancel_required": true,
+            "gateway_enabled": true,
+            "guard_health": "healthy",
+            "guard_latched": false,
+            "localization_ready": true,
+            "reason": "cancel_service",
+            "schema": "limo_v1_navigation_status/v1",
+            "state": "CANCELED"
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "integrated",
+      "name": "integrated_ready",
+      "observations": [
+        {
+          "interface_id": "integrated_navigation_status",
+          "json": {
+            "epoch": 4,
+            "nonce": "mock-read-only-nonce-0004",
+            "protocol": "cleanup_navigation_bridge/v3",
+            "scan_fresh": true,
+            "server_ready": true,
+            "state": "ready",
+            "tf_ready": true
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "integrated",
+      "name": "integrated_unavailable",
+      "observations": [
+        {
+          "interface_id": "integrated_navigation_status",
+          "json": {
+            "epoch": 4,
+            "nonce": "mock-read-only-nonce-0005",
+            "protocol": "cleanup_navigation_bridge/v3",
+            "scan_fresh": false,
+            "server_ready": false,
+            "state": "unavailable",
+            "tf_ready": false
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "integrated",
+      "name": "integrated_request_accepted_status",
+      "observations": [
+        {
+          "interface_id": "integrated_navigation_status",
+          "json": {
+            "epoch": 5,
+            "nonce": "mock-read-only-nonce-0006",
+            "protocol": "cleanup_navigation_bridge/v3",
+            "scan_fresh": true,
+            "server_ready": true,
+            "state": "active",
+            "tf_ready": true
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "integrated",
+      "name": "integrated_request_rejected_status",
+      "observations": [
+        {
+          "interface_id": "integrated_navigation_status",
+          "json": {
+            "epoch": 6,
+            "nonce": "mock-read-only-nonce-0007",
+            "protocol": "cleanup_navigation_bridge/v3",
+            "scan_fresh": true,
+            "server_ready": true,
+            "state": "rejected",
+            "tf_ready": false
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    },
+    {
+      "mode": "integrated",
+      "name": "integrated_cancel_observed",
+      "observations": [
+        {
+          "interface_id": "integrated_navigation_status",
+          "json": {
+            "epoch": 7,
+            "nonce": "mock-read-only-nonce-0008",
+            "protocol": "cleanup_navigation_bridge/v3",
+            "scan_fresh": true,
+            "server_ready": true,
+            "state": "stopped",
+            "tf_ready": true
+          },
+          "ros_type": "std_msgs/String"
+        }
+      ]
+    }
+  ],
+  "schema": "limo_v1_read_only_status_fixture/v1"
+}

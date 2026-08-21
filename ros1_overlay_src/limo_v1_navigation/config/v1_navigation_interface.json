@@ -1,0 +1,68 @@
+{
+  "integrated_navigation": {
+    "core_owner": "bridge_runner_private_launch",
+    "installed_launch_entry": false,
+    "move_base_output_topic": "/cleanup/base/cmd_vel_request",
+    "precore_stage": "navigation_precore",
+    "snapshot_required": true
+  },
+  "public_navigation": {
+    "core_args": [
+      "active_map_id",
+      "map_file",
+      "preflight_token"
+    ],
+    "mode": "native",
+    "move_base_output_topic": "/v1/nav_cmd_vel",
+    "wrapper_args": [
+      "active_map_id",
+      "allow_nonzero",
+      "allow_goal_forwarding",
+      "driver_timeout_verified",
+      "enable_goal_gateway",
+      "enable_navigation",
+      "enable_rviz",
+      "map_file",
+      "preflight_token"
+    ]
+  },
+  "schema": "limo_v1_navigation_interface/v2",
+  "snapshot_config_sha256": {
+    "amcl.yaml": "8648ba3f354335cceb356a10b3b9d9f905bf6c5d43a6e4425fb6ce5827369e33",
+    "costmap_common.yaml": "4c38280248e658b677f6c1a3c0631a825a4ac3e6ffc0916e32cbf10f55e14193",
+    "global_costmap.yaml": "7520f19ac21b7a36d0a3abf58ca39c78f005d5fcd824d0d9b5a21612eb26f576",
+    "local_costmap.yaml": "cfbebf667375cc8109abbf9d12d5a66cfc07356e77013a4cbb346c4ae2819891",
+    "move_base.yaml": "e4c9e7e38982ae9ddc2f8c26f386fddb01e6b7b9d6b4639e2f8ef9baeab6c950",
+    "planner.yaml": "87b6d44cb250b0325bd71d7a67a1dca4fc7291ccdbee5db7182a11921cea0027"
+  },
+  "snapshot_rosparam_load_order": [
+    {
+      "file": "amcl.yaml",
+      "namespace": "/amcl"
+    },
+    {
+      "file": "costmap_common.yaml",
+      "namespace": "/move_base/global_costmap"
+    },
+    {
+      "file": "costmap_common.yaml",
+      "namespace": "/move_base/local_costmap"
+    },
+    {
+      "file": "local_costmap.yaml",
+      "namespace": "/move_base"
+    },
+    {
+      "file": "global_costmap.yaml",
+      "namespace": "/move_base"
+    },
+    {
+      "file": "move_base.yaml",
+      "namespace": "/move_base"
+    },
+    {
+      "file": "planner.yaml",
+      "namespace": "/move_base"
+    }
+  ]
+}

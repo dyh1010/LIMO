@@ -2,20 +2,14 @@
 
 set -euo pipefail
 
-driver_package=${DABAI_DRIVER_PACKAGE:-orbbec_camera}
-driver_launch_file=${DABAI_DRIVER_LAUNCH_FILE:-dabai.launch.py}
-
-if ! command -v ros2 >/dev/null 2>&1; then
-  echo 'ERROR: ros2 is not available; source the ROS 2 environment first.' >&2
-  exit 2
-fi
-
-if ! ros2 pkg prefix "$driver_package" >/dev/null 2>&1; then
-  echo "ERROR: ROS 2 package '$driver_package' is not installed." >&2
-  echo 'Install the DaBai-compatible driver supplied with the robot first.' >&2
-  exit 3
-fi
-
-echo "Starting camera only: ros2 launch $driver_package $driver_launch_file $*"
-echo 'No LIMO base, navigation, arm, gripper, or cleanup executor is started.'
-exec ros2 launch "$driver_package" "$driver_launch_file" "$@"
+# Permanently retired fail-closed shim.  The former implementation verified a
+# pathname and then launched through ROS package resolution, so the verified
+# bytes were not atomically bound to the executed bytes.  Keeping the filename
+# avoids silently reviving old operator notes while making every invocation
+# non-executable.
+echo 'ERROR: scripts/start_dabai_camera.sh is retired and never starts ROS.' >&2
+echo 'Use docs/PERCEPTION_V2_ROS1_NOETIC_FIELD_RUNBOOK.md and the host-owned' >&2
+echo 'audit_tools/ros1_camera_only_atomic_launcher.py sealed-memfd path.' >&2
+echo 'The atomic launcher requires --mode EXECUTE_AUDITED_CAMERA_ONLY and an' >&2
+echo 'explicit --actual-vendor-launch absolute path; it accepts no overrides.' >&2
+exit 64

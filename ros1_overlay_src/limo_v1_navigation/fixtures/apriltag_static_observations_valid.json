@@ -1,0 +1,23 @@
+{
+  "schema_version": "limo_apriltag_docking_static_observations/v1",
+  "observations": [
+    {
+      "schema_version": "limo_apriltag_docking_observation/v1",
+      "target": {"family": "tag52h13", "id": 5, "object_index": 1, "side": "right"},
+      "timestamp_ns": 1234567890,
+      "visible": true,
+      "camera_frame_pose": {
+        "frame_id": "camera_color_optical_frame",
+        "translation_m": {"x": 0.1, "y": -0.02, "z": 0.4},
+        "orientation_xyzw": {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0}
+      },
+      "quality": {"confidence": 0.9, "reprojection_error_px": 0.4},
+      "tf_inputs": {
+        "map_to_base_link": {"available": true, "parent_frame": "map", "child_frame": "base_link", "timestamp_ns": 1234567890},
+        "base_link_to_camera": {"available": true, "parent_frame": "base_link", "child_frame": "camera_color_optical_frame", "timestamp_ns": 1234567890}
+      },
+      "decision": "ACCEPT",
+      "failure_reason": null
+    }
+  ]
+}

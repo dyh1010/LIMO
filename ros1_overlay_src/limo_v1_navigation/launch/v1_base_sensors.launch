@@ -1,0 +1,22 @@
+<launch>
+  <!--
+    This is the only V1 entry that may open hardware. It is inert by default.
+    odom_tf_owner has no default so omission is a roslaunch error.
+  -->
+  <arg name="enable_hardware" default="false" />
+  <arg name="hardware_authorization_id" default="NOT_AUTHORIZED" />
+  <arg name="odom_tf_owner" />
+  <arg name="port_name" default="ttyTHS0" />
+  <arg name="use_mcnamu" default="false" />
+
+  <group if="$(eval arg('enable_hardware') == 'true' and arg('hardware_authorization_id') != 'NOT_AUTHORIZED' and arg('odom_tf_owner') == '/limo_base_node')">
+    <!-- Keep the vendor driver off public /cmd_vel. -->
+    <remap from="/cmd_vel" to="/v1/driver_cmd_vel" />
+    <include file="$(find limo_bringup)/launch/limo_start.launch">
+      <arg name="port_name" value="$(arg port_name)" />
+      <arg name="use_mcnamu" value="$(arg use_mcnamu)" />
+      <!-- The base driver is the sole odom -> base_link TF owner. -->
+      <arg name="pub_odom_tf" value="true" />
+    </include>
+  </group>
+</launch>

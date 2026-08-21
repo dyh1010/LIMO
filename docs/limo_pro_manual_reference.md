@@ -1,17 +1,29 @@
 # LIMO Pro 官方手册项目摘录
 
-更新时间：2026-08-05  
+更新时间：2026-08-11
 资料来源：本地官方文档 `Limo Pro user manual(EN).md`、中文版本及
 `Limo Pro Ros2 Foxy user manual(EN).md`。
 
 ## 1. 使用范围与版本边界
 
 官方资料同时包含 ROS 1 示例、ROS 2 Foxy 示例，以及 Jetson Nano 时代遗留文字；
-LIMO Pro 规格表则写明 Jetson Orin Nano。当前自研环境是 ROS 2 Humble，因此：
+LIMO Pro 规格表则写明 Jetson Orin Nano。当前开发电脑使用 ROS 2 Humble，目标机同时
+安装 ROS1 Noetic 与 ROS2 Foxy。现场已经确认真正能够驱动本机履带的是 ROS1 Noetic
+`limo_base_node`，而不是此前假定的 ROS2 Foxy vendor 路径。因此：
 
 - 硬件参数可作为到货验收清单，但仍以样机铭牌和实测为准。
-- Foxy 的包名、launch 文件和话题只能作为排查线索，不能直接视为 Humble 契约。
-- 样机到货后先记录系统版本、驱动分支、实际话题、TF 和 QoS，再决定适配方式。
+- ROS1/ROS2 手册中的包名、launch 和话题只作为历史线索，不能直接视为本项目实机契约。
+- ROS1 Noetic `limo_base_node` 是 `/dev/ttyTHS0` 的唯一底盘硬件 owner；ROS2 `limo_base`
+  仅保留为历史诊断路径，两套 driver 永远不得并发。
+- ROS2 清理系统必须经过受限单向 bridge、ROS1 fail-closed watchdog 和私有
+  `/cleanup/base/driver_cmd_vel` 才能接入 ROS1 driver。bridge、catkin wrapper 与 watchdog
+  已在本地实现并通过离线测试，但 Catkin 构建、ROS1/ROS2 跨图运行、机器人全零、断链
+  停车、状态/TF 和实机运动仍未验证，状态为
+  `ROS1_ROS2_BASE_BRIDGE_IMPLEMENTED_LOCALLY_UNVERIFIED`。
+- V1 不等待 bridge 实机验收，可继续只读、感知与 dry-run 交付；V1 不得因此绕过 bridge
+  或声明已经具备真实自动底盘运动。
+- ROS2 checker 看不到 ROS1 图。系统版本、进程、UART owner、ROS1/ROS2 话题、状态、TF
+  和 QoS 必须分别从实机两套图中记录，不能用一侧的空结果推断另一侧安全。
 
 ## 2. 底盘与计算平台
 
@@ -69,10 +81,25 @@ CAN、PWM 和 GPIO；车体外部 USB HUB 则是 1×Type-C、2×USB 2.0。
 手册中的 Foxy 启动参考：
 
 ```bash
-ros2 launch astra_camera dabai.launch.py
+# LEGACY_NONAUTHORITATIVE/DO NOT RUN: ros2 launch astra_camera dabai.launch.py
 # 失败时手册建议尝试：
-ros2 launch orbbec_camera dabai.launch.py
+# LEGACY_NONAUTHORITATIVE/DO NOT RUN: ros2 launch orbbec_camera dabai.launch.py
 ```
+
+以上只保留为手册历史。2026-08-14 本机曾观察到以下 ROS1 Noetic
+package-resolution 命令；它现在是 **HISTORICAL / FORBIDDEN**，不得执行：
+
+```bash
+# DO NOT RUN -- historical observation only
+# HISTORICAL/NON_AUTHORITATIVE/DO NOT RUN: roslaunch astra_camera dabai_u3.launch
+```
+
+实测 launch SHA-256 为
+`75f9ada995ac961d0b4dddb7d86d591f57dc5392165663f4a905709a24231b2e`。
+现场不得再默认使用 Foxy 相机图、DDS QoS 或 rosbag2 作为 V2 验收入口。
+未来只允许按 `PERCEPTION_V2_ROS1_NOETIC_FIELD_RUNBOOK.md` 使用 host-owned
+`ros1_camera_only_atomic_launcher.py` 的 sealed-memfd camera-only 路径；旧
+`scripts/start_dabai_camera.sh` 已永久 fail-closed。
 
 ## 5. LiDAR T-mini Pro
 
@@ -86,7 +113,10 @@ ros2 launch orbbec_camera dabai.launch.py
 | 角分辨率 | 0.54° |
 
 ROS 2 Foxy 手册通过 `ros2 launch limo_bringup limo_start.launch.py` 启动底盘与
-LiDAR。样机到货后需核对 `/scan` 的实际名称、时间戳、frame_id 和扫描频率。
+LiDAR；该命令现在只保留为历史资料，不能作为本机默认实机入口。现场实际底盘基线是
+ROS1 `~/agilex_ws` 中的 `limo_start.launch`。ROS1 bringup 是否同时拥有 LiDAR 与相关 TF、
+以及 `/scan` 的实际名称、时间戳、frame_id 和扫描频率，仍须通过 ROS1 运行图单独核对；
+桥入 ROS2 前还要排除重复 TF owner。
 
 ## 6. MyCobot 280 M5（选配）
 
@@ -111,36 +141,78 @@ LiDAR。样机到货后需核对 `/scan` 的实际名称、时间戳、frame_id 
 - 机械臂需要约 60 W 额定输入，不能从总输出仅 0.5 A 的车体 USB HUB 取电。
 - 手册要求先把机械臂配置为 Transponder → USB UART，再进行 API/MoveIt 控制。
 
-## 7. ROS 2 接口线索
+## 7. 底盘接口线索与实机纠偏
 
-Foxy 手册提供以下参考：
+Foxy 手册提供以下参考，但这些命令只用于保存上游接口线索：
 
 > **禁止直接执行以下原厂示例。** 它们仅用于记录手册接口：`limo_base` 启动会发送
-> `0x421` 硬件写入，直接向 `/cmd_vel` 发布会绕过本项目安全网关。当前只能使用分级验收
-> 文档中的私有 `/cleanup/base/safe_cmd_vel` 链和受控 Stage 2 包装 Launch。
+> `0x421` 硬件写入，直接向 `/cmd_vel` 发布会绕过本项目安全网关。ROS2 vendor Stage 2/3
+> 流程现已冻结为历史诊断资产，不是默认实机路径，也不得作为 bridge 的替代方案。
 
 ```bash
 # HISTORICAL VENDOR EXAMPLES — DO NOT RUN
-ros2 launch limo_base limo_base.launch.py
-ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "..."
-ros2 launch limo_bringup limo_start.launch.py
-ros2 launch limo_bringup limo_nav2.launch.py
-ros2 launch limo_bringup limo_nav2_ackmann.launch.py
+# LEGACY_NONAUTHORITATIVE/DO NOT RUN: ros2 launch limo_base limo_base.launch.py
+# LEGACY_NONAUTHORITATIVE/DO NOT RUN: ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "..."
+# LEGACY_NONAUTHORITATIVE/DO NOT RUN: ros2 launch limo_bringup limo_start.launch.py
+# LEGACY_NONAUTHORITATIVE/DO NOT RUN: ros2 launch limo_bringup limo_nav2.launch.py
+# LEGACY_NONAUTHORITATIVE/DO NOT RUN: ros2 launch limo_bringup limo_nav2_ackmann.launch.py
 ```
 
-- 四轮差速、履带和麦轮共用普通导航入口；Ackermann 使用单独入口。
-- `/cmd_vel` 是底盘速度控制入口，但真实运动前必须加入仲裁、限速、超时停车和急停。
-- 手册要求遥控器/APP切换到 command mode 后程序控制才生效；模式状态也需要纳入
-  到货验收与安全检查。
-- ROS 1 主手册显示驱动会发布里程计、LIMO 状态和 IMU，并读取电池电压与错误码；
-  Humble 版本的具体消息和话题必须从实机节点图确认。
+2026-08-11 现场已经用以下 ROS1 命令成功让履带运动。它们只记录已经发生的证据，不构成
+后续运行授权；在确认 ROS1/ROS2 进程和 UART owner 前不得直接重跑：
 
-## 8. 到货验收新增检查项
+```bash
+# VERIFIED HISTORICAL FIELD EVIDENCE — DO NOT RE-RUN WITHOUT A NEW CHECK
+# HISTORICAL/NON_AUTHORITATIVE/DO NOT RUN: source ~/agilex_ws/devel/setup.bash
+# HISTORICAL/NON_AUTHORITATIVE/DO NOT RUN: roslaunch limo_bringup limo_start.launch
+# HISTORICAL/NON_AUTHORITATIVE/DO NOT RUN: roslaunch limo_bringup limo_teletop_keyboard.launch
+```
+
+实际运动节点为 ROS1 `limo_base_node`，使用 `ttyTHS0`、`use_mcnamu=false`。同日 ROS2
+受控链虽然观测到 `linear.x=0.03 m/s`、持续 `0.5 s`，履带却没有物理动作，因此不能记为
+Stage 3 通过，也不能把无动作直接归因于死区、模式或某个单一原因。
+
+当前自动底盘目标链固定为：
+
+```text
+ROS2 /cleanup/base/cmd_vel_request
+  -> ROS2 tracked_base_controller
+  -> ROS2 /cleanup/base/safe_cmd_vel
+  -> 受限单向 bridge（仅 Twist，ROS2 -> ROS1）
+  -> ROS1 /cleanup/base/safe_cmd_vel
+  -> ROS1 fail-closed timeout/watchdog
+  -> ROS1 /cleanup/base/driver_cmd_vel
+  -> ROS1 limo_base_node（原 /cmd_vel 订阅 remap 到私有话题）
+  -> /dev/ttyTHS0
+```
+
+自动模式下公开 ROS1 `/cmd_vel` 必须无端点，bridge 不得直接发布公开 `/cmd_vel` 或私有
+driver 话题，也不得使用 `--bridge-all-topics`。bridge、watchdog 或授权链断开时必须按
+已验收的有界超时停车；该行为目前尚无完整实现和现场证据。
+
+- 四轮差速、履带和麦轮共用普通导航入口；Ackermann 使用单独入口。
+- 手册中的 `/cmd_vel` 是底盘历史公开入口；本项目自动模式必须把 ROS1 driver 订阅 remap
+  到私有 `/cleanup/base/driver_cmd_vel`，禁止任何节点绕过 ROS2 网关和 ROS1 watchdog。
+- 手册要求遥控器/APP切换到 command mode 后程序控制才生效；模式状态也需要纳入
+  实机验收与安全检查。
+- ROS 1 主手册显示驱动会发布里程计、LIMO 状态和 IMU，并读取电池电压与错误码；
+  当前只把 `/odom`、`/imu` 列为首版 ROS1 → ROS2 候选白名单。`/limo_status` 的消息定义
+  和 bridge pair、`/tf`/`/tf_static` 的逐 child 唯一 owner 均未验收，禁止盲桥。
+
+## 8. 实机验收检查项
 
 1. 核对 Jetson 型号、内存、NVMe、Ubuntu、JetPack、CUDA、ROS 和驱动分支。
 2. 核对 DaBai、T-mini Pro、HI226 的型号、USB/串口连接和设备权限。
-3. 记录 `ros2 topic list -t`、`ros2 node list`、`ros2 action list -t` 和 TF 树。
-4. 对相机图像、深度、相机内参和点云分别记录话题、frame_id、频率与 QoS。
-5. 对 `/cmd_vel`、里程计、IMU、底盘状态、电池电压和错误码记录实际接口。
-6. 核对机械臂、夹爪、安装板、独立 12 V 供电、串口设备名和通信模式。
-7. 称量每个抓取物体；超过机械臂安全负载的物体只允许用于视觉测试。
+3. 在彼此隔离的 Noetic 与 Foxy shell 中分别记录 ROS1 `rosnode`/`rostopic` 和 ROS2
+   `ros2 node`/`ros2 topic`；不得在同一 shell 混合 source 两套环境。
+4. 同时检查进程表和 `fuser /dev/ttyTHS0`，确认 ROS1 `limo_base_node` 是唯一 UART owner，
+   ROS2 `limo_base`、第二 driver、teleop 和串口探针均未并发。
+5. 对相机图像、深度、相机内参和点云分别记录话题、frame_id、频率与 QoS。
+6. 对 ROS1/ROS2 命令话题、里程计、IMU、底盘状态、电池电压和错误码记录实际接口；
+   ROS2 checker 的 PASS 不能替代 ROS1 图检查。
+7. 用 bridge 的实际 pair 列表验证 Twist 单向白名单和状态消息兼容；确认公开 ROS1
+   `/cmd_vel` 无端点，私有 `/cleanup/base/driver_cmd_vel` 只有 watchdog 一个发布者。
+8. 分别记录 `map -> odom`、`odom -> base_link`、传感器静态 TF 的唯一 owner；状态和 TF
+   bridge 未通过前不得接入 Nav2。
+9. 核对机械臂、夹爪、安装板、独立 12 V 供电、串口设备名和通信模式。
+10. 称量每个抓取物体；超过机械臂安全负载的物体只允许用于视觉测试。

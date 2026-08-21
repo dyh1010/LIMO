@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "limo_v1_apriltag_docking_config/v1",
+  "title": "LIMO V1 AprilTag docking measured configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "template_only", "measurement_status", "frames",
+    "tag_frame_convention", "field_tags", "geofence", "objects",
+    "calibration", "planning", "safety"
+  ],
+  "properties": {
+    "schema": {"const": "limo_v1_apriltag_docking_config/v1"},
+    "template_only": {"type": "boolean"},
+    "measurement_status": {
+      "enum": ["TEMPLATE_INCOMPLETE", "MEASURED_VERIFIED"]
+    },
+    "frames": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["map", "base", "camera_optical"],
+      "properties": {
+        "map": {"const": "map"},
+        "base": {"const": "base_link"},
+        "camera_optical": {"type": "string", "minLength": 1}
+      }
+    },
+    "tag_frame_convention": {
+      "const": "X_LEFT_Y_DOWN_Z_OUT_OF_FRONT"
+    },
+    "field_tags": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {"$ref": "#/$defs/field_tag"}
+    },
+    "geofence": {"$ref": "#/$defs/geofence"},
+    "objects": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {"$ref": "#/$defs/object"}
+    },
+    "calibration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["canonical_payload"],
+      "properties": {
+        "canonical_payload": {
+          "type": ["object", "null"],
+          "description": "The sole canonical payload validated by tag_docking_adapter; null keeps the template fail-closed."
+        }
+      }
+    },
+    "planning": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "default_final_standoff_m", "allowed_final_standoff_m",
+        "preapproach_standoff_m"
+      ],
+      "properties": {
+        "default_final_standoff_m": {"const": 0.4},
+        "allowed_final_standoff_m": {
+          "type": "array", "prefixItems": [{"const": 0.4}],
+          "items": false, "minItems": 1, "maxItems": 1
+        },
+        "preapproach_standoff_m": {
+          "type": "number", "minimum": 0.8, "maximum": 1.0
+        }
+      }
+    },
+    "safety": {"$ref": "#/$defs/safety"}
+  },
+  "$defs": {
+    "number_or_null": {"type": ["number", "null"]},
+    "pose": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frame_id", "position_xyz", "orientation_xyzw"],
+      "properties": {
+        "frame_id": {"const": "map"},
+        "position_xyz": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "items": {"$ref": "#/$defs/number_or_null"}
+        },
+        "orientation_xyzw": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {"$ref": "#/$defs/number_or_null"}
+        }
+      }
+    },
+    "field_tag": {
+      "type": "object", "additionalProperties": false,
+      "required": ["family", "id", "role", "measured", "pose_map"],
+      "properties": {
+        "family": {"const": "tag36h11"},
+        "id": {"type": "integer", "minimum": 0, "maximum": 3},
+        "role": {"const": "map_anchor"},
+        "measured": {"type": "boolean"},
+        "pose_map": {"$ref": "#/$defs/pose"}
+      }
+    },
+    "vertex": {
+      "type": "object", "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": {"$ref": "#/$defs/number_or_null"},
+        "y": {"$ref": "#/$defs/number_or_null"}
+      }
+    },
+    "geofence": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "frame_id", "measured", "polygon_map", "boundary_margin_m",
+        "base_footprint_radius_m"
+      ],
+      "properties": {
+        "frame_id": {"const": "map"},
+        "measured": {"type": "boolean"},
+        "polygon_map": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {"$ref": "#/$defs/vertex"}
+        },
+        "boundary_margin_m": {"$ref": "#/$defs/number_or_null"},
+        "base_footprint_radius_m": {"$ref": "#/$defs/number_or_null"}
+      }
+    },
+    "dimensions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["length", "width", "height"],
+      "properties": {
+        "length": {"$ref": "#/$defs/number_or_null"},
+        "width": {"$ref": "#/$defs/number_or_null"},
+        "height": {"$ref": "#/$defs/number_or_null"}
+      }
+    },
+    "object_tag": {
+      "type": "object", "additionalProperties": false,
+      "required": ["family", "id", "side_index", "side_label"],
+      "properties": {
+        "family": {"const": "tag52h13"},
+        "id": {"type": "integer", "minimum": 0, "maximum": 11},
+        "side_index": {"type": "integer", "minimum": 0, "maximum": 3},
+        "side_label": {"enum": ["front", "right", "back", "left"]}
+      }
+    },
+    "object": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_id", "dimensions_m", "mount_verified", "tags"],
+      "properties": {
+        "object_id": {"type": "integer", "minimum": 0, "maximum": 2},
+        "dimensions_m": {"$ref": "#/$defs/dimensions"},
+        "mount_verified": {"type": "boolean"},
+        "tags": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {"$ref": "#/$defs/object_tag"}
+        }
+      }
+    },
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "minimum_detection_confidence", "max_tag_age_s",
+        "max_planar_tilt_deg", "max_base_goal_z_m",
+        "max_linear_speed_mps", "max_angular_speed_rad_s",
+        "docking_timeout_s", "tag_loss_stop_s",
+        "final_standoff_tolerance_m", "final_lateral_tolerance_m",
+        "final_yaw_tolerance_deg", "require_localization_ready",
+        "require_stop_clear", "require_geofence", "abort_on_tag_loss",
+        "motion_output_enabled"
+      ],
+      "properties": {
+        "minimum_detection_confidence": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "max_tag_age_s": {"type": "number", "exclusiveMinimum": 0},
+        "max_planar_tilt_deg": {"type": "number", "exclusiveMinimum": 0},
+        "max_base_goal_z_m": {"type": "number", "exclusiveMinimum": 0},
+        "max_linear_speed_mps": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.15},
+        "max_angular_speed_rad_s": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.35},
+        "docking_timeout_s": {"type": "number", "exclusiveMinimum": 0},
+        "tag_loss_stop_s": {"type": "number", "exclusiveMinimum": 0},
+        "final_standoff_tolerance_m": {"const": 0.08},
+        "final_lateral_tolerance_m": {"const": 0.05},
+        "final_yaw_tolerance_deg": {"const": 5.0},
+        "require_localization_ready": {"const": true},
+        "require_stop_clear": {"const": true},
+        "require_geofence": {"const": true},
+        "abort_on_tag_loss": {"const": true},
+        "motion_output_enabled": {"const": false}
+      }
+    }
+  }
+}

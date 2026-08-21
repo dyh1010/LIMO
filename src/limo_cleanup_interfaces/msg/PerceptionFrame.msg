@@ -1,0 +1,10 @@
+builtin_interfaces/Time stamp
+string frame_id
+string task_id
+uint32 sequence
+bool valid
+string status
+string error_code
+float32 sync_span_sec
+float32 processing_latency_sec
+limo_cleanup_interfaces/PerceptionTarget[] targets

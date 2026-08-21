@@ -1,0 +1,453 @@
+{
+  "schema_version": 1,
+  "scope": "perception_v2_v5_top_level_gap_crosswalk",
+  "read_only": true,
+  "authorizes_motion": false,
+  "publishes_ros_messages": false,
+  "delivery_ready": false,
+  "source_report": {
+    "path": "evidence/perception_v2_offline_20260813/formal_readiness_missing_20260814_failclosed_v5.json",
+    "size_bytes": 4495,
+    "sha256": "a6d9f8a8d40cbbc0975ea1b244af30bc0a31e4b26c4da5dcad3427839612e187",
+    "failure_count": 37
+  },
+  "mapped_failure_count": 37,
+  "all_failures_mapped": true,
+  "current_blockers": [
+    {
+      "id": "workspace_models_directory_missing",
+      "state": "BLOCKED",
+      "evidence": "The current workspace has no models directory containing the two pinned model artifacts.",
+      "required_resolution": "Provide the controlled nongfu_yolov8n_best.pt and trash_bin_yolov8n_best.pt artifacts at the approved hashes, then regenerate source/runtime/release evidence.",
+      "delivery_blocking": true
+    },
+    {
+      "id": "hardware_checker_report_contract_incomplete",
+      "state": "BLOCKED",
+      "evidence": "The production hardware checker does not yet emit the required camera-extrinsics measurement_reference_sha256 binding and its report path is not proven exclusive-create.",
+      "required_resolution": "In the hardware-owner scope, make the checker bind an independent extrinsics reference hash and refuse an existing report path; rebuild and field-revalidate under a read-only authorization.",
+      "delivery_blocking": true
+    },
+    {
+      "id": "isolated_build_record_helper_missing",
+      "state": "BLOCKED",
+      "evidence": "The runbook defines the exact schema-v2 build record, but no environment-executed helper has produced it; WSL entry is currently E_ACCESSDENIED.",
+      "required_resolution": "Restore a usable Foxy environment, run the exact isolated colcon commands, and generate the bound build record and three hashed logs without starting nodes.",
+      "delivery_blocking": true
+    },
+    {
+      "id": "xyz_and_clock_independent_proof_missing",
+      "state": "BLOCKED",
+      "evidence": "Formal XYZ measurement and clock-domain/latency proof remain schema-declared field evidence; no independent measurement artifact hash and no on-site clock proof are present in v5.",
+      "required_resolution": "Capture independent XYZ reference artifacts and field clock synchronization evidence, bind their immutable hashes/time window to each scene, and pass readiness.",
+      "delivery_blocking": true
+    },
+    {
+      "id": "foxy_aarch64_environment_tests_pending",
+      "state": "BLOCKED",
+      "evidence": "The 14 detection-gate cases and three ament linter files have not been reproduced in the target Foxy/Python 3.8.10/aarch64 install.",
+      "required_resolution": "In the restored isolated install, reproduce 14 detection-gate passes, one flake8 pass, one pydocstyle pass, and the declared copyright skip; do not report the skip as a PASS.",
+      "delivery_blocking": true
+    }
+  ],
+  "failures": [
+    {
+      "index": 1,
+      "failure": "release_binding_invalid",
+      "evidence_domain": "release_identity",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Generate a new exclusive source_manifest.json and bind its release_id, artifact SHA-256, canonical source-set SHA-256, and generation time in release_binding.",
+      "readiness_gate": {"covered": true, "function": "_release_binding"},
+      "current_state": "missing_or_invalid_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 2,
+      "failure": "missing_artifact:model:plastic_bottle",
+      "evidence_domain": "model_binding",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Bind the controlled nongfu_yolov8n_best.pt path, exact size, and expected SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software->_artifact"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 3,
+      "failure": "missing_artifact:model:trash_bin",
+      "evidence_domain": "model_binding",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Bind the controlled trash_bin_yolov8n_best.pt path, exact size, and expected SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software->_artifact"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 4,
+      "failure": "model_filename_binding_mismatch",
+      "evidence_domain": "model_binding",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Use exactly nongfu_yolov8n_best.pt for plastic_bottle and trash_bin_yolov8n_best.pt for trash_bin.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 5,
+      "failure": "model_hash_mismatch:plastic_bottle",
+      "evidence_domain": "model_binding",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Recompute and bind the approved plastic-bottle model SHA-256; runtime preflight must measure the same hash.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 6,
+      "failure": "model_hash_mismatch:trash_bin",
+      "evidence_domain": "model_binding",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Recompute and bind the approved trash-bin model SHA-256; runtime preflight must measure the same hash.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 7,
+      "failure": "missing_source_binding",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Populate software_binding.sources from the current generated complete source manifest.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 8,
+      "failure": "source_binding_scope_mismatch",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind exactly the 13 REQUIRED_SOURCE_BASENAMES once each, with no omission, duplicate, or extra basename.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "scope_not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 9,
+      "failure": "source_hash_mismatch:dual_model_detector.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current dual_model_detector.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 10,
+      "failure": "source_hash_mismatch:offline_dual_detector.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current offline_dual_detector.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 11,
+      "failure": "source_hash_mismatch:perception_core.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current perception_core.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 12,
+      "failure": "source_hash_mismatch:perception_evaluator.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current perception_evaluator.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 13,
+      "failure": "source_hash_mismatch:evidence_binding.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current evidence_binding.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 14,
+      "failure": "source_hash_mismatch:perception_frame_collector.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current perception_frame_collector.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 15,
+      "failure": "source_hash_mismatch:perception_frame_io.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current perception_frame_io.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 16,
+      "failure": "source_hash_mismatch:perception_readiness.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current perception_readiness.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 17,
+      "failure": "source_hash_mismatch:rgbd_bag_indexer.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current rgbd_bag_indexer.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 18,
+      "failure": "source_hash_mismatch:rgbd_contract.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current rgbd_contract.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 19,
+      "failure": "source_hash_mismatch:target_contract.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current target_contract.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 20,
+      "failure": "source_hash_mismatch:orchestration_contract.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current orchestration_contract.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 21,
+      "failure": "source_hash_mismatch:typed_raw_binding.py",
+      "evidence_domain": "source_binding",
+      "acquisition_entry": "runbook.section_1.generate_perception_source_manifest",
+      "required_artifact_or_command": "Bind the current typed_raw_binding.py bytes and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "current_hash_not_bound_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 22,
+      "failure": "missing_artifact:runtime_preflight",
+      "evidence_domain": "runtime_validation",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Run perception_release_preflight.py in the matching Foxy/Python/aarch64 environment and bind its exclusive JSON report.",
+      "readiness_gate": {"covered": true, "function": "_check_software->_artifact"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 23,
+      "failure": "runtime_preflight_stale",
+      "evidence_domain": "runtime_validation",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Generate current runtime proof no older than 30 days and not future-dated.",
+      "readiness_gate": {"covered": true, "function": "_check_software->_check_report_freshness"},
+      "current_state": "freshness_not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 24,
+      "failure": "runtime_preflight_not_passed",
+      "evidence_domain": "runtime_validation",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Prove Foxy, Python 3.8.10, aarch64, required modules, exact Ultralytics/model labels, source hashes, and both model hashes PASS.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "pass_not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 25,
+      "failure": "runtime_release_binding_mismatch",
+      "evidence_domain": "runtime_validation",
+      "acquisition_entry": "runbook.section_1.perception_release_preflight",
+      "required_artifact_or_command": "Bind runtime proof to the same release ID, source-manifest artifact hash, canonical source-set hash, model hashes, and post-manifest time.",
+      "readiness_gate": {"covered": true, "function": "_check_software"},
+      "current_state": "release_binding_not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 26,
+      "failure": "missing_artifact:ros_build_validation",
+      "evidence_domain": "isolated_ros_build",
+      "acquisition_entry": "runbook.section_1.isolated_colcon_build_test",
+      "required_artifact_or_command": "In a restored environment, run the exact /tmp isolated interfaces+perception colcon build/test/test-result commands and bind the exclusive schema-v2 record plus logs.",
+      "readiness_gate": {"covered": true, "function": "_check_ros_build->_artifact"},
+      "current_state": "environment_blocked_and_missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 27,
+      "failure": "ros_build_validation_not_passed",
+      "evidence_domain": "isolated_ros_build",
+      "acquisition_entry": "runbook.section_1.isolated_colcon_build_test",
+      "required_artifact_or_command": "Prove result PASS, three zero exit codes, zero failures, exact argv/platform/source manifest, distinct non-empty logs, and nodes_started=false.",
+      "readiness_gate": {"covered": true, "function": "_check_ros_build"},
+      "current_state": "not_run_due_to_WSL_E_ACCESSDENIED_not_a_source_failure_or_pass",
+      "delivery_blocking": true
+    },
+    {
+      "index": 28,
+      "failure": "missing_artifact:hardware_readiness",
+      "evidence_domain": "field_hardware_readiness",
+      "acquisition_entry": "runbook.section_2.read_only_graph_safety",
+      "required_artifact_or_command": "Under a future read-only camera authorization, generate and bind a fresh hardware readiness report covering streams, intrinsics, TF/extrinsics, and no-actuation checks.",
+      "readiness_gate": {"covered": true, "function": "_check_hardware->_artifact"},
+      "current_state": "camera_not_started_and_artifact_missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 29,
+      "failure": "hardware_readiness_not_passed",
+      "evidence_domain": "field_hardware_readiness",
+      "acquisition_entry": "runbook.section_2.read_only_graph_safety",
+      "required_artifact_or_command": "Prove every REQUIRED_HARDWARE_CHECKS item PASS, exact no-actuation publisher/subscriber emptiness, base-to-camera TF, and measured extrinsics.",
+      "readiness_gate": {"covered": true, "function": "_check_hardware"},
+      "current_state": "pass_not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 30,
+      "failure": "scene_set_mismatch",
+      "evidence_domain": "four_scene_field_set",
+      "acquisition_entry": "runbook.section_2.four_scene_capture",
+      "required_artifact_or_command": "Declare exactly background, bin_only, bottle_in_bin, and bottle_outside with no missing or extra scene.",
+      "readiness_gate": {"covered": true, "function": "evaluate_readiness"},
+      "current_state": "empty_scene_set_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 31,
+      "failure": "missing_scene:background",
+      "evidence_domain": "scene_background",
+      "acquisition_entry": "collector+rgbd_bag_indexer+typed_raw_binding+readiness_cli:background",
+      "required_artifact_or_command": "Acquire an independent background scene with at least 30 unique typed/raw-bound frames and every scene evidence artifact in scene_mandatory_evidence.",
+      "readiness_gate": {"covered": true, "function": "evaluate_readiness.scene_loop"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 32,
+      "failure": "missing_scene:bin_only",
+      "evidence_domain": "scene_bin_only",
+      "acquisition_entry": "collector+rgbd_bag_indexer+typed_raw_binding+readiness_cli:bin_only",
+      "required_artifact_or_command": "Acquire an independent trash-bin-only scene with at least 30 unique typed/raw-bound frames and every scene evidence artifact in scene_mandatory_evidence.",
+      "readiness_gate": {"covered": true, "function": "evaluate_readiness.scene_loop"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 33,
+      "failure": "missing_scene:bottle_in_bin",
+      "evidence_domain": "scene_bottle_in_bin",
+      "acquisition_entry": "collector+rgbd_bag_indexer+typed_raw_binding+readiness_cli:bottle_in_bin",
+      "required_artifact_or_command": "Acquire an independent bottle-in-bin scene with at least 30 unique typed/raw-bound frames and every scene evidence artifact in scene_mandatory_evidence.",
+      "readiness_gate": {"covered": true, "function": "evaluate_readiness.scene_loop"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 34,
+      "failure": "missing_scene:bottle_outside",
+      "evidence_domain": "scene_bottle_outside",
+      "acquisition_entry": "collector+rgbd_bag_indexer+typed_raw_binding+readiness_cli:bottle_outside",
+      "required_artifact_or_command": "Acquire an independent actionable bottle-outside scene with at least 30 unique typed/raw-bound frames and every scene evidence artifact in scene_mandatory_evidence.",
+      "readiness_gate": {"covered": true, "function": "evaluate_readiness.scene_loop"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 35,
+      "failure": "missing_artifact:extrinsics_measurement_reference",
+      "evidence_domain": "extrinsics_reference",
+      "acquisition_entry": "runbook.section_3.independent_annotation_and_measurement",
+      "required_artifact_or_command": "Create and bind a separate independently measured camera-extrinsics reference artifact with exact size and SHA-256.",
+      "readiness_gate": {"covered": true, "function": "_check_extrinsics_reference->_artifact"},
+      "current_state": "missing_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 36,
+      "failure": "missing_extrinsics_reference_artifact",
+      "evidence_domain": "extrinsics_reference",
+      "acquisition_entry": "runbook.section_3.independent_annotation_and_measurement",
+      "required_artifact_or_command": "Provide a resolvable extrinsics reference whose SHA-256 is bound by all scene TF artifacts and the hardware measurement check.",
+      "readiness_gate": {"covered": true, "function": "_check_extrinsics_reference"},
+      "current_state": "reference_and_cross_bindings_not_proven_in_v5",
+      "delivery_blocking": true
+    },
+    {
+      "index": 37,
+      "failure": "typed_frame_evaluator_failed",
+      "evidence_domain": "quantitative_four_scene_acceptance",
+      "acquisition_entry": "runbook.section_4.perception_readiness_cli",
+      "required_artifact_or_command": "Run the four-scene evaluator through perception_readiness with all scene frames present; every detection, filtering, 3D, sync, rejection, and latency threshold must pass.",
+      "readiness_gate": {"covered": true, "function": "evaluate_readiness->evaluate_suite"},
+      "current_state": "four_scenes_absent_so_evaluator_failed_in_v5",
+      "delivery_blocking": true
+    }
+  ],
+  "scene_mandatory_evidence": {
+    "applies_to_each_scene": ["background", "bin_only", "bottle_in_bin", "bottle_outside"],
+    "missing_scene_short_circuit_note": "The v5 report short-circuits each absent scene after missing_scene, so the 37 top-level strings do not enumerate these inner gates. They remain mandatory and fail closed as soon as a scene declaration exists.",
+    "requirements": [
+      {"name": "independent_arrangement", "readiness_functions": ["_check_arrangement", "_check_arrangement_independence", "_check_independent_reviewers"]},
+      {"name": "at_least_30_unique_complete_typed_frames", "readiness_functions": ["_frame_identity", "_check_typed_frame_schema", "evaluate_readiness"]},
+      {"name": "bounded_read_only_collector_manifest", "readiness_functions": ["_check_manifest"]},
+      {"name": "typed_raw_payload_binding", "readiness_functions": ["_check_typed_raw_binding_artifact", "_check_typed_raw_sync_binding"]},
+      {"name": "exact_six_topic_raw_db3_and_strict_index", "readiness_functions": ["_check_raw_capture", "_check_streams"]},
+      {"name": "exhaustive_bottle_and_trash_bin_ground_truth", "readiness_functions": ["_check_ground_truth", "_check_truth_semantics", "_check_instance_metrics"]},
+      {"name": "decoded_tf_and_tf_static_camera_to_base_chain", "readiness_functions": ["_check_tf", "_check_raw_tf_binding", "_check_frame_chain"]},
+      {"name": "instance_bound_xyz_ground_truth", "readiness_functions": ["_check_xyz"]},
+      {"name": "independent_depth_measurement_reference", "readiness_functions": ["_check_depth_measurement_reference"]},
+      {"name": "raw_depth_pixels_and_depth_quality", "readiness_functions": ["_read_raw_depth_messages", "_check_depth"]},
+      {"name": "processing_and_transport_latency_with_clock_proof", "readiness_functions": ["_check_latency"]},
+      {"name": "single_capture_release_source_model_tf_truth_hash_and_time_binding", "readiness_functions": ["_check_capture_derived_binding", "_check_capture_time_binding", "_check_scene_evidence_binding"]}
+    ],
+    "fail_closed_statement": "Missing RGB-D, exhaustive truth including independent trash-bin labels, decoded TF, XYZ, raw depth/depth reference, latency, current runtime, isolated build, or hardware/no-actuation evidence keeps delivery_ready false. A scene name, string-only frame claim, metadata-only bag summary, or fabricated JSON TF cannot substitute."
+  },
+  "entrypoint_crosswalk": {
+    "collector": "perception_frame_collector --scene SCENE --task-id TASK --output NEW.frames.jsonl --manifest NEW.collector.json --max-frames >=30 --duration-sec >0",
+    "raw_indexer": "rgbd_bag_indexer --bag STOPPED.db3 --capture-id UNIQUE --scene SCENE --expected-topic-manifest INSTALLED/rgbd_expected_topics.json --output NEW.rgbd-index.json",
+    "typed_raw_binding": "typed_raw_binding --typed-frames ... --collector-manifest ... --raw-bag ... --raw-inspection ... --scene ... --capture-id ... --release/source/model bindings ... --output NEW.json",
+    "readiness": "perception_readiness --bundle COMPLETE.json --report NEW.json",
+    "frozen_manifest_id": "limo-dabai-rgbd-six-topics-v1",
+    "current_camera_authorization_active": false,
+    "current_WSL_state": "E_ACCESSDENIED_environment_block_only_do_not_report_source_build_PASS_or_FAIL"
+  }
+}

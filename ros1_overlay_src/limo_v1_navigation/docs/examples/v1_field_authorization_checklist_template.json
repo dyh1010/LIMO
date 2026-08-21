@@ -1,0 +1,331 @@
+{
+  "schema": "limo_v1_field_authorization_checklist/v1",
+  "template_only": true,
+  "approval_packet_only": true,
+  "runtime_authorization_validator": false,
+  "real_machine_evidence": false,
+  "status": "NOT_RUN",
+  "execution_ready": false,
+  "decision": "BLOCKED",
+  "block_reasons": [
+    "template_only",
+    "dedicated_field_orchestrator_not_present",
+    "required_grants_not_populated",
+    "physical_boundary_not_verified"
+  ],
+  "current_boundary": {
+    "dedicated_field_orchestrator_present": false,
+    "manual_edit_can_set_execution_ready": false,
+    "offline_pass_is_field_authority": false,
+    "prior_stage_pass_is_field_authority": false,
+    "launch_identifier_is_grant_validator": false,
+    "initial_pose_trigger_is_grant_validator": false,
+    "runtime_boolean_is_grant_validator": false
+  },
+  "grant_policy": {
+    "classes": [
+      "hardware_read_only",
+      "zero_motion_localization",
+      "real_motion"
+    ],
+    "independent_grants_required": true,
+    "upgrade_inheritance_allowed": false,
+    "class_substitution_allowed": false,
+    "fresh_bundle_required_for_every_stage_entry": true,
+    "one_use_required": true,
+    "atomic_consume_required": true,
+    "recheck_before_boundary_required": true,
+    "required_grant_fields": [
+      "authorization_class",
+      "authorization_id",
+      "approval_reference",
+      "boot_id",
+      "session_id",
+      "robot_id",
+      "operator",
+      "observer_at_physical_stop",
+      "scope",
+      "issued_at_utc",
+      "expires_at_utc",
+      "one_use",
+      "consumed",
+      "revoked",
+      "fresh"
+    ],
+    "required_grants_by_requested_stage": {
+      "hardware_read_only": [
+        "hardware_read_only"
+      ],
+      "zero_motion_localization": [
+        "hardware_read_only",
+        "zero_motion_localization"
+      ],
+      "real_motion": [
+        "hardware_read_only",
+        "zero_motion_localization",
+        "real_motion"
+      ]
+    },
+    "fail_closed_reasons": [
+      "missing_required_field",
+      "approval_reference_missing_or_unverified",
+      "issued_in_future",
+      "expired",
+      "boot_mismatch",
+      "session_mismatch",
+      "robot_mismatch",
+      "operator_missing",
+      "observer_missing",
+      "scope_mismatch",
+      "one_use_not_true",
+      "already_consumed",
+      "revoked",
+      "lower_stage_pass_substitution",
+      "grant_class_substitution",
+      "physical_boundary_incomplete",
+      "dedicated_field_orchestrator_missing"
+    ]
+  },
+  "requested_stage": "",
+  "requested_scope": {
+    "stage": "",
+    "operation_ids": [],
+    "map_id": "",
+    "evidence_root": "",
+    "trial_ids": []
+  },
+  "grants": {
+    "hardware_read_only": {
+      "authorization_class": "hardware_read_only",
+      "authorization_id": "",
+      "approval_reference": "",
+      "boot_id": "",
+      "session_id": "",
+      "robot_id": "",
+      "operator": "",
+      "observer_at_physical_stop": "",
+      "scope": {
+        "stage": "",
+        "operation_ids": [],
+        "map_id": "",
+        "evidence_root": "",
+        "trial_ids": []
+      },
+      "issued_at_utc": "",
+      "expires_at_utc": "",
+      "one_use": null,
+      "consumed": null,
+      "revoked": null,
+      "fresh": false,
+      "freshness_checks": {
+        "issued_not_in_future": null,
+        "not_expired": null,
+        "boot_matches": null,
+        "session_matches": null,
+        "robot_matches": null,
+        "scope_matches": null
+      },
+      "record_complete": false,
+      "grant_valid": false,
+      "decision": "BLOCKED",
+      "block_reasons": [
+        "template_only_missing_grant"
+      ]
+    },
+    "zero_motion_localization": {
+      "authorization_class": "zero_motion_localization",
+      "authorization_id": "",
+      "approval_reference": "",
+      "boot_id": "",
+      "session_id": "",
+      "robot_id": "",
+      "operator": "",
+      "observer_at_physical_stop": "",
+      "scope": {
+        "stage": "",
+        "operation_ids": [],
+        "map_id": "",
+        "evidence_root": "",
+        "trial_ids": []
+      },
+      "issued_at_utc": "",
+      "expires_at_utc": "",
+      "one_use": null,
+      "consumed": null,
+      "revoked": null,
+      "fresh": false,
+      "freshness_checks": {
+        "issued_not_in_future": null,
+        "not_expired": null,
+        "boot_matches": null,
+        "session_matches": null,
+        "robot_matches": null,
+        "scope_matches": null
+      },
+      "record_complete": false,
+      "grant_valid": false,
+      "decision": "BLOCKED",
+      "block_reasons": [
+        "template_only_missing_grant"
+      ]
+    },
+    "real_motion": {
+      "authorization_class": "real_motion",
+      "authorization_id": "",
+      "approval_reference": "",
+      "boot_id": "",
+      "session_id": "",
+      "robot_id": "",
+      "operator": "",
+      "observer_at_physical_stop": "",
+      "scope": {
+        "stage": "",
+        "operation_ids": [],
+        "map_id": "",
+        "evidence_root": "",
+        "trial_ids": []
+      },
+      "issued_at_utc": "",
+      "expires_at_utc": "",
+      "one_use": null,
+      "consumed": null,
+      "revoked": null,
+      "fresh": false,
+      "freshness_checks": {
+        "issued_not_in_future": null,
+        "not_expired": null,
+        "boot_matches": null,
+        "session_matches": null,
+        "robot_matches": null,
+        "scope_matches": null
+      },
+      "record_complete": false,
+      "grant_valid": false,
+      "decision": "BLOCKED",
+      "block_reasons": [
+        "template_only_missing_grant"
+      ]
+    }
+  },
+  "stage_contracts": {
+    "hardware_read_only": {
+      "required_grant_classes": [
+        "hardware_read_only"
+      ],
+      "allowed_operation_ids": [
+        "host_process_and_port_read",
+        "approved_sensor_identity_and_owner_read",
+        "approved_sensor_startup_without_motion_ingress",
+        "finite_subscriber_only_capture"
+      ],
+      "forbidden_operation_ids": [
+        "initial_pose_administration",
+        "localization_reset",
+        "motion_authority_opening",
+        "manual_drive",
+        "rotation_scan",
+        "recovery_behavior",
+        "fault_injection"
+      ],
+      "physical_requirements": [
+        "onsite_operator_present",
+        "observer_at_physical_stop_present",
+        "physical_stop_path_checked_for_session",
+        "people_and_loose_objects_clear",
+        "base_lifted_or_effectively_restrained"
+      ],
+      "current_status": "NOT_RUN",
+      "execution_ready": false,
+      "decision": "BLOCKED"
+    },
+    "zero_motion_localization": {
+      "required_grant_classes": [
+        "hardware_read_only",
+        "zero_motion_localization"
+      ],
+      "allowed_operation_ids": [
+        "explicit_initial_pose_once",
+        "manager_bounded_no_motion_update",
+        "localization_status_observation",
+        "stationary_repeatability_measurement",
+        "stationary_absolute_localization_measurement",
+        "finite_subscriber_only_capture"
+      ],
+      "forbidden_operation_ids": [
+        "navigation_request",
+        "motion_authority_opening",
+        "manual_drive",
+        "rotation_scan",
+        "recovery_behavior",
+        "fault_injection"
+      ],
+      "physical_requirements": [
+        "onsite_operator_present",
+        "observer_at_physical_stop_present",
+        "physical_stop_path_checked_for_session",
+        "people_and_loose_objects_clear",
+        "base_lifted_or_effectively_restrained",
+        "motion_ingress_disabled"
+      ],
+      "current_status": "NOT_RUN",
+      "execution_ready": false,
+      "decision": "BLOCKED"
+    },
+    "real_motion": {
+      "required_grant_classes": [
+        "hardware_read_only",
+        "zero_motion_localization",
+        "real_motion"
+      ],
+      "allowed_operation_ids": [
+        "one_predeclared_point_to_point_trial",
+        "one_predeclared_cancel_trial",
+        "one_predeclared_static_avoidance_trial",
+        "one_predeclared_dynamic_avoidance_trial"
+      ],
+      "forbidden_operation_ids": [
+        "unbounded_or_unscripted_movement",
+        "teleoperation",
+        "automatic_rotation",
+        "automatic_recovery",
+        "scope_extension",
+        "repeat_without_new_grant",
+        "fault_injection_without_separate_scope"
+      ],
+      "physical_requirements": [
+        "onsite_operator_present",
+        "observer_at_physical_stop_present",
+        "physical_stop_path_checked_for_session",
+        "full_path_envelope_cleared",
+        "exact_trial_bounds_reviewed",
+        "stop_criteria_reviewed"
+      ],
+      "current_status": "NOT_RUN",
+      "execution_ready": false,
+      "decision": "BLOCKED"
+    }
+  },
+  "physical_boundary": {
+    "onsite_operator_present": null,
+    "observer_at_physical_stop_present": null,
+    "physical_estop_or_main_switch_identified": null,
+    "physical_stop_path_checked_for_session": null,
+    "energy_isolation_path_known": null,
+    "people_and_loose_objects_clear": null,
+    "base_lifted_or_effectively_restrained_for_zero_motion": null,
+    "full_path_envelope_cleared_for_real_motion": null,
+    "software_stop_replaces_physical_estop": false,
+    "complete": false
+  },
+  "validation_summary": {
+    "all_required_fields_present": false,
+    "all_required_grants_fresh": false,
+    "all_required_grants_unused": false,
+    "all_required_grants_not_revoked": false,
+    "all_required_scopes_match": false,
+    "physical_boundary_complete": false,
+    "dedicated_field_orchestrator_present": false,
+    "execution_ready": false,
+    "decision": "BLOCKED"
+  }
+}

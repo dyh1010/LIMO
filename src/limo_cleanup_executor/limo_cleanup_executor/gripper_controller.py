@@ -12,7 +12,6 @@ from rclpy.node import Node
 from .gripper_backends import (
     DryRunGripperBackend,
     GripperBackendError,
-    PymycobotGripperBackend,
 )
 from .gripper_core import (
     GripperCommandError,
@@ -50,12 +49,7 @@ class GripperController(Node):
         parameters = (
             ('backend', 'dry_run'),
             ('allow_hardware_motion', False),
-            ('confirmed_gripper_model', 'mycobot_gripper_ag'),
-            ('serial_port', '/dev/elephant'),
-            ('baud', 115200),
-            ('gripper_type', 1),
-            ('closed_value', 0),
-            ('open_value', 100),
+            ('confirmed_gripper_model', 'UNRESOLVED_DO_NOT_CONNECT'),
             ('default_speed', 0.25),
             ('position_tolerance', 0.08),
             ('command_timeout', 3.0),
@@ -70,11 +64,6 @@ class GripperController(Node):
             'allow_hardware_motion')
         self.confirmed_gripper_model = self._string_parameter(
             'confirmed_gripper_model')
-        self.serial_port = self._string_parameter('serial_port')
-        self.baud = self._integer_parameter('baud')
-        self.gripper_type = self._integer_parameter('gripper_type')
-        self.closed_value = self._integer_parameter('closed_value')
-        self.open_value = self._integer_parameter('open_value')
         self.default_speed = self._double_parameter('default_speed')
         self.position_tolerance = self._double_parameter(
             'position_tolerance')
@@ -114,25 +103,18 @@ class GripperController(Node):
             self.get_logger().warning(self.backend_error)
             return
 
-        if self.confirmed_gripper_model != 'mycobot_gripper_ag':
-            self.backend_error = (
-                'confirmed_gripper_model must be mycobot_gripper_ag')
-            self.get_logger().error(self.backend_error)
-            return
-
-        try:
-            self.backend = PymycobotGripperBackend(
-                port=self.serial_port,
-                baud=self.baud,
-                gripper_type=self.gripper_type,
-                closed_value=self.closed_value,
-                open_value=self.open_value,
-            )
-        except GripperBackendError as error:
-            self.backend_error = str(error)
-            self.get_logger().error(self.backend_error)
+        self.backend_error = (
+            'legacy pymycobot AG hardware backend is forbidden: the final '
+            'tool model, actuator, protocol, transport, limits, feedback and '
+            'calibration are unresolved; use dry_run only')
+        self.get_logger().error(self.backend_error)
 
     def goal_callback(self, goal_request):
+        if self.backend is None:
+            self.get_logger().warning(
+                'Rejecting gripper goal because no released backend exists: '
+                + self.backend_error)
+            return GoalResponse.REJECT
         try:
             resolve_gripper_command(
                 goal_request.command,
@@ -154,8 +136,23 @@ class GripperController(Node):
         return GoalResponse.ACCEPT
 
     def cancel_callback(self, goal_handle):
-        self.get_logger().info('Accepting gripper command cancellation')
+        self.get_logger().info(
+            'Accepting gripper command cancellation; STOP will be requested')
         return CancelResponse.ACCEPT
+
+    def _stop_backend(self, reason: str) -> str:
+        if self.backend is None:
+            return 'STOP unavailable because no backend is configured'
+        stopper = getattr(self.backend, 'stop', None)
+        if stopper is None:
+            return 'STOP unavailable because backend has no stop method'
+        try:
+            stopper()
+            return f'STOP requested: {reason}'
+        except Exception as error:  # noqa: BLE001
+            detail = f'STOP failed after {reason}: {error}'
+            self.get_logger().error(detail)
+            return detail
 
     def execute_callback(self, goal_handle):
         result = ControlGripper.Result()
@@ -193,21 +190,26 @@ class GripperController(Node):
                 command.position, command.speed)
 
             if not command.verify:
-                goal_handle.succeed()
-                result.success = True
-                result.final_state = 'commanded'
+                stop_detail = self._stop_backend(
+                    'unverified completion is forbidden')
+                goal_handle.abort()
+                result.success = False
+                result.final_state = 'verification_required'
                 result.detail = (
-                    'Command accepted without position verification')
+                    'Command was sent but success cannot be declared without '
+                    'fresh feedback; ' + stop_detail)
                 return result
 
             deadline = time.monotonic() + self.command_timeout
             while time.monotonic() < deadline:
                 if goal_handle.is_cancel_requested:
+                    stop_detail = self._stop_backend('action cancellation')
                     goal_handle.canceled()
                     result.success = False
                     result.final_state = 'cancelled'
                     result.detail = (
-                        'Cancelled; no automatic recovery motion was sent')
+                        'Cancelled; no automatic recovery motion was sent; '
+                        + stop_detail)
                     return result
 
                 measured = self.backend.read_position()
@@ -230,25 +232,29 @@ class GripperController(Node):
                     return result
                 time.sleep(self.poll_period)
 
+            stop_detail = self._stop_backend('verification timeout')
             goal_handle.abort()
             result.success = False
             result.final_state = 'verification_timeout'
             result.detail = (
                 'Position was not verified before timeout; '
-                'no automatic retry was sent')
+                'no automatic retry was sent; ' + stop_detail)
             return result
         except (GripperCommandError, GripperBackendError) as error:
+            stop_detail = self._stop_backend('command or feedback failure')
             goal_handle.abort()
             result.success = False
             result.final_state = 'failed'
-            result.detail = str(error)
+            result.detail = f'{error}; {stop_detail}'
             self.get_logger().error(result.detail)
             return result
         except Exception as error:  # noqa: BLE001
+            stop_detail = self._stop_backend('unexpected exception')
             goal_handle.abort()
             result.success = False
             result.final_state = 'failed'
-            result.detail = f'Unexpected gripper error: {error}'
+            result.detail = (
+                f'Unexpected gripper error: {error}; {stop_detail}')
             self.get_logger().error(result.detail)
             return result
         finally:
@@ -271,6 +277,10 @@ class GripperController(Node):
 
     def destroy_node(self):
         self.action_server.destroy()
+        if self.backend is not None:
+            close = getattr(self.backend, 'close', None)
+            if close is not None:
+                close()
         super().destroy_node()
 
 

@@ -1,0 +1,73 @@
+{
+  "schema": "limo_v1_apriltag_docking_config/v1",
+  "template_only": true,
+  "measurement_status": "TEMPLATE_INCOMPLETE",
+  "frames": {
+    "map": "map",
+    "base": "base_link",
+    "camera_optical": "camera_color_optical_frame"
+  },
+  "tag_frame_convention": "X_LEFT_Y_DOWN_Z_OUT_OF_FRONT",
+  "field_tags": [
+    {"family": "tag36h11", "id": 0, "role": "map_anchor", "measured": false, "pose_map": {"frame_id": "map", "position_xyz": [null, null, null], "orientation_xyzw": [null, null, null, null]}},
+    {"family": "tag36h11", "id": 1, "role": "map_anchor", "measured": false, "pose_map": {"frame_id": "map", "position_xyz": [null, null, null], "orientation_xyzw": [null, null, null, null]}},
+    {"family": "tag36h11", "id": 2, "role": "map_anchor", "measured": false, "pose_map": {"frame_id": "map", "position_xyz": [null, null, null], "orientation_xyzw": [null, null, null, null]}},
+    {"family": "tag36h11", "id": 3, "role": "map_anchor", "measured": false, "pose_map": {"frame_id": "map", "position_xyz": [null, null, null], "orientation_xyzw": [null, null, null, null]}}
+  ],
+  "geofence": {
+    "frame_id": "map",
+    "measured": false,
+    "polygon_map": [
+      {"x": null, "y": null}, {"x": null, "y": null},
+      {"x": null, "y": null}, {"x": null, "y": null}
+    ],
+    "boundary_margin_m": null,
+    "base_footprint_radius_m": null
+  },
+  "objects": [
+    {"object_id": 0, "dimensions_m": {"length": null, "width": null, "height": null}, "mount_verified": false, "tags": [
+      {"family": "tag52h13", "id": 0, "side_index": 0, "side_label": "front"},
+      {"family": "tag52h13", "id": 1, "side_index": 1, "side_label": "right"},
+      {"family": "tag52h13", "id": 2, "side_index": 2, "side_label": "back"},
+      {"family": "tag52h13", "id": 3, "side_index": 3, "side_label": "left"}
+    ]},
+    {"object_id": 1, "dimensions_m": {"length": null, "width": null, "height": null}, "mount_verified": false, "tags": [
+      {"family": "tag52h13", "id": 4, "side_index": 0, "side_label": "front"},
+      {"family": "tag52h13", "id": 5, "side_index": 1, "side_label": "right"},
+      {"family": "tag52h13", "id": 6, "side_index": 2, "side_label": "back"},
+      {"family": "tag52h13", "id": 7, "side_index": 3, "side_label": "left"}
+    ]},
+    {"object_id": 2, "dimensions_m": {"length": null, "width": null, "height": null}, "mount_verified": false, "tags": [
+      {"family": "tag52h13", "id": 8, "side_index": 0, "side_label": "front"},
+      {"family": "tag52h13", "id": 9, "side_index": 1, "side_label": "right"},
+      {"family": "tag52h13", "id": 10, "side_index": 2, "side_label": "back"},
+      {"family": "tag52h13", "id": 11, "side_index": 3, "side_label": "left"}
+    ]}
+  ],
+  "calibration": {
+    "canonical_payload": null
+  },
+  "planning": {
+    "default_final_standoff_m": 0.40,
+    "allowed_final_standoff_m": [0.40],
+    "preapproach_standoff_m": 0.90
+  },
+  "safety": {
+    "minimum_detection_confidence": 0.80,
+    "max_tag_age_s": 0.25,
+    "max_planar_tilt_deg": 5.0,
+    "max_base_goal_z_m": 0.05,
+    "max_linear_speed_mps": 0.10,
+    "max_angular_speed_rad_s": 0.20,
+    "docking_timeout_s": 20.0,
+    "tag_loss_stop_s": 0.25,
+    "final_standoff_tolerance_m": 0.08,
+    "final_lateral_tolerance_m": 0.05,
+    "final_yaw_tolerance_deg": 5.0,
+    "require_localization_ready": true,
+    "require_stop_clear": true,
+    "require_geofence": true,
+    "abort_on_tag_loss": true,
+    "motion_output_enabled": false
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "limo_v1_software_interface.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "compatibility": {
+      "const": "additive_only"
+    },
+    "controlled_interfaces": {
+      "items": {
+        "$ref": "#/$defs/controlledInterface"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "defaults": {
+      "additionalProperties": false,
+      "properties": {
+        "integrated": {
+          "additionalProperties": false,
+          "properties": {
+            "adapter_enabled": {
+              "const": false
+            },
+            "navigation_ready": {
+              "const": false
+            }
+          },
+          "required": [
+            "adapter_enabled",
+            "navigation_ready"
+          ],
+          "type": "object"
+        },
+        "native": {
+          "additionalProperties": false,
+          "properties": {
+            "forwarding_allowed": {
+              "const": false
+            },
+            "gateway_enabled": {
+              "const": false
+            },
+            "navigation_enabled": {
+              "const": false
+            },
+            "nonzero_output_allowed": {
+              "const": false
+            },
+            "stop_latched": {
+              "const": true
+            }
+          },
+          "required": [
+            "forwarding_allowed",
+            "gateway_enabled",
+            "navigation_enabled",
+            "nonzero_output_allowed",
+            "stop_latched"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "native",
+        "integrated"
+      ],
+      "type": "object"
+    },
+    "frozen": {
+      "const": true
+    },
+    "freshness_policy": {
+      "$ref": "#/$defs/freshnessPolicy"
+    },
+    "mock_fixture": {
+      "const": "docs/examples/v1_read_only_status_fixture.json"
+    },
+    "modes": {
+      "additionalProperties": false,
+      "properties": {
+        "integrated": {
+          "$ref": "#/$defs/modeOwnership"
+        },
+        "mutually_exclusive": {
+          "const": true
+        },
+        "native": {
+          "$ref": "#/$defs/modeOwnership"
+        }
+      },
+      "required": [
+        "mutually_exclusive",
+        "native",
+        "integrated"
+      ],
+      "type": "object"
+    },
+    "read_only_interfaces": {
+      "items": {
+        "$ref": "#/$defs/readOnlyInterface"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema": {
+      "const": "limo_v1_software_interface/v1"
+    }
+  },
+  "required": [
+    "schema",
+    "frozen",
+    "compatibility",
+    "modes",
+    "defaults",
+    "freshness_policy",
+    "read_only_interfaces",
+    "controlled_interfaces",
+    "mock_fixture"
+  ],
+  "title": "LIMO V1 frozen software interface",
+  "type": "object",
+  "$defs": {
+    "freshnessPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "const": "consumer_monotonic_receipt"
+        },
+        "error_records_are_not_health_heartbeats": {
+          "const": true
+        },
+        "fresh_if": {
+          "const": "0 <= receipt_age_s < freshness_timeout_s"
+        },
+        "latched_heartbeat_requires_followup_sample": {
+          "const": true
+        },
+        "missing_heartbeat_fail_closed": {
+          "const": true
+        },
+        "stale_at_or_above_timeout": {
+          "const": true
+        }
+      },
+      "required": [
+        "basis",
+        "fresh_if",
+        "stale_at_or_above_timeout",
+        "missing_heartbeat_fail_closed",
+        "latched_heartbeat_requires_followup_sample",
+        "error_records_are_not_health_heartbeats"
+      ],
+      "type": "object"
+    },
+    "controlledInterface": {
+      "additionalProperties": false,
+      "properties": {
+        "default_authorized": {
+          "const": false
+        },
+        "effect": {
+          "enum": [
+            "cancel_only",
+            "localization_only",
+            "may_start_motion",
+            "opens_authority_only"
+          ]
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "internal_only": {
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "service",
+            "topic"
+          ]
+        },
+        "modes": {
+          "$ref": "#/$defs/modes"
+        },
+        "name": {
+          "pattern": "^/",
+          "type": "string"
+        },
+        "public_consumer": {
+          "type": "boolean"
+        },
+        "ros_type": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "ros_type",
+        "modes",
+        "default_authorized",
+        "effect",
+        "internal_only"
+      ],
+      "type": "object"
+    },
+    "modeOwnership": {
+      "additionalProperties": false,
+      "properties": {
+        "action_client_owner": {
+          "pattern": "^/",
+          "type": "string"
+        },
+        "action_prefix": {
+          "pattern": "^/",
+          "type": "string"
+        },
+        "action_server_owner": {
+          "const": "/move_base"
+        },
+        "forbidden_action_client_owner": {
+          "pattern": "^/",
+          "type": "string"
+        },
+        "visibility": {
+          "enum": [
+            "private",
+            "runner_private_internal"
+          ]
+        }
+      },
+      "required": [
+        "action_prefix",
+        "action_client_owner",
+        "action_server_owner",
+        "forbidden_action_client_owner",
+        "visibility"
+      ],
+      "type": "object"
+    },
+    "modes": {
+      "items": {
+        "enum": [
+          "integrated",
+          "native"
+        ]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "readOnlyInterface": {
+      "additionalProperties": false,
+      "properties": {
+        "access": {
+          "const": "subscribe_only"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "const": "topic"
+        },
+        "first_sample_establishes_liveness": {
+          "type": "boolean"
+        },
+        "freshness_semantics": {
+          "enum": [
+            "heartbeat",
+            "latched_event_record"
+          ]
+        },
+        "freshness_timeout_s": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "latched": {
+          "type": "boolean"
+        },
+        "modes": {
+          "$ref": "#/$defs/modes"
+        },
+        "motion_capable": {
+          "const": false
+        },
+        "name": {
+          "pattern": "^/",
+          "type": "string"
+        },
+        "nominal_publish_period_s": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payload_contract": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "publisher_owner": {
+          "pattern": "^/",
+          "type": "string"
+        },
+        "required_payload_fields": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "ros_type": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "ros_type",
+        "modes",
+        "publisher_owner",
+        "access",
+        "latched",
+        "nominal_publish_period_s",
+        "freshness_timeout_s",
+        "freshness_semantics",
+        "first_sample_establishes_liveness",
+        "motion_capable",
+        "payload_contract",
+        "required_payload_fields"
+      ],
+      "type": "object"
+    }
+  }
+}

@@ -7,12 +7,15 @@
   <maintainer email="2099439179@qq.com">dyh</maintainer>
   <license>Apache-2.0</license>
 
+  <buildtool_depend>ament_python</buildtool_depend>
   <depend>rclpy</depend>
   <depend>limo_cleanup_interfaces</depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-opencv</exec_depend>
+  <!-- torch/ultralytics are pinned and loaded by perception_release_preflight;
+       Foxy has no portable rosdep key for the required wheel versions. -->
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

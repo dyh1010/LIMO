@@ -60,6 +60,35 @@ def test_raw_conversion_supports_both_directions():
     assert raw_to_normalized(75, 100, 0) == pytest.approx(0.25)
 
 
+@pytest.mark.parametrize(
+    'raw_value,closed_value,open_value',
+    ((9, 10, 90), (91, 10, 90), (9, 90, 10), (91, 90, 10)),
+)
+def test_raw_feedback_outside_calibrated_endpoints_is_rejected(
+        raw_value, closed_value, open_value):
+    with pytest.raises(GripperCommandError, match='calibrated endpoint'):
+        raw_to_normalized(raw_value, closed_value, open_value)
+
+
 def test_position_reached_uses_normalized_tolerance():
     assert position_reached(0.28, 0.30, 0.03)
     assert not position_reached(0.20, 0.30, 0.03)
+
+
+def test_numeric_subclasses_are_rejected_without_conversion_callbacks():
+    calls = []
+
+    class ActiveFloat(float):
+        def __float__(value):
+            calls.append('float')
+            return float.__float__(value)
+
+    class ActiveInt(int):
+        pass
+
+    with pytest.raises(GripperCommandError, match='built-in number'):
+        resolve_gripper_command(
+            COMMAND_SET_POSITION, ActiveFloat(0.3), 0.2, True, 0.25)
+    with pytest.raises(GripperCommandError, match='integer'):
+        raw_to_normalized(ActiveInt(10), 0, 100)
+    assert calls == []

@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "intake_scope": "limo_v2_formal_four_scene_rgbd_field_intake",
+  "read_only": true,
+  "authorizes_motion": false,
+  "publishes_control_messages": false,
+  "delivery_ready": false,
+  "intake_id": null,
+  "created_at_unix_sec": null,
+  "authorization": {
+    "authorization_id": null,
+    "authorized_by": null,
+    "authorized_at_unix_sec": null,
+    "expires_at_unix_sec": null,
+    "scope": "camera_read_capture_and_offline_evaluation_only",
+    "allow": [
+      "start_preapproved_rgbd_camera_driver",
+      "subscribe_rgb_depth_camera_info_tf",
+      "record_exact_frozen_six_topic_bag",
+      "run_dual_model_inference",
+      "publish_perception_only_outputs",
+      "subscribe_typed_perception_frame",
+      "write_exclusive_new_evidence_files",
+      "run_offline_index_binding_and_readiness"
+    ],
+    "deny": [
+      "publish_or_subscribe_actuation_commands",
+      "send_navigation_goals",
+      "start_base_navigation_teleop_bridge_watchdog",
+      "start_arm_gripper_moveit_or_executor",
+      "open_actuator_uart_or_serial",
+      "rosbag_play",
+      "record_extra_or_alias_topics",
+      "frame_id_override_or_placeholder_tf",
+      "overwrite_existing_evidence",
+      "use_sim_time",
+      "connect_perception_to_motion_consumers"
+    ],
+    "preconditions": {
+      "physical_estop_available": null,
+      "ros1_control_graph_confirmed_inactive": null,
+      "ros2_control_graph_confirmed_inactive": null,
+      "actuator_uart_owner_confirmed_absent": null
+    }
+  },
+  "release_binding": {
+    "release_id": null,
+    "source_manifest": null,
+    "source_set_sha256": null,
+    "models": {
+      "plastic_bottle": null,
+      "trash_bin": null
+    }
+  },
+  "frozen_topic_manifest": {
+    "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+    "schema_version": 1,
+    "path": "fixtures/rgbd_expected_topics.json",
+    "size_bytes": 1969,
+    "sha256": "0e56197a7ca2bb01675d7894c79ff89fbcc2e45c5fad1c969ce97471c07dc8f4",
+    "topics": [
+      "/camera/color/image_raw",
+      "/camera/depth/image_raw",
+      "/camera/color/camera_info",
+      "/camera/depth/camera_info",
+      "/tf",
+      "/tf_static"
+    ]
+  },
+  "capture_policy": {
+    "scenes_exact": [
+      "background",
+      "bin_only",
+      "bottle_in_bin",
+      "bottle_outside"
+    ],
+    "min_unique_typed_frames_per_scene": 30,
+    "target_unique_typed_frames_per_scene": 120,
+    "duration_sec": 120,
+    "raw_storage_identifier": "sqlite3",
+    "exclusive_new_files": true,
+    "raw_topics_exact": [
+      "/camera/color/image_raw",
+      "/camera/depth/image_raw",
+      "/camera/color/camera_info",
+      "/camera/depth/camera_info",
+      "/tf",
+      "/tf_static"
+    ],
+    "planned_exclusive_output_paths": [],
+    "max_sync_span_sec": 0.15,
+    "max_dynamic_tf_age_sec": 0.15,
+    "max_typed_raw_unpaired_rate": 0.05
+  },
+  "global_artifacts": {
+    "runtime_preflight": null,
+    "ros_build_validation": null,
+    "ros1_field_install_validation": null,
+    "hardware_readiness": null,
+    "extrinsics_measurement_reference": null,
+    "authorization_record": null
+  },
+  "scenes": {
+    "background": {
+      "scene": "background",
+      "expected_presence": {
+        "plastic_bottle": false,
+        "trash_bin": false
+      },
+      "expected_bottle_relation": "absent",
+      "capture_id": null,
+      "task_id": null,
+      "min_unique_typed_frames": 30,
+      "target_unique_typed_frames": 120,
+      "exclusive_new_files": true,
+      "arrangement": {
+        "independently_arranged": true,
+        "operator": null,
+        "reviewer": null,
+        "started_unix_sec": null,
+        "ended_unix_sec": null
+      },
+      "capture_window": {
+        "started_unix_sec": null,
+        "ended_unix_sec": null
+      },
+      "artifacts": {
+        "raw_capture": null,
+        "raw_inspection": null,
+        "typed_frames": null,
+        "collector_manifest": null,
+        "typed_raw_binding": null,
+        "rgbd_artifact": null,
+        "ground_truth": null,
+        "tf_artifact": null,
+        "xyz_ground_truth": null,
+        "depth_measurement_reference": null,
+        "depth_quality": null,
+        "latency_evidence": null,
+        "scene_evidence_binding": null
+      },
+      "capture_provenance": {
+        "capture_binding_id": null,
+        "capture_id": null,
+        "scene": "background",
+        "task_id": null,
+        "capture_window": {
+          "started_unix_sec": null,
+          "ended_unix_sec": null
+        },
+        "release_id": null,
+        "source_set_sha256": null,
+        "model_sha256": {
+          "plastic_bottle": null,
+          "trash_bin": null
+        },
+        "raw_capture_sha256": null,
+        "raw_inspection_sha256": null,
+        "expected_topic_manifest": null
+      },
+      "evidence_requirements": {
+        "exhaustive_ground_truth": true,
+        "truth_classes_exact": ["plastic_bottle", "trash_bin"],
+        "real_tf_and_tf_static_chain": true,
+        "base_frame": "base_link",
+        "camera_frame": "camera_color_optical_frame",
+        "independent_xyz_reference": true,
+        "independent_depth_reference": true,
+        "clock_domain": "system_time_unix",
+        "sensor_stamp_clock": "CLOCK_REALTIME",
+        "receipt_clock": "CLOCK_REALTIME",
+        "synchronization_status": "synchronized",
+        "processing_and_transport_latency": true
+      }
+    },
+    "bin_only": {
+      "scene": "bin_only",
+      "expected_presence": {
+        "plastic_bottle": false,
+        "trash_bin": true
+      },
+      "expected_bottle_relation": "absent",
+      "capture_id": null,
+      "task_id": null,
+      "min_unique_typed_frames": 30,
+      "target_unique_typed_frames": 120,
+      "exclusive_new_files": true,
+      "arrangement": {
+        "independently_arranged": true,
+        "operator": null,
+        "reviewer": null,
+        "started_unix_sec": null,
+        "ended_unix_sec": null
+      },
+      "capture_window": {
+        "started_unix_sec": null,
+        "ended_unix_sec": null
+      },
+      "artifacts": {
+        "raw_capture": null,
+        "raw_inspection": null,
+        "typed_frames": null,
+        "collector_manifest": null,
+        "typed_raw_binding": null,
+        "rgbd_artifact": null,
+        "ground_truth": null,
+        "tf_artifact": null,
+        "xyz_ground_truth": null,
+        "depth_measurement_reference": null,
+        "depth_quality": null,
+        "latency_evidence": null,
+        "scene_evidence_binding": null
+      },
+      "capture_provenance": {
+        "capture_binding_id": null,
+        "capture_id": null,
+        "scene": "bin_only",
+        "task_id": null,
+        "capture_window": {
+          "started_unix_sec": null,
+          "ended_unix_sec": null
+        },
+        "release_id": null,
+        "source_set_sha256": null,
+        "model_sha256": {
+          "plastic_bottle": null,
+          "trash_bin": null
+        },
+        "raw_capture_sha256": null,
+        "raw_inspection_sha256": null,
+        "expected_topic_manifest": null
+      },
+      "evidence_requirements": {
+        "exhaustive_ground_truth": true,
+        "truth_classes_exact": ["plastic_bottle", "trash_bin"],
+        "real_tf_and_tf_static_chain": true,
+        "base_frame": "base_link",
+        "camera_frame": "camera_color_optical_frame",
+        "independent_xyz_reference": true,
+        "independent_depth_reference": true,
+        "clock_domain": "system_time_unix",
+        "sensor_stamp_clock": "CLOCK_REALTIME",
+        "receipt_clock": "CLOCK_REALTIME",
+        "synchronization_status": "synchronized",
+        "processing_and_transport_latency": true
+      }
+    },
+    "bottle_in_bin": {
+      "scene": "bottle_in_bin",
+      "expected_presence": {
+        "plastic_bottle": true,
+        "trash_bin": true
+      },
+      "expected_bottle_relation": "inside_trash_bin_non_actionable",
+      "capture_id": null,
+      "task_id": null,
+      "min_unique_typed_frames": 30,
+      "target_unique_typed_frames": 120,
+      "exclusive_new_files": true,
+      "arrangement": {
+        "independently_arranged": true,
+        "operator": null,
+        "reviewer": null,
+        "started_unix_sec": null,
+        "ended_unix_sec": null
+      },
+      "capture_window": {
+        "started_unix_sec": null,
+        "ended_unix_sec": null
+      },
+      "artifacts": {
+        "raw_capture": null,
+        "raw_inspection": null,
+        "typed_frames": null,
+        "collector_manifest": null,
+        "typed_raw_binding": null,
+        "rgbd_artifact": null,
+        "ground_truth": null,
+        "tf_artifact": null,
+        "xyz_ground_truth": null,
+        "depth_measurement_reference": null,
+        "depth_quality": null,
+        "latency_evidence": null,
+        "scene_evidence_binding": null
+      },
+      "capture_provenance": {
+        "capture_binding_id": null,
+        "capture_id": null,
+        "scene": "bottle_in_bin",
+        "task_id": null,
+        "capture_window": {
+          "started_unix_sec": null,
+          "ended_unix_sec": null
+        },
+        "release_id": null,
+        "source_set_sha256": null,
+        "model_sha256": {
+          "plastic_bottle": null,
+          "trash_bin": null
+        },
+        "raw_capture_sha256": null,
+        "raw_inspection_sha256": null,
+        "expected_topic_manifest": null
+      },
+      "evidence_requirements": {
+        "exhaustive_ground_truth": true,
+        "truth_classes_exact": ["plastic_bottle", "trash_bin"],
+        "real_tf_and_tf_static_chain": true,
+        "base_frame": "base_link",
+        "camera_frame": "camera_color_optical_frame",
+        "independent_xyz_reference": true,
+        "independent_depth_reference": true,
+        "clock_domain": "system_time_unix",
+        "sensor_stamp_clock": "CLOCK_REALTIME",
+        "receipt_clock": "CLOCK_REALTIME",
+        "synchronization_status": "synchronized",
+        "processing_and_transport_latency": true
+      }
+    },
+    "bottle_outside": {
+      "scene": "bottle_outside",
+      "expected_presence": {
+        "plastic_bottle": true,
+        "trash_bin": true
+      },
+      "expected_bottle_relation": "outside_trash_bin_actionable",
+      "capture_id": null,
+      "task_id": null,
+      "min_unique_typed_frames": 30,
+      "target_unique_typed_frames": 120,
+      "exclusive_new_files": true,
+      "arrangement": {
+        "independently_arranged": true,
+        "operator": null,
+        "reviewer": null,
+        "started_unix_sec": null,
+        "ended_unix_sec": null
+      },
+      "capture_window": {
+        "started_unix_sec": null,
+        "ended_unix_sec": null
+      },
+      "artifacts": {
+        "raw_capture": null,
+        "raw_inspection": null,
+        "typed_frames": null,
+        "collector_manifest": null,
+        "typed_raw_binding": null,
+        "rgbd_artifact": null,
+        "ground_truth": null,
+        "tf_artifact": null,
+        "xyz_ground_truth": null,
+        "depth_measurement_reference": null,
+        "depth_quality": null,
+        "latency_evidence": null,
+        "scene_evidence_binding": null
+      },
+      "capture_provenance": {
+        "capture_binding_id": null,
+        "capture_id": null,
+        "scene": "bottle_outside",
+        "task_id": null,
+        "capture_window": {
+          "started_unix_sec": null,
+          "ended_unix_sec": null
+        },
+        "release_id": null,
+        "source_set_sha256": null,
+        "model_sha256": {
+          "plastic_bottle": null,
+          "trash_bin": null
+        },
+        "raw_capture_sha256": null,
+        "raw_inspection_sha256": null,
+        "expected_topic_manifest": null
+      },
+      "evidence_requirements": {
+        "exhaustive_ground_truth": true,
+        "truth_classes_exact": ["plastic_bottle", "trash_bin"],
+        "real_tf_and_tf_static_chain": true,
+        "base_frame": "base_link",
+        "camera_frame": "camera_color_optical_frame",
+        "independent_xyz_reference": true,
+        "independent_depth_reference": true,
+        "clock_domain": "system_time_unix",
+        "sensor_stamp_clock": "CLOCK_REALTIME",
+        "receipt_clock": "CLOCK_REALTIME",
+        "synchronization_status": "synchronized",
+        "processing_and_transport_latency": true
+      }
+    }
+  }
+}

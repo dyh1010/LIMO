@@ -6,9 +6,12 @@ cleanup_dual_model_detector:
     # This must be depth registered/aligned to the RGB pixel grid.
     depth_topic: /camera/depth/image_raw
     camera_info_topic: /camera/color/camera_info
+    depth_camera_info_topic: /camera/depth/camera_info
     depth_scale: 0.001
     min_depth: 0.30
     max_depth: 3.00
+    min_target_depth_pixels: 5
+    min_target_depth_ratio: 0.02
     frame_id_override: ''
     confidence: 0.35
     iou: 0.45
@@ -16,6 +19,8 @@ cleanup_dual_model_detector:
     device: '0'
     process_period: 0.20
     publish_period: 0.50
+    max_sync_delta_sec: 0.15
+    sync_queue_size: 30
     in_bin_overlap: 0.30
     opening_height_ratio: 0.62
     opening_margin_ratio: 0.0

@@ -1,0 +1,61 @@
+{
+  "schema": "limo_jyu2c_intrinsics/v1",
+  "status": "CALIBRATED_CANDIDATE_PENDING_DEVICE_IDENTITY_REBIND",
+  "motion_authority": false,
+  "camera": {
+    "vendor": "JoyandAI",
+    "model": "JYU2C-2083",
+    "serial": "JYU2C-2083-2603103",
+    "usb_vendor_id": "1bcf",
+    "usb_model_id": "2281",
+    "stable_device_path": "/dev/v4l/by-id/usb-JoyandAI_JYU2C-2083_JYU2C-2083-2603103-video-index0",
+    "width": 640,
+    "height": 480,
+    "distortion_model": "plumb_bob"
+  },
+  "camera_matrix": [
+    410.47240131383364,
+    0.0,
+    315.36436501208436,
+    0.0,
+    410.44123266246476,
+    256.44674823678156,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "distortion_coefficients": [
+    -0.3309952005845528,
+    0.16255538901288852,
+    -0.0010196075254803902,
+    0.0002165779041849054,
+    -0.0574223753740263
+  ],
+  "calibration": {
+    "checkerboard_inner_corners": [11, 8],
+    "square_size_m": 0.014,
+    "captured_views": 30,
+    "final_views": 29,
+    "excluded_views": ["view_04.png"],
+    "final_rms_px": 0.13557634644859942,
+    "holdout_views": 6,
+    "holdout_mean_rms_px": 0.0838388813038667,
+    "holdout_max_rms_px": 0.12934455275535583
+  },
+  "source": {
+    "archive_sha256": "9af1808c6eaee04d870d9d0a01ea680522194bda70bec4172e2c31af1f5a3a90",
+    "intrinsics_json_sha256": "9dc7c18f12573c7d3b67cd694708092da1cdd761eff38659ecdb8f7b7d46b9d1",
+    "collector_sha256": "8bea2ab871346577c5ff0bfd8bfec61a75829663a45b8999c703afedbd9adce3",
+    "superseded_capture": "v1_preview_overlay_not_calibration_evidence",
+    "device_identity_binding": "REBIND_REQUIRED_OR_RECAPTURE"
+  },
+  "remaining_required_gates": [
+    "intrinsics_device_identity_rebind",
+    "hand_eye_flange_to_camera",
+    "independent_metric_validation",
+    "wrist_yolo_model",
+    "ros1_camera_info_publisher",
+    "ik_and_collision_planner",
+    "action_level_motion_authorization"
+  ]
+}

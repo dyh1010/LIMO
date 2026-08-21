@@ -1,59 +1,99 @@
-# myCobot Gripper AG control boundary
+# Gripper control boundary (simulation-only; runtime prohibited)
 
-## Purpose
+## Current repository status
 
-The confirmed end effector is the Elephant Robotics myCobot Gripper AG
-(`mycobot_gripper_ag`) mounted on a myCobot 280 M5. The repository previously
-contained only mock `grasping` and `dropping` states. It had no bounded
-gripper command interface, hardware-motion interlock, position verification,
-timeout, or failure contract.
+The final end effector is not frozen. The CAD under
+`C:\Users\DYH\Desktop\v1gripper` is a complete replacement-gripper candidate,
+not evidence that an Elephant Robotics AG actuator, controller or protocol is
+retained. No real gripper backend or hardware transport is released.
 
-This implementation adds a standalone action:
+The current ROS 2 source contains two distinct simulation-only surfaces:
+
+- The legacy `gripper_controller` executable exposes `/cleanup/gripper` with
+  `limo_cleanup_interfaces/action/ControlGripper`. It constructs
+  `DryRunGripperBackend` only. Selecting another backend leaves the controller
+  without a backend; selecting `pymycobot` does not construct a client even if
+  `allow_hardware_motion` is true.
+- The contract gateway `gripper_gateway` exposes
+  `/cleanup/gripper/execute`, `/cleanup/gripper/stop`,
+  `/cleanup/gripper/acknowledge_fault` and `/cleanup/gripper/state` using
+  `ExecuteGripperMotion`, `StopGripper`, `AcknowledgeGripperFault` and
+  `GripperState`. It accepts only `backend=dry_run`, constructs the local
+  in-memory `DryRunGatewayGripperBackend`, and requires all identity fields to
+  use explicit `DRY_RUN_*` sentinels.
+
+Neither surface contains a gripper hardware transport: there is no serial,
+USB, device-path, vendor-socket or actuator-owner implementation.
+`DRY_RUN_TRANSPORT` is a sentinel identity string, not a transport
+implementation. The full cleanup launch does not start the legacy gripper
+controller by default.
+
+These statements describe the reviewed source. They do not claim that a ROS
+runtime or ROS graph was started or inspected in this task.
+
+## Permanent task boundary
+
+This task is permanently limited to local pure-fake tests, source/AST/compile
+checks, documentation, manifests and hashes. It must not:
+
+- establish SSH or any target-machine connection;
+- enumerate, inspect or open device paths, serial ports or USB devices;
+- start, inspect or interact with a ROS runtime or ROS graph;
+- import, construct or connect a vendor backend;
+- send any Action or Service request, including the simulation-only endpoints;
+- power, enable, initialize, home, calibrate, clear faults or move a gripper.
+
+The boundary is stronger than the launch defaults. No command example,
+interface definition, manifest or future checklist grants permission to run a
+ROS node or contact hardware. Software STOP is not a physical emergency stop
+and cannot prove removal of stored mechanical energy.
+
+## Simulation-only contracts
+
+The legacy `ControlGripper` action uses a normalized position contract:
 
 ```text
-/cleanup/gripper
-limo_cleanup_interfaces/action/ControlGripper
+0.0 = configured dry-run closed endpoint
+1.0 = configured dry-run open endpoint
 ```
 
-The public position is normalized:
+It lacks session, authorization, command-ID, separate STOP and separate ACK
+fields. It remains an integration fixture and is not a releasable hardware
+contract. Its `allow_hardware_motion` parameter does not create a hardware
+path.
+
+The newer gateway source wires the tool-neutral Action/STOP/ACK/state IDL to a
+ROS node, but only around an in-memory backend. Its launch and config pin:
 
 ```text
-0.0 = calibrated closed position
-1.0 = calibrated open position
+backend: dry_run
+allow_simulated_motion: false
+reviewed_* identity: DRY_RUN_* sentinels
 ```
 
-`COMMAND_SET_POSITION` is intentionally supported. An empty plastic bottle is
-deformable, so the first real grasp must use a measured partial-close position
-instead of blindly driving to the mechanical closed limit.
+The gateway core provides session binding, authorization and command IDs,
+timestamped samples, identity and controller-boot checks, `STOPPING`,
+multi-sample stationary verification, latched faults and authorization-gated
+local ACK. Jaw opening, current, force, voltage and temperature are not
+implemented by the dry-run backend and must not be inferred from normalized
+position.
 
-## Safety defaults
+The repository contains no released final-tool parser, hardware gateway,
+transport owner, firmware binding or physical STOP/ACK implementation.
 
-- The default backend is `dry_run`.
-- `allow_hardware_motion` defaults to `false`.
-- Selecting `backend:=pymycobot` without motion authorization does not import
-  pymycobot, open the serial device, or transmit a command.
-- Real connection also requires
-  `confirmed_gripper_model:=mycobot_gripper_ag`.
-- Calibration, initialization, zeroing and repeated close commands are never
-  issued automatically.
-- A timeout aborts the action without an automatic retry or recovery movement.
-- The full cleanup launch does not start the gripper controller by default.
+## Backend and legacy AG policy
 
-These rules protect against an incorrect serial device, mismatched driver API,
-unverified jaw direction, crushing an empty bottle, and repeated closing after
-a jam.
+`DryRunGripperBackend` and `DryRunGatewayGripperBackend` store state in memory.
+They are the only backends constructed by the ROS source.
 
-## Backends
+`PymycobotGripperBackend` is a permanent fail-closed placeholder. It requires
+an explicit callable only so tests can prove that the supplied factory is
+never invoked; it exposes no command/read/STOP/close protocol methods and
+contains no retired device route, actuator selector or command calibration.
+No ROS factory constructs it. A generic arm STOP must never be presented as
+gripper STOP evidence.
 
-`dry_run` stores and reports the commanded normalized position. It is suitable
-for action integration and task-state tests before hardware arrival.
-
-`pymycobot` is a deliberately thin optional adapter around
-`set_gripper_value` and `get_gripper_value`. It supports pymycobot variants
-whose methods either include or omit the `gripper_type` argument. The package
-is loaded dynamically, so development and dry-run tests do not require it.
-
-The provisional raw calibration is:
+The previous provisional AG values are retired:
 
 ```yaml
 closed_value: 0
@@ -61,48 +101,61 @@ open_value: 100
 gripper_type: 1
 ```
 
-These values are not yet hardware acceptance results. Confirm them against the
-installed pymycobot version and the physical gripper before enabling motion.
+They are not runtime defaults or release evidence. Historical feedback `255`
+is INVALID/DISCONNECTED, never fully open. Do not inherit the range, direction,
+type, torque, current, TCP or mass assumptions for either a retained AG chain
+or the complete replacement candidate.
 
-## Dry-run
+## Local verification scope
 
-```bash
-ros2 launch limo_cleanup_bringup gripper_control.launch.py
-```
+Permitted verification is source-only or pure-fake. Relevant local contracts
+include:
 
-Open:
+- `test_gripper_source_safety.py` for vendor-import, construction and launch
+  lockouts;
+- `test_gripper_gateway_ros_contract.py` for simulation-only ROS source and
+  dry-run launch/config wiring;
+- `test_gripper_gateway_callback_contract.py` for Action/STOP/ACK callback
+  behavior without importing ROS 2;
+- `test_gripper_gateway_core.py` for session, identity, STOP, stationary, ACK,
+  timeout and concurrency behavior with fake backends;
+- `test_gripper_safety_latch.py` for append-only restart persistence,
+  monotonic session epochs/nonces, pre-latch old-session rejection, exact
+  runtime/profile binding and forged clearance/hash rejection;
+- `test_gripper_interface_contract.py` for tool-neutral IDL and removal of AG
+  defaults.
 
-```bash
-ros2 action send_goal /cleanup/gripper \
-  limo_cleanup_interfaces/action/ControlGripper \
-  "{command: 1, position: 0.0, speed: 0.2, verify: true}"
-```
+The machine-readable persistence design is documented in
+`docs/gripper_persistent_safety_latch.md`. It is not wired into the gateway
+STOP path and cannot substitute for protected storage, a bounded supervisor or
+physical energy isolation.
 
-Partial close:
+Under the current permanent boundary, do not run `ros2 launch`, send an Action
+goal, call a Service, inspect a graph or use a vendor tool, even for an
+otherwise in-memory configuration.
 
-```bash
-ros2 action send_goal /cleanup/gripper \
-  limo_cleanup_interfaces/action/ControlGripper \
-  "{command: 3, position: 0.35, speed: 0.15, verify: true}"
-```
+## Unreleased future evidence
 
-## Hardware acceptance sequence
+The controlled missing inputs are tracked in
+`docs/final_gripper_release_input_checklist.md`,
+`src/limo_cleanup_executor/config/final_gripper_release_manifest.json` and
+`docs/arm_gripper_field_acceptance_matrix.md`. The checked-in manifest keeps
+`release_requested=false` and `release_approved=false`.
 
-Do not enable `pymycobot` until all of the following are complete:
+Release remains blocked on the exact final tool and assembly revision,
+actuator/controller/firmware identity, protocol, sole transport owner,
+electrical limits, native units, command/opening calibration, TCP, mass, CoM,
+inertia, collision/cable envelope, STOP/stationary/ACK semantics and signed
+review evidence. CAD filenames and legacy AG parameters cannot fill those
+fields.
 
-1. Verify the arm and gripper nameplates, supply, grounding, mounting and
-   emergency power removal.
-2. Confirm the Jetson serial path, permissions, pymycobot version, constructor
-   class and `gripper_type` required by that version.
-3. Keep the arm stationary and clear the gripper workspace.
-4. Confirm which raw value opens and closes the jaws using the vendor tool at
-   minimum speed. Update `closed_value` and `open_value`.
-5. Measure the safe jaw range and calibrate `gripper_tcp`.
-6. Use a weighed empty bottle. Sweep partial-close values slowly and record the
-   first repeatable hold position, slip rate and release success.
-7. Only after those checks, launch with both
-   `backend:=pymycobot` and `allow_hardware_motion:=true`.
+Supplier documents may continue to be reviewed locally. Physical measurement,
+passive identity read, staged power-up or motion acceptance is outside this
+task and is currently unauthorized. This document intentionally provides no
+field execution sequence and no path to enable a hardware backend. A future
+task would require a new, explicit scope and authorization; the present task
+must remain local and disconnected.
 
-Gripper position alone does not prove a successful grasp. A bottle may slip,
-buckle, or remain between the jaws. The parent cleanup executor must later use
-vision, arm load/current data, or another sensor to verify pickup and release.
+Gripper position alone would not prove a successful grasp. Any future release
+would also need independent pickup, retention and release evidence without
+weakening the transport, STOP or physical-energy-isolation requirements.

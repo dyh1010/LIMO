@@ -15,8 +15,18 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CleanupTask.msg"
   "msg/CleanupStatus.msg"
   "msg/ObjectDetection.msg"
+  "msg/PerceptionTarget.msg"
+  "msg/PerceptionFrame.msg"
+  "msg/ArmState.msg"
+  "msg/GripperState.msg"
   "action/ExecuteCleanup.action"
   "action/ControlGripper.action"
+  "action/ExecuteArmMotion.action"
+  "action/ExecuteGripperMotion.action"
+  "srv/StopArm.srv"
+  "srv/AcknowledgeArmFault.srv"
+  "srv/StopGripper.srv"
+  "srv/AcknowledgeGripperFault.srv"
   DEPENDENCIES builtin_interfaces geometry_msgs
 )
 

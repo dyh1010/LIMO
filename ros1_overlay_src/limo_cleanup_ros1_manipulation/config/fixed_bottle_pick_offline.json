@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "mode": "LOCAL_OFFLINE_PREVIEW_ONLY",
+  "object_class": "plastic_bottle",
+  "target_frame": "arm_base_link",
+  "minimum_confidence": 0.8,
+  "maximum_target_age_s": 0.25,
+  "fixed_target": {
+    "position_m": null,
+    "position_tolerance_m": null,
+    "orientation_attestation_id": null,
+    "tool_rpy_rad": null
+  },
+  "geometry": {
+    "target_to_grasp_tcp_m": null,
+    "pregrasp_clearance_m": null,
+    "lift_clearance_m": null
+  },
+  "workspace": {
+    "x_m": null,
+    "y_m": null,
+    "z_m": null
+  },
+  "gripper": {
+    "source_config_sha256": "62508BEA0CB96817099DC8EFDE10FEB034CAD7A844A95FEFDD29A3F57A6BBD18",
+    "gripper_type": 1,
+    "open_target": 100,
+    "bottle_60mm_target": 5,
+    "speed": 30,
+    "protect_current": 300,
+    "hold_success": {
+      "moving_required": true,
+      "feedback_range": [18, 20],
+      "bottle_clamped_required": true,
+      "no_abnormal_sound_required": true,
+      "no_overheat_required": true
+    }
+  },
+  "runtime": {
+    "dry_run": true,
+    "allow_arm_motion": false,
+    "allow_gripper_motion": false,
+    "vendor_backend_allowed": false,
+    "device_access_allowed": false
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "schema": "limo_v1_ros1_vendor_include_blocker/v1",
+  "generated_utc": "2026-08-14T05:26:51.6438449Z",
+  "status": "BLOCKED_ON_VENDOR_INCLUDE",
+  "ownership_conclusion": "PROVISIONAL",
+  "claim_scope": "DESIGN_INTENT_NOT_RUNTIME_VERIFIED",
+  "blocked_include": {
+    "consumer": "launch/v1_base_sensors.launch",
+    "expression": "$(find limo_bringup)/launch/limo_start.launch",
+    "wrapper_remap": "/cmd_vel->/v1/driver_cmd_vel",
+    "wrapper_forced_args": {
+      "pub_odom_tf": true
+    },
+    "wrapper_remap_or_args_close_vendor_evidence": false
+  },
+  "current_local_evidence": {
+    "searched_roots": [
+      "C:/Users/DYH/Desktop/ai scout develop",
+      "C:/Users/DYH/Desktop/limo_graphtest",
+      "C:/Users/DYH/Desktop/v1gripper"
+    ],
+    "local_archives_examined": 5,
+    "vendor_raw_source_archived": false,
+    "current_hash_verified": false,
+    "resolved_include_chain_verified": false,
+    "installed_vendor_manifest_present": false,
+    "runtime_graph_queried": false
+  },
+  "required_installed_tf_publisher_pin": {
+    "status": "MISSING",
+    "edge": {
+      "parent_frame": "base_link",
+      "child_frame": "laser_link",
+      "temporal_semantics": "STATIC"
+    },
+    "resolved_launch_node_name": null,
+    "resolved_callerid": null,
+    "package": null,
+    "package_version": null,
+    "node_type": null,
+    "executable_absolute_path": null,
+    "executable_sha256": null,
+    "resolved_arguments": null,
+    "selected_topic": null,
+    "selected_transport_semantics": null,
+    "candidate_topics_pending_pin": ["/tf", "/tf_static"],
+    "candidate_topics_are_runtime_allowlist": false,
+    "historical_candidate_callerid": "/base_link_to_laser_link",
+    "historical_candidate_is_runtime_allowlist": false,
+    "runtime_observation_can_create_or_select_pin": false
+  },
+  "future_verified_tf_rules_artifact_contract": {
+    "schema": "limo_v1_ros1_vendor_tf_rules/v2",
+    "default_path": null,
+    "auto_discovery_allowed": false,
+    "required_top_level_fields": [
+      "schema",
+      "status",
+      "source_manifest_sha256",
+      "publisher_pin_sha256",
+      "rules"
+    ],
+    "required_rule_fields": [
+      "parent_frame",
+      "child_frame",
+      "authority",
+      "topic",
+      "behavior"
+    ],
+    "self_reported_provenance_field_allowed": false,
+    "status_must_equal": "VERIFIED",
+    "allowed_behaviors": ["STATIC_PERIODIC", "STATIC_LATCHED"],
+    "rules_must_cover": "EVERY_VENDOR_STATIC_EDGE_IN_RESOLVED_INCLUDE_CHAIN",
+    "historical_camera_imu_laser_edges_are_candidates_only": true,
+    "empty_missing_or_unverified_disposition": "FAIL_CLOSED"
+  },
+  "independent_artifact_binding_contract": {
+    "source_manifest_schema": "limo_v1_ros1_vendor_source_manifest/v1",
+    "publisher_pin_schema": "limo_v1_ros1_vendor_tf_publisher_pin/v1",
+    "source_manifest_status_required": "VERIFIED",
+    "publisher_pin_status_required": "VERIFIED",
+    "blocker_status_required_before_any_loader_pass": "VERIFIED",
+    "source_manifest_requirements": [
+      "closure_complete=true",
+      "root is limo_bringup/launch/limo_start.launch",
+      "every archived roslaunch path is absolute and exists",
+      "every archived raw byte stream is rehashed and matches its declared SHA-256",
+      "the declared recursive include graph exactly matches include elements parsed from the same archived bytes",
+      "every artifact is reachable from the root"
+    ],
+    "publisher_pin_requirements": [
+      "actual executable bytes exist and match executable_sha256",
+      "package and node type match every parsed static_transform_publisher in the archived source",
+      "callerid, parent, child, topic and behavior exactly match the parsed source nodes",
+      "source_manifest_sha256 binds the exact parsed source-manifest bytes"
+    ],
+    "rules_manifest_requirements": [
+      "source_manifest_sha256 and publisher_pin_sha256 bind the exact independently parsed artifact bytes",
+      "the normalized rules equal the publisher-pin rules exactly",
+      "arbitrary well-formed hashes and provenance_verified self-claims are rejected"
+    ],
+    "installed_blocker_must_independently_pin": [
+      "source_manifest_sha256",
+      "publisher_pin_sha256",
+      "rules_manifest_sha256",
+      "resolved_callerid",
+      "selected_topic",
+      "selected_transport_semantics",
+      "executable_sha256"
+    ]
+  },
+  "historical_evidence": {
+    "classification": "HISTORICAL_SUMMARY_WITHOUT_ARCHIVED_RAW_BYTES",
+    "record": "C:/Users/DYH/Desktop/ai scout develop/ROS1_LIDAR_NAV_V1_PROGRESS_2026-08-11.md",
+    "observed_vendor_root": "/home/agilex/agilex_ws/src/limo_ros",
+    "limo_start_launch": {
+      "path": "/home/agilex/agilex_ws/src/limo_ros/limo_bringup/launch/limo_start.launch",
+      "size_bytes": 1061,
+      "mtime_local": "2023-10-12T11:17:53+08:00",
+      "sha256": "acd80d07a8169ef15d805a365d1ae72615ced51db32ccf7f5ec94719fede0682",
+      "reported_includes": [
+        "$(find limo_base)/launch/limo_base.launch",
+        "$(find ydlidar_ros_driver)/launch/Tmini.launch"
+      ],
+      "reported_static_tf_nodes": [
+        "/base_link_to_camera_link",
+        "/base_link_to_imu_link",
+        "/base_link_to_laser_link"
+      ],
+      "reported_static_tf_rate_hz": 10
+    },
+    "limo_base_launch": {
+      "path": "/home/agilex/agilex_ws/src/limo_ros/limo_base/launch/limo_base.launch",
+      "sha256": "239acd47bab21658382485990d1a9859268f02b39199cfeeabcd38a7c28e9a4c"
+    },
+    "tmini_launch": {
+      "path": "/home/agilex/agilex_ws/src/ydlidar_ros_driver/launch/Tmini.launch",
+      "sha256": "c287b8c9b1a81f16be5a8b8e12bfad202dcaba8ead2a303add3d73bf57fdb899"
+    },
+    "historical_hashes_prove_current_bytes": false,
+    "tf_transport": "HISTORICALLY_/tf_RATE_BASED_CURRENTLY_UNRESOLVED"
+  },
+  "required_artifacts_to_close_source_chain": [
+    "raw limo_bringup/launch/limo_start.launch bytes with stat and SHA-256",
+    "raw limo_base/launch/limo_base.launch bytes with stat and SHA-256",
+    "raw ydlidar_ros_driver/launch/Tmini.launch bytes with stat and SHA-256",
+    "every recursively included launch/config/xacro file with canonical path and SHA-256",
+    "resolved static TF publisher package/version, node type, executable absolute path and SHA-256",
+    "resolved static TF node name/callerid, full arguments, parent/child frames, selected topic and temporal semantics",
+    "rospack find output for limo_bringup, limo_base, and ydlidar_ros_driver",
+    "roslaunch --files expansion for the exact launch arguments",
+    "roslaunch --nodes expansion for the exact launch arguments",
+    "roslaunch --dump-params output for the exact launch arguments",
+    "resolved remap/node/parameter inventory bound to the same package paths and hashes"
+  ],
+  "runtime_evidence_still_required_after_source_closure": [
+    "exact publishers and subscribers for /scan, /odom, /cmd_vel, and private driver command",
+    "each TFMessage transform attributed by parent frame, child frame, connection callerid, exact /tf or /tf_static callback topic, source stamp, receipt time, and geometry fingerprint",
+    "edge-level TF attribution for odom->base_link, base_link->laser_link, and the stage-specific map->odom rule",
+    "exactly one parent and one authority per protected child frame",
+    "absence of the same edge across both /tf and /tf_static",
+    "dynamic /tf freshness/stamp behavior and pinned static periodic-or-latched behavior",
+    "absence of duplicate driver, lidar, TF, teleop, navigation, and public command owners"
+  ],
+  "decision": {
+    "ownership_closed": false,
+    "software_contract_provisional": true,
+    "field_execution_ready": false,
+    "static_wrapper_remap_is_sufficient": false,
+    "historical_tf_candidate_is_sufficient": false,
+    "runtime_tf_observation_can_select_transport": false,
+    "tf_edge_runtime_pass_eligible": false,
+    "tf_edge_policy_enforcement_scope": [
+      "V1_RUNTIME_PREFLIGHT",
+      "V1_PERCEPTION_ONLY_FIELD_CAPTURE"
+    ],
+    "continuous_guard_or_ready_tf_edge_claimed": false,
+    "unknown_or_mismatched_vendor_source_disposition": "FAIL_CLOSED"
+  },
+  "safety": {
+    "ros_started": false,
+    "hardware_accessed": false,
+    "serial_accessed": false,
+    "goal_sent": false,
+    "twist_published": false
+  }
+}

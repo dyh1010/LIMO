@@ -1,0 +1,16 @@
+<launch>
+  <!-- Base/sensors must already have passed the read-only runtime preflight. -->
+  <arg name="enable_mapping" default="false" />
+  <arg name="preflight_token" />
+  <arg name="scan_topic" default="/scan" />
+  <arg name="enable_rviz" default="false" />
+
+  <group if="$(eval arg('enable_mapping') == 'true' and arg('preflight_token') == 'V1_SCAN_ODOM_TF_PREFLIGHT_PASS')">
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen" required="true">
+      <rosparam file="$(find limo_v1_navigation)/config/gmapping.yaml" command="load" />
+      <remap from="scan" to="$(arg scan_topic)" />
+    </node>
+    <node if="$(arg enable_rviz)" pkg="rviz" type="rviz" name="v1_mapping_rviz"
+          args="-d $(find limo_bringup)/rviz/gmapping.rviz" />
+  </group>
+</launch>

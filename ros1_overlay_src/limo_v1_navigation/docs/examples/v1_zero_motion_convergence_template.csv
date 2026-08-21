@@ -1,0 +1,4 @@
+session_id,run_id,robot_id,operator,authorization_id,authorization_scope,overlay_revision,active_map_id,map_yaml_sha256,amcl_sha256,preflight_evidence_path,preflight_sha256,capture_path,capture_sha256,initial_pose_accepted_wall_time,first_new_amcl_wall_time,ready_wall_time,convergence_s,nomotion_successes,nomotion_failures,max_covariance_x,max_covariance_y,max_covariance_yaw,stable_samples,stable_duration_s,repeatability_csv_path,repeatability_report_path,repeatability_report_sha256,final_state,final_reason,result
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

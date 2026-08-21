@@ -1,0 +1,49 @@
+<launch>
+  <arg name="enable_navigation_bridge" default="false" />
+  <arg name="binding_file" />
+  <arg name="binding_sha256" />
+  <arg name="binding_token" />
+  <arg name="map_root" />
+  <arg name="v1_release_root" />
+  <arg name="runtime_lease_file" />
+  <arg name="runtime_lease_sha256" />
+  <arg name="runtime_token" />
+
+  <group if="$(arg enable_navigation_bridge)">
+    <node pkg="limo_cleanup_ros1_base"
+          type="fail_closed_navigation_adapter.py"
+          name="cleanup_ros1_navigation_adapter"
+          output="screen"
+          required="true">
+      <param name="enabled" value="true" />
+      <param name="operating_mode" value="navigation" />
+      <param name="move_base_action" value="/move_base" />
+      <param name="binding_file" value="$(arg binding_file)" />
+      <param name="binding_sha256" value="$(arg binding_sha256)" />
+      <param name="binding_token" value="$(arg binding_token)" />
+      <param name="map_root" value="$(arg map_root)" />
+      <param name="v1_release_root" value="$(arg v1_release_root)" />
+      <param name="runtime_lease_file" value="$(arg runtime_lease_file)" />
+      <param name="runtime_lease_sha256" value="$(arg runtime_lease_sha256)" />
+      <param name="runtime_token" value="$(arg runtime_token)" />
+      <param name="status_rate" value="20.0" />
+      <param name="scan_topic" value="/scan" />
+      <param name="scan_frame" value="laser_link" />
+      <param name="scan_timeout" value="0.5" />
+      <param name="scan_angle_min" value="-1.7453292519943295" />
+      <param name="scan_angle_max" value="1.7453292519943295" />
+      <param name="scan_minimum_beams" value="360" />
+      <param name="global_frame" value="map" />
+      <param name="odom_frame" value="odom" />
+      <param name="base_frame" value="base_link" />
+      <param name="tf_timeout" value="0.5" />
+      <param name="tf_future_tolerance" value="0.10" />
+      <param name="expected_amcl_transform_tolerance" value="0.05" />
+      <param name="amcl_transform_tolerance_param"
+             value="/amcl/transform_tolerance" />
+      <param name="topology_ready_topic"
+             value="/cleanup/navigation/ros1_topology_ready" />
+      <param name="topology_timeout" value="0.25" />
+    </node>
+  </group>
+</launch>

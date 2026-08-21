@@ -1,0 +1,19 @@
+{
+  "schema": "limo_v1_endpoint_measurement/v1",
+  "active_map_id": "limo_v1_map",
+  "goal": {
+    "x": 1.0,
+    "y": 0.0,
+    "yaw": 0.0
+  },
+  "amcl_final": {
+    "x": 0.96,
+    "y": 0.0,
+    "yaw": 0.02
+  },
+  "ground_truth_final": {
+    "x": 0.91,
+    "y": 0.0,
+    "yaw": 0.03
+  }
+}

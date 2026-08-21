@@ -1,0 +1,623 @@
+{
+  "schema_id": "limo.final_gripper_release_manifest",
+  "schema_version": 4,
+  "manifest_id": "FINAL-GRIPPER-RELEASE-INPUT",
+  "manifest_revision": "UNRELEASED-1",
+  "created_at_utc": "2026-08-14T00:00:00Z",
+  "release_requested": false,
+  "release_approved": false,
+  "tool_identity": {
+    "tool_model": null,
+    "tool_revision": null,
+    "assembly_configuration": null,
+    "serial_or_lot": null,
+    "tool_architecture": "COMPLETE_REPLACEMENT",
+    "complete_replacement": true,
+    "legacy_ag_components_retained": false,
+    "ag_retention_map_sha256": null,
+    "assembly_sha256": "d5f513c69b3590378791cfec8e0853567f8377676429772ed7e38d1653e94d98",
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "controller_firmware": {
+    "actuator_manufacturer": null,
+    "actuator_model": null,
+    "actuator_hardware_revision": null,
+    "controller_manufacturer": null,
+    "controller_model": null,
+    "controller_hardware_revision": null,
+    "controller_serial": null,
+    "firmware_revision": null,
+    "compatibility_matrix_sha256": null,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "transport_protocol": {
+    "transport_type": null,
+    "physical_layer_specification": null,
+    "protocol_name": null,
+    "protocol_revision": null,
+    "protocol_definition_sha256": null,
+    "native_command_unit": null,
+    "timing_and_addressing_specification": null,
+    "frame_and_integrity_specification": null,
+    "ack_nak_specification": null,
+    "command_id_specification": null,
+    "ordering_and_replay_specification": null,
+    "watchdog_and_disconnect_specification": null,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "cad_sources": {
+    "source_snapshot_name": "v1gripper-local-read-only-snapshot-2026-08-14",
+    "source_snapshot_sha256": "d588c4e41008a3f04b8dc3ab40b461c4ba35b0320120f9611b78f04ceed090fe",
+    "file_count": 35,
+    "total_size_bytes": 8058955,
+    "assembly_path": "齿轮箱.SLDASM",
+    "assembly_sha256": "d5f513c69b3590378791cfec8e0853567f8377676429772ed7e38d1653e94d98",
+    "neutral_assembly_path": null,
+    "neutral_assembly_sha256": null,
+    "controlled_bom_sha256": null,
+    "controlled_drawing_sha256": null,
+    "files": [
+      {
+        "path": "GB╱T 276-2013[深沟球轴承[60000]604].sldprt",
+        "role": "PART",
+        "sha256": "76d2692c18a1dbd8fc600a89db56f7882b0cb144ed35aa97ec7aa8275ae04777",
+        "size_bytes": 1014440
+      },
+      {
+        "path": "Macro1.swp",
+        "role": "TOOLING",
+        "sha256": "9766385e5bb394502e75baa7e0bffef077cc423a6e96dbe1d3eb92a7bd40f64f",
+        "size_bytes": 20992
+      },
+      {
+        "path": "ZBA推力滚针轴承[ZBA0821].sldprt",
+        "role": "PART",
+        "sha256": "302b4e378c52f556c7e92275fc7f4000dc5aef6ac5d302138410edd46c3a6e7c",
+        "size_bytes": 117752
+      },
+      {
+        "path": "ZC-FL微型带凸缘深沟球轴承 防尘限位式[ZC-FL673ZZ].sldprt",
+        "role": "PART",
+        "sha256": "0c5e3d4ef3a7fd89dc0bd56fb4db56d49439a26fcb85dcbc2fe6081721f36a79",
+        "size_bytes": 178238
+      },
+      {
+        "path": "上盖板.SLDPRT",
+        "role": "PART",
+        "sha256": "52f0b66d5c60dfc1fbf99970c30b21337b2d9b2784c0c7d249846b19ffdf1a3d",
+        "size_bytes": 221097
+      },
+      {
+        "path": "下板.SLDPRT",
+        "role": "PART",
+        "sha256": "5237250b45c694d98923b2e7eb1a604b2340f7c5b095a6b17e15f93839d68506",
+        "size_bytes": 255147
+      },
+      {
+        "path": "前板.SLDPRT",
+        "role": "PART",
+        "sha256": "2a21e1ff099ec32ecf6d9a96d3a3f3856a053fda31252cc759b51e8b5c35b08f",
+        "size_bytes": 84857
+      },
+      {
+        "path": "后板.SLDPRT",
+        "role": "PART",
+        "sha256": "570378d892a8086744564f03dffb12793418244749f85959746c75351073cabf",
+        "size_bytes": 68694
+      },
+      {
+        "path": "垫片.SLDPRT",
+        "role": "PART",
+        "sha256": "0018e04a343e93ab42686760dd16d18606fd19a3ef2eeb808014ea1d7785ffa4",
+        "size_bytes": 74297
+      },
+      {
+        "path": "夹爪.SLDPRT",
+        "role": "PART",
+        "sha256": "557d3e8ca8c950c1d57dd14a41e40c959a3d2585d9fa36267c98bf72755b6e99",
+        "size_bytes": 127482
+      },
+      {
+        "path": "套柱2.SLDPRT",
+        "role": "PART",
+        "sha256": "9d7ba42c927d447b8812e25be88bf0c39532686e2c0db241763155fa71b7b66d",
+        "size_bytes": 76002
+      },
+      {
+        "path": "套柱子.SLDPRT",
+        "role": "PART",
+        "sha256": "a7929a2d336214fc4acd0fb274c9ef331cca6e478012f6813541769bc30a3104",
+        "size_bytes": 75578
+      },
+      {
+        "path": "标准-304防松螺母-M2.5.SLDPRT",
+        "role": "PART",
+        "sha256": "12631728572603c6fb58b7949e5c5c682f265b216dc1a8e0504f8f20ef874cbf",
+        "size_bytes": 381896
+      },
+      {
+        "path": "标准-304防松螺母-M3.SLDPRT",
+        "role": "PART",
+        "sha256": "c60651149bee329fbd6bdc2a0a7135a64175236587c7142c5b40454c8db32b8e",
+        "size_bytes": 391228
+      },
+      {
+        "path": "标准-内六角螺栓-M2 8.SLDPRT",
+        "role": "PART",
+        "sha256": "34a7419043003eb4c93e386633558df864d5262d0e80da523be9a401b77dd7f6",
+        "size_bytes": 163435
+      },
+      {
+        "path": "标准-内六角螺栓-M2.5-16光杆.SLDPRT",
+        "role": "PART",
+        "sha256": "19b724292f0807b7e8df0b5209c7d98d2a1498999e43f9b1b4bcd61d4cd99c60",
+        "size_bytes": 149500
+      },
+      {
+        "path": "标准-内六角螺栓-M2.SLDPRT",
+        "role": "PART",
+        "sha256": "1cb617a931c25c146bafd890071cd136c1d410010b13a10055d7f96ec7abc169",
+        "size_bytes": 139189
+      },
+      {
+        "path": "标准-内六角螺栓-M3-14.SLDPRT",
+        "role": "PART",
+        "sha256": "f3fd31bf82bb6da3c3ac7c29cecc6638717d5d2843e3094017be1613d0910b07",
+        "size_bytes": 145498
+      },
+      {
+        "path": "标准-内六角螺栓-M3-18.SLDPRT",
+        "role": "PART",
+        "sha256": "514e53fa885393181a4b998582bdde7c8a93798e079d042f64cae67075ed1b59",
+        "size_bytes": 144178
+      },
+      {
+        "path": "标准-内六角螺栓-M3-40.SLDPRT",
+        "role": "PART",
+        "sha256": "776f0df0406efea8529bfbfc3f23982fe94a221119f53677d20352a830e7f649",
+        "size_bytes": 136455
+      },
+      {
+        "path": "标准-内六角螺栓-M4光杆35.SLDPRT",
+        "role": "PART",
+        "sha256": "4aaaf3457560751529b1a80688d05585eae483fc3caf54e7f101cf6e26d11eea",
+        "size_bytes": 145997
+      },
+      {
+        "path": "法兰型双盖式深沟球轴承[GBF694ZZ].SLDPRT",
+        "role": "PART",
+        "sha256": "4fcfa307155e375f173fbcf29fb9ab1a09ba656b230f7ea10375e40862903d56",
+        "size_bytes": 112496
+      },
+      {
+        "path": "矿泉水.SLDPRT",
+        "role": "PART",
+        "sha256": "025e236b6e0f670456a3e8082cf82443ed27a967280994db669db6c2f02ff768",
+        "size_bytes": 65096
+      },
+      {
+        "path": "立柱.SLDPRT",
+        "role": "PART",
+        "sha256": "bdd006c9fa6df0a9d71631d6eab318e1f89ccb0a408128f38326724adeebe6cf",
+        "size_bytes": 72249
+      },
+      {
+        "path": "舵机.SLDPRT",
+        "role": "PART",
+        "sha256": "4ee4e495bbba172b4dc0c584dc80e694fe68a69049064fbe531e1c83ffa54114",
+        "size_bytes": 119417
+      },
+      {
+        "path": "舵机盒子.SLDPRT",
+        "role": "PART",
+        "sha256": "0ec843fe1082188a9a40c6dbe3617a5f3d36dc0ba72008726f6c92c672a5642b",
+        "size_bytes": 240851
+      },
+      {
+        "path": "舵盘齿轮.SLDPRT",
+        "role": "PART",
+        "sha256": "d28a619e5a2ca7072f10e7a0d8a8c6fb528a7fbeeaf9416434b8fa5d4c4717d9",
+        "size_bytes": 368816
+      },
+      {
+        "path": "连杆.SLDPRT",
+        "role": "PART",
+        "sha256": "8792fc8f0c9e816d8c8424f0228ec89384fbeb5320e48245d95ac6e41f045d88",
+        "size_bytes": 105371
+      },
+      {
+        "path": "连杆1.SLDPRT",
+        "role": "PART",
+        "sha256": "0e3aaff239915a0e9ac099d482512ba06cee40c3bcad09d612f834f6c9a00ecb",
+        "size_bytes": 98906
+      },
+      {
+        "path": "连杆副.SLDPRT",
+        "role": "PART",
+        "sha256": "6856e8799714bc52cf9a9dcb2b9a669b4729492e9bec4c078dd1be5b41df97a0",
+        "size_bytes": 72657
+      },
+      {
+        "path": "铝柱10.SLDPRT",
+        "role": "PART",
+        "sha256": "daeda263936b43016bff0082bf7fe99f57e7592080645ceb5f637fd389fa7700",
+        "size_bytes": 76458
+      },
+      {
+        "path": "铝柱12.SLDPRT",
+        "role": "PART",
+        "sha256": "7555cd245f850c28f4a989fb87adab400d30a9c70a521141346f4fc32e131507",
+        "size_bytes": 74753
+      },
+      {
+        "path": "铝柱25.SLDPRT",
+        "role": "PART",
+        "sha256": "5bb514c3b7a1918603010b0020cca99823e848804313dc9aa773a21d289c0a6a",
+        "size_bytes": 71564
+      },
+      {
+        "path": "齿轮副.SLDPRT",
+        "role": "PART",
+        "sha256": "859eb157bffb0ea2be01773c1170c0960788e311568cc99b430d8530b0e85748",
+        "size_bytes": 433328
+      },
+      {
+        "path": "齿轮箱.SLDASM",
+        "role": "ASSEMBLY",
+        "sha256": "d5f513c69b3590378791cfec8e0853567f8377676429772ed7e38d1653e94d98",
+        "size_bytes": 2035041
+      }
+    ],
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad",
+    "mass": "kg",
+    "inertia": "kg*m^2",
+    "force": "N",
+    "voltage": "V",
+    "current": "A",
+    "time": "s",
+    "angular_velocity": "rad/s",
+    "angular_acceleration": "rad/s^2",
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "flange_tcp": {
+    "arm_flange_frame": "arm_flange",
+    "gripper_mount_frame": "gripper_mount",
+    "gripper_tcp_frame": "gripper_tcp",
+    "flange_interface_drawing_sha256": null,
+    "fastener_stack_specification_sha256": null,
+    "flange_to_mount_transform": null,
+    "mount_to_tcp_transform": null,
+    "tcp_opening_dependency": null,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "motion_limits": {
+    "native_command_range": null,
+    "jaw_opening_range_m": null,
+    "joints": null,
+    "named_poses": null,
+    "closing_force_limit_n": null,
+    "command_to_opening_calibration_sha256": null,
+    "hard_limit_evidence_sha256": null,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "mass_properties": {
+    "installed_tool_mass_kg": null,
+    "mass_measurement_uncertainty_kg": null,
+    "center_of_mass": null,
+    "inertia_tensor": null,
+    "includes_adapter_fasteners_cable": false,
+    "mass_property_report_sha256": null,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "collision_cable_envelope": {
+    "visual_mesh_manifest_sha256": null,
+    "collision_mesh_manifest_sha256": null,
+    "open_envelope": null,
+    "mid_envelope": null,
+    "closed_envelope": null,
+    "cable_envelope": null,
+    "cable_minimum_bend_radius_m": null,
+    "cable_strain_relief_verified": false,
+    "interference_review_passed": false,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "electrical": {
+    "rated_supply_voltage_v": null,
+    "absolute_supply_voltage_v": null,
+    "idle_current_a": null,
+    "startup_current_a": null,
+    "rated_current_a": null,
+    "peak_current_a": null,
+    "stall_current_a": null,
+    "conductor_cross_section_mm2": null,
+    "fuse_or_current_limit_a": null,
+    "connector_pinout_sha256": null,
+    "polarity_and_grounding": null,
+    "protection_specification_sha256": null,
+    "hot_plug_policy": null,
+    "energy_isolation_specification_sha256": null,
+    "static_inspection_passed": false,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "passive_power_loss_safety": {
+    "backdrivability": null,
+    "brake": null,
+    "self_locking": null,
+    "loss_of_power_jaw_behavior": null,
+    "object_drop_hazard": null,
+    "secondary_retention_or_exclusion": null,
+    "loss_of_power_hazard_analysis_sha256": null,
+    "passive_safety_static_inspection_sha256": null,
+    "controlled_review_passed": false,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "contact_human_safety": {
+    "pad_material": null,
+    "pad_compliance": null,
+    "pad_retention": null,
+    "allowable_contact_pressure": null,
+    "cleaning_and_chemical_compatibility": null,
+    "pinch_hazard_review_passed": false,
+    "shear_hazard_review_passed": false,
+    "crush_hazard_review_passed": false,
+    "entanglement_hazard_review_passed": false,
+    "sharp_edge_guarding_review_passed": false,
+    "contact_interface_specification_sha256": null,
+    "hazard_guarding_inspection_sha256": null,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "durability_maintenance": {
+    "rated_cycle_life_cycles": null,
+    "rated_duty_cycle": null,
+    "gear_bearing_load_life_basis": null,
+    "wear_limit_specification": null,
+    "backlash_limit_specification": null,
+    "lubrication_specification": null,
+    "fastener_locking_and_torque_mark_policy": null,
+    "inspection_interval": null,
+    "replacement_criteria": null,
+    "approved_spares_revision_control": null,
+    "maintenance_plan_sha256": null,
+    "initial_static_condition_sha256": null,
+    "initial_static_inspection_passed": false,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "backend_execution_safety": {
+    "release_binding": {
+      "runtime_release_id": null,
+      "release_manifest_sha256": null
+    },
+    "motion_profile_binding": {
+      "profile_id": null,
+      "runtime_release_id": null,
+      "profile_manifest_sha256": null,
+      "approved_speed_grades": null
+    },
+    "method_deadlines_s": {
+      "read_state": null,
+      "command_position": null,
+      "stop": null,
+      "close": null
+    },
+    "method_timeout_handling": {
+      "read_state": null,
+      "command_position": null,
+      "stop": null,
+      "close": null
+    },
+    "stop_isolation": {
+      "independent_executor": false,
+      "independent_lock_domain": false,
+      "not_queued_behind_normal_commands": false,
+      "hung_command_stop_deadline_s": null,
+      "hung_command_stop_deadline_verified": false,
+      "deadline_miss_fails_closed": true
+    },
+    "backend_method_contract_sha256": null,
+    "stop_isolation_architecture_sha256": null,
+    "hung_command_stop_test_report_sha256": null,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "feedback_contract": {
+    "field_capabilities": {
+      "connected": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "valid": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "enabled": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "moving": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "opened_limit": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "closed_limit": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "normalized_position": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "jaw_opening_m": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "supply_voltage_v": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "motor_current_a": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "grip_force_n": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "temperature_c": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null},
+      "fault_code": {"support": null, "unit": null, "encoding": null, "range": null, "resolution": null, "update_rate_hz": null, "validity_specification": null}
+    },
+    "source_timestamp_specification": null,
+    "receive_timestamp_specification": null,
+    "sequence_specification": null,
+    "invalid_value_specification": null,
+    "fault_dictionary_sha256": null,
+    "fault_latch_and_recovery_specification": null,
+    "command_feedback_correlation_specification": null,
+    "controller_restart_specification": null,
+    "normalized_position_command_supported": false,
+    "jaw_opening_command_supported": false,
+    "command_capability_specification_sha256": null,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "stop_stationary_ack": {
+    "stop": {
+      "request_mechanism": null,
+      "acknowledgement_mechanism": null,
+      "ack_timeout_s": null,
+      "safe_output_state": null,
+      "latched_until_local_ack": true,
+      "independent_energy_isolation_required": true,
+      "software_stop_is_not_physical_estop": true
+    },
+    "stationary": {
+      "feedback_signal": null,
+      "feedback_unit": null,
+      "position_tolerance_native": null,
+      "minimum_consecutive_samples": null,
+      "dwell_s": null,
+      "sample_period_s": null,
+      "timeout_s": null,
+      "invalid_feedback_fails_closed": true
+    },
+    "ack": {
+      "matching_session_required": true,
+      "matching_fault_required": true,
+      "local_authorization_required": true,
+      "requires_stationary": true,
+      "may_initialize_controller": false,
+      "may_enable_output": false,
+      "may_clear_controller_fault": false,
+      "may_resume_motion": false,
+      "may_retry_command": false
+    },
+    "recovery": {
+      "new_command_id_required": true,
+      "new_session_after_controller_restart_required": true,
+      "no_automatic_reenable": true,
+      "no_automatic_resume": true,
+      "unresolved_stop_escalation": "PHYSICAL_ESTOP_REQUIRED",
+      "software_stop_failure_requires_physical_isolation": true
+    },
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "transport_owner": {
+    "owner_identity": null,
+    "ownership_scope": null,
+    "arbitration_mechanism": null,
+    "owner_lock_artifact_sha256": null,
+    "ownership_evidence_sha256": null,
+    "sole_owner_verified": false,
+    "boot_session_identity_required": true,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "legacy_input_policy": {
+    "ag_parameters_inherited": false,
+    "generic_servo_parameters_inherited": false,
+    "generated_staging_geometry_inherited": false,
+    "historical_tcp_or_mass_inherited": false,
+    "legacy_transport_fallback_present": false,
+    "denylist_scan_passed": false,
+    "review": {
+      "reviewed": false,
+      "evidence_ids": [],
+      "reviewer": null,
+      "reviewed_at_utc": null,
+      "disposition": null
+    }
+  },
+  "evidence_records": []
+}

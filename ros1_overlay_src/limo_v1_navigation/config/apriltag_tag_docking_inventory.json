@@ -1,0 +1,33 @@
+{
+  "schema_version": "limo_apriltag_docking_inventory/v1",
+  "fixed_field_tags": [
+    {"family": "tag36h11", "id": 0},
+    {"family": "tag36h11", "id": 1},
+    {"family": "tag36h11", "id": 2},
+    {"family": "tag36h11", "id": 3}
+  ],
+  "movable_object_tags": [
+    {"family": "tag52h13", "id": 0, "object_index": 0, "side": "front"},
+    {"family": "tag52h13", "id": 1, "object_index": 0, "side": "right"},
+    {"family": "tag52h13", "id": 2, "object_index": 0, "side": "back"},
+    {"family": "tag52h13", "id": 3, "object_index": 0, "side": "left"},
+    {"family": "tag52h13", "id": 4, "object_index": 1, "side": "front"},
+    {"family": "tag52h13", "id": 5, "object_index": 1, "side": "right"},
+    {"family": "tag52h13", "id": 6, "object_index": 1, "side": "back"},
+    {"family": "tag52h13", "id": 7, "object_index": 1, "side": "left"},
+    {"family": "tag52h13", "id": 8, "object_index": 2, "side": "front"},
+    {"family": "tag52h13", "id": 9, "object_index": 2, "side": "right"},
+    {"family": "tag52h13", "id": 10, "object_index": 2, "side": "back"},
+    {"family": "tag52h13", "id": 11, "object_index": 2, "side": "left"}
+  ],
+  "contract": {
+    "camera_pose_frame": "camera_color_optical_frame",
+    "required_tf_inputs": ["map_to_base_link", "base_link_to_camera"],
+    "freshness_owner": "host_now_ns",
+    "max_observation_age_ns": 250000000,
+    "stale_at_or_above_max_age": true,
+    "success_decision": "ACCEPT",
+    "failure_decision": "ABORT",
+    "initial_standoff_m": 0.4
+  }
+}

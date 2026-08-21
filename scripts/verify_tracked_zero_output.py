@@ -8,7 +8,7 @@ from geometry_msgs.msg import Twist
 from rclpy.node import Node
 
 
-SAFE_COMMAND_TOPIC = '/cleanup/base/safe_cmd_vel'
+SAFE_COMMAND_TOPIC = '/test/cleanup/tracked_zero_output'
 EXPECTED_PUBLISHER_NODE = 'cleanup_tracked_base_zero_output'
 PUBLIC_COMMAND_TOPICS = (
     '/cmd_vel',
@@ -20,13 +20,34 @@ ZERO_EPSILON = 1e-9
 MINIMUM_SAMPLES = 10
 
 
-def _endpoint_name(endpoint):
-    namespace = str(endpoint.node_namespace or '/').rstrip('/')
+def _fully_qualified_node_name(node_name, node_namespace):
+    namespace = str(node_namespace or '/').rstrip('/')
     if not namespace:
         namespace = '/'
     if namespace == '/':
-        return '/{}'.format(endpoint.node_name)
-    return '{}/{}'.format(namespace, endpoint.node_name)
+        return '/{}'.format(node_name)
+    return '{}/{}'.format(namespace, node_name)
+
+
+def _endpoint_name(endpoint):
+    return _fully_qualified_node_name(
+        endpoint.node_name, endpoint.node_namespace)
+
+
+def _rmw_identifier():
+    public_getter = getattr(
+        rclpy, 'get_rmw_implementation_identifier', None)
+    if public_getter is not None:
+        return str(public_getter())
+    try:
+        from rclpy.impl.implementation_singleton import rclpy_implementation
+    except ImportError:
+        return 'unknown'
+    private_getter = getattr(
+        rclpy_implementation, 'rmw_get_implementation_identifier', None)
+    if private_getter is None:
+        return 'unknown'
+    return str(private_getter())
 
 
 def _twist_values(message):
@@ -72,7 +93,8 @@ class ZeroOutputVerifier(Node):
                     SAFE_COMMAND_TOPIC, publisher_name, expected_name))
         subscriber_names = {
             _endpoint_name(endpoint) for endpoint in subscribers}
-        expected_subscriber = self.get_fully_qualified_name()
+        expected_subscriber = _fully_qualified_node_name(
+            self.get_name(), self.get_namespace())
         if (len(subscribers) != 1
                 or subscriber_names != {expected_subscriber}):
             raise RuntimeError(
@@ -105,15 +127,33 @@ def _spin_until(node, predicate, timeout):
 def run_verification():
     verifier = ZeroOutputVerifier()
     try:
+        expected_publisher = '/{}'.format(EXPECTED_PUBLISHER_NODE)
+        expected_subscriber = _fully_qualified_node_name(
+            verifier.get_name(), verifier.get_namespace())
         discovered = _spin_until(
             verifier,
-            lambda: bool(verifier.get_publishers_info_by_topic(
-                SAFE_COMMAND_TOPIC)),
+            lambda: (
+                len(verifier.get_publishers_info_by_topic(
+                    SAFE_COMMAND_TOPIC)) == 1
+                and {
+                    _endpoint_name(endpoint)
+                    for endpoint in verifier.get_publishers_info_by_topic(
+                        SAFE_COMMAND_TOPIC)
+                } == {expected_publisher}
+                and len(verifier.get_subscriptions_info_by_topic(
+                    SAFE_COMMAND_TOPIC)) == 1
+                and {
+                    _endpoint_name(endpoint)
+                    for endpoint in verifier.get_subscriptions_info_by_topic(
+                        SAFE_COMMAND_TOPIC)
+                } == {expected_subscriber}
+            ),
             5.0,
         )
         if not discovered:
             raise RuntimeError(
-                '{} publisher was not discovered'.format(
+                '{} endpoint metadata did not resolve to the exact '
+                'zero-output topology'.format(
                     SAFE_COMMAND_TOPIC))
         verifier.verify_topology()
 
@@ -150,6 +190,7 @@ def run_verification():
 def main():
     rclpy.init()
     try:
+        print('RMW_IMPLEMENTATION={}'.format(_rmw_identifier()))
         return run_verification()
     finally:
         rclpy.shutdown()

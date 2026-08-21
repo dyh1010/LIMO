@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LIMO ROS1 V1 navigation profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "frames",
+    "topics",
+    "owners",
+    "scan",
+    "freshness",
+    "tf_timing",
+    "motion",
+    "map_policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "frames": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["map", "odom", "base", "laser"],
+      "properties": {
+        "map": {"const": "map"},
+        "odom": {"const": "odom"},
+        "base": {"const": "base_link"},
+        "laser": {"const": "laser_link"}
+      }
+    },
+    "topics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scan", "odom", "nav_cmd", "driver_cmd"],
+      "properties": {
+        "scan": {"const": "/scan"},
+        "odom": {"const": "/odom"},
+        "nav_cmd": {"const": "/v1/nav_cmd_vel"},
+        "driver_cmd": {"const": "/v1/driver_cmd_vel"}
+      }
+    },
+    "owners": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["odom_tf", "scan", "forbidden_odom_tf"],
+      "properties": {
+        "odom_tf": {"const": "/limo_base_node"},
+        "scan": {"const": "/ydlidar_lidar_publisher"},
+        "forbidden_odom_tf": {
+          "type": "array",
+          "contains": {"const": "/robot_pose_ekf"}
+        }
+      }
+    },
+    "scan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_hz", "min_hz", "max_hz", "range_min_m", "range_max_m"],
+      "properties": {
+        "expected_hz": {"const": 6.0},
+        "min_hz": {"const": 4.8},
+        "max_hz": {"const": 7.2},
+        "range_min_m": {"const": 0.02},
+        "range_max_m": {"const": 16.0}
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scan_timeout_s", "odom_timeout_s", "tf_timeout_s", "command_timeout_s"],
+      "properties": {
+        "scan_timeout_s": {"maximum": 0.5, "exclusiveMinimum": 0.0},
+        "odom_timeout_s": {"maximum": 0.5, "exclusiveMinimum": 0.0},
+        "tf_timeout_s": {"maximum": 0.5, "exclusiveMinimum": 0.0},
+        "command_timeout_s": {"maximum": 0.25, "exclusiveMinimum": 0.0}
+      }
+    },
+    "tf_timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amcl_transform_tolerance_s",
+        "source_future_tolerance_s"
+      ],
+      "properties": {
+        "amcl_transform_tolerance_s": {"const": 0.05},
+        "source_future_tolerance_s": {"const": 0.10}
+      }
+    },
+    "motion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allow_nonzero_default",
+        "driver_timeout_verified",
+        "max_linear_x_mps",
+        "max_angular_z_rps",
+        "max_linear_accel_mps2",
+        "max_angular_accel_rps2"
+      ],
+      "properties": {
+        "allow_nonzero_default": {"const": false},
+        "driver_timeout_verified": {"const": false},
+        "max_linear_x_mps": {"maximum": 0.2, "exclusiveMinimum": 0.0},
+        "max_angular_z_rps": {"maximum": 0.5, "exclusiveMinimum": 0.0},
+        "max_linear_accel_mps2": {"maximum": 0.5, "exclusiveMinimum": 0.0},
+        "max_angular_accel_rps2": {"maximum": 1.0, "exclusiveMinimum": 0.0}
+      }
+    },
+    "map_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["require_absolute_path", "reject_vendor_maps", "rejected_map_ids"],
+      "properties": {
+        "require_absolute_path": {"const": true},
+        "reject_vendor_maps": {"const": true},
+        "rejected_map_ids": {
+          "type": "array",
+          "contains": {"const": "map1017"}
+        }
+      }
+    }
+  }
+}

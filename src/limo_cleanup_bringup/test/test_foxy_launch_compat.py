@@ -165,7 +165,7 @@ def test_real_hardware_defaults_match_verified_robot_interfaces():
         assert '/camera/depth/image_raw' in source
 
 
-def test_gripper_defaults_use_stable_udev_alias():
+def test_gripper_defaults_do_not_expose_a_hardware_transport():
     bringup_root = LAUNCH_DIR.parent
     executor_root = bringup_root.parent / 'limo_cleanup_executor'
     checked_paths = (
@@ -177,7 +177,9 @@ def test_gripper_defaults_use_stable_udev_alias():
     for path in checked_paths:
         source = path.read_text(encoding='utf-8')
         assert '/dev/ttyACM0' not in source
-        assert '/dev/elephant' in source
+    for path in checked_paths:
+        source = path.read_text(encoding='utf-8')
+        assert 'UNRESOLVED_DO_NOT_' in source
 
 
 def test_smoke_scripts_have_portable_defaults():
@@ -188,6 +190,36 @@ def test_smoke_scripts_have_portable_defaults():
         assert '/home/dyh/' not in source
         assert '/mnt/c/' not in source
         assert 'ROS_LOCALHOST_ONLY=1' in source
+
+    touch = (
+        PROJECT_ROOT / 'scripts' / 'smoke_test_touch_only.sh'
+    ).read_text(encoding='utf-8')
+    for marker in (
+            'FIELD_RUNTIME_AUTHORITY=ROS1_NOETIC',
+            'LEGACY_ROS2_OFFLINE_ONLY',
+            'LIMO_ALLOW_LEGACY_ROS2_OFFLINE',
+            'NOT_NOETIC_FIELD_OR_DELIVERY_EVIDENCE'):
+        assert marker in touch
+    guard = touch.index(
+        'if [[ "${LIMO_ALLOW_LEGACY_ROS2_OFFLINE-}" != \'1\' ]]')
+    assert guard < touch.index('source "${ros_setup}"')
+    assert guard < touch.index('setsid ros2 launch')
+    assert guard < touch.index('python3 "${workspace}/scripts/')
+    assert 'export ROS_LOCALHOST_ONLY=1' in touch
+    assert 'export ROS_DOMAIN_ID=221' in touch
+    assert 'ROS_DOMAIN_ID=137' not in touch
+    for launch_gate in (
+            'use_tracked_base_controller:=false',
+            'allow_base_motion:=false',
+            'use_real_perception:=false',
+            'use_mock_perception:=true',
+            'use_mock_executor:=true',
+            'executor_dry_run:=true',
+            'use_gripper_controller:=false',
+            'allow_gripper_motion:=false',
+            'allow_arm_motion:=false'):
+        assert launch_gate in touch
+    assert 'LEGACY_ROS2_OFFLINE_ONLY_MOCK_PASS' in touch
 
 
 def test_yaml_does_not_override_launch_owned_always_active():
@@ -206,7 +238,8 @@ def test_yaml_does_not_override_launch_owned_readiness_parameters():
         'cleanup_hardware_readiness:', 1)[1]
     launch_source = _source('hardware_readonly_acceptance.launch.py')
     for parameter in (
-            'rgb_topic', 'depth_topic', 'camera_info_topic', 'base_frame',
+            'rgb_topic', 'depth_topic', 'camera_info_topic',
+            'depth_camera_info_topic', 'base_frame',
             'camera_frame_override', 'require_tf', 'report_path'):
         assert '\n    {}:'.format(parameter) not in readiness_source
         assert "'{}'".format(parameter) in launch_source
@@ -292,6 +325,12 @@ def test_tracked_base_zero_output_launch_cannot_enable_motion():
     source = _source(filename)
 
     assert defaults['output_topic'] == '/cleanup/base/safe_cmd_vel'
+    assert defaults['input_topic'] == '/cleanup/base/cmd_vel_request'
+    assert defaults['authorization_topic'] == (
+        '/cleanup/base/motion_authorized')
+    assert defaults['safety_topic'] == '/cleanup/base/safety_clear'
+    assert defaults['topology_ready_topic'] == (
+        '/cleanup/navigation/topology_ready')
     assert defaults['publish_rate'] == '20.0'
     assert 'allow_base_motion' not in defaults
     assert "'allow_base_motion': False" in source
@@ -308,20 +347,46 @@ def test_tracked_base_zero_output_launch_cannot_enable_motion():
         feature_version=(3, 8),
     )
     assert "TEST_OUTPUT_TOPIC = '/test/cleanup/tracked_zero_output'" in probe
+    for test_topic in (
+            'TEST_REQUEST_TOPIC', 'TEST_AUTHORIZATION_TOPIC',
+            'TEST_SAFETY_TOPIC'):
+        assert test_topic in probe
+    for production_topic in (
+            "Twist, '/cleanup/base/cmd_vel_request'",
+            "Bool, '/cleanup/base/motion_authorized'",
+            "Bool, '/cleanup/base/safety_clear'"):
+        assert production_topic not in probe
     assert "get_publishers_info_by_topic('/cmd_vel')" in probe
 
     wrapper = (
         PROJECT_ROOT / 'scripts' / 'smoke_test_tracked_zero_launch.sh'
     ).read_text(encoding='utf-8')
+    for marker in (
+            'FIELD_RUNTIME_AUTHORITY=ROS1_NOETIC',
+            'LEGACY_ROS2_OFFLINE_ONLY',
+            'LIMO_ALLOW_LEGACY_ROS2_OFFLINE',
+            'NOT_NOETIC_FIELD_OR_DELIVERY_EVIDENCE'):
+        assert marker in wrapper
+    guard = wrapper.index(
+        'if [[ "${LIMO_ALLOW_LEGACY_ROS2_OFFLINE-}" != \'1\' ]]')
+    assert guard < wrapper.index('source "${ros_setup}"')
+    assert guard < wrapper.index('setsid ros2 launch')
+    assert guard < wrapper.index('python3 "${script_dir}/smoke')
     assert 'RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' in wrapper
-    assert 'NetworkInterface name="lo"' in wrapper
-    assert 'output_topic:=/test/cleanup/tracked_zero_output' in wrapper
+    assert 'export ROS_LOCALHOST_ONLY=1' in wrapper
+    assert 'export ROS_DOMAIN_ID=222' in wrapper
+    assert 'ROS_DOMAIN_ID=137' not in wrapper
+    assert 'ROS_LOCALHOST_ONLY=0' not in wrapper
+    assert 'CYCLONEDDS_URI=' not in wrapper
+    assert 'TEST_OUTPUT_TOPIC=/test/cleanup/tracked_zero_output' in wrapper
+    assert 'output_topic:="${TEST_OUTPUT_TOPIC}"' in wrapper
     assert 'smoke_test_tracked_zero_launch.py' in wrapper
     assert 'setsid ros2 launch' in wrapper
     assert 'kill -TERM -- "-${zero_launch_pid}"' in wrapper
     assert 'kill -KILL -- "-${zero_launch_pid}"' in wrapper
     assert 'tracked_base_vendor_stage2.launch.py' not in wrapper
     assert 'allow_base_motion:=true' not in wrapper
+    assert 'LEGACY_ROS2_OFFLINE_ONLY_MOCK_PASS' in wrapper
 
 
 def test_tracked_base_vendor_stage2_is_disabled_and_remapped():

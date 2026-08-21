@@ -17,6 +17,12 @@ from rclpy.time import Time
 from sensor_msgs.msg import CameraInfo, Image
 from tf2_ros import Buffer, TransformException, TransformListener
 
+from limo_cleanup_perception.rgbd_contract import (
+    StreamMetadata,
+    nearest_by_stamp,
+    validate_rgbd_contract,
+)
+
 
 INTEGER_DEPTH_ENCODINGS = {'16UC1', 'mono16'}
 FLOAT_DEPTH_ENCODINGS = {'32FC1'}
@@ -117,6 +123,17 @@ def aligned_depth_frame_matches_rgb(rgb_frame, depth_frame):
     return bool(rgb_frame) and depth_frame == rgb_frame
 
 
+def camera_info_intrinsics_valid(message):
+    """Return whether a CameraInfo message has finite positive focal lengths."""
+    return (
+        len(message.k) == 9
+        and math.isfinite(float(message.k[0]))
+        and math.isfinite(float(message.k[4]))
+        and float(message.k[0]) > 0.0
+        and float(message.k[4]) > 0.0
+    )
+
+
 class HardwareReadinessCheck(Node):
     """Subscribe and inspect only; never publish commands or call actions."""
 
@@ -126,6 +143,7 @@ class HardwareReadinessCheck(Node):
             ('rgb_topic', '/camera/color/image_raw'),
             ('depth_topic', '/camera/depth/image_raw'),
             ('camera_info_topic', '/camera/color/camera_info'),
+            ('depth_camera_info_topic', '/camera/depth/camera_info'),
             ('base_frame', 'base_link'),
             ('camera_frame_override', ''),
             ('timeout_sec', 20.0),
@@ -160,6 +178,8 @@ class HardwareReadinessCheck(Node):
         self.rgb_topic = self.string_parameter('rgb_topic')
         self.depth_topic = self.string_parameter('depth_topic')
         self.camera_info_topic = self.string_parameter('camera_info_topic')
+        self.depth_camera_info_topic = self.string_parameter(
+            'depth_camera_info_topic')
         self.base_frame = self.string_parameter('base_frame')
         self.start_monotonic = time.monotonic()
         self.rgb_message = None
@@ -167,10 +187,13 @@ class HardwareReadinessCheck(Node):
         self.latest_rgb_message = None
         self.latest_depth_message = None
         self.camera_info_message = None
+        self.depth_camera_info_message = None
         self.rgb_candidates = deque(maxlen=60)
         self.depth_candidates = deque(maxlen=60)
-        self.synchronized_pair = False
-        self.synchronized_delta_sec = None
+        self.camera_info_candidates = deque(maxlen=60)
+        self.depth_camera_info_candidates = deque(maxlen=60)
+        self.synchronized_bundle = False
+        self.synchronized_span_sec = None
         self.done = False
         self.exit_code = 1
         self.tf_buffer = Buffer()
@@ -185,6 +208,9 @@ class HardwareReadinessCheck(Node):
         self.create_subscription(
             CameraInfo, self.camera_info_topic, self.camera_info_callback,
             qos_profile_sensor_data)
+        self.create_subscription(
+            CameraInfo, self.depth_camera_info_topic,
+            self.depth_camera_info_callback, qos_profile_sensor_data)
         self.create_timer(0.25, self.check_if_ready)
         self.get_logger().info(
             'Read-only check started; no command publisher, action client, '
@@ -205,42 +231,79 @@ class HardwareReadinessCheck(Node):
     def rgb_callback(self, message):
         """Keep the newest RGB image."""
         self.latest_rgb_message = message
-        self.rgb_candidates.append(message)
-        depth, delta = nearest_stamped_message(
-            message, self.depth_candidates)
-        if depth is not None:
-            self.consider_synchronized_pair(message, depth, delta)
+        self.rgb_candidates.append((self.stream_metadata('rgb', message),
+                                    message))
+        self.consider_synchronized_bundle(message)
 
     def depth_callback(self, message):
         """Keep the newest aligned depth image."""
         self.latest_depth_message = message
-        self.depth_candidates.append(message)
-        rgb, delta = nearest_stamped_message(message, self.rgb_candidates)
-        if rgb is not None:
-            self.consider_synchronized_pair(rgb, message, delta)
+        self.depth_candidates.append((
+            self.stream_metadata('depth', message), message))
+        if self.latest_rgb_message is not None:
+            self.consider_synchronized_bundle(self.latest_rgb_message)
 
-    def consider_synchronized_pair(self, rgb, depth, delta):
-        """Keep the latest acceptable pair or the best failing candidate."""
-        maximum = self.float_parameter('max_sync_delta_sec')
-        accepted = delta <= maximum
-        replace = accepted or (
-            not self.synchronized_pair
-            and (
-                self.synchronized_delta_sec is None
-                or delta < self.synchronized_delta_sec
-            )
+    @staticmethod
+    def stream_metadata(name, message):
+        """Extract contract metadata from Image or CameraInfo."""
+        return StreamMetadata(
+            name=name,
+            stamp_sec=stamp_seconds(message.header.stamp),
+            frame_id=message.header.frame_id,
+            width=int(message.width),
+            height=int(message.height),
+        )
+
+    def consider_synchronized_bundle(self, rgb):
+        """Keep an accepted four-stream bundle or the closest failing one."""
+        if not all((
+                self.depth_candidates,
+                self.camera_info_candidates,
+                self.depth_camera_info_candidates)):
+            return
+        rgb_metadata = self.stream_metadata('rgb', rgb)
+        reference_stamp = rgb_metadata.stamp_sec
+        depth_item = nearest_by_stamp(reference_stamp, self.depth_candidates)
+        rgb_info_item = nearest_by_stamp(
+            reference_stamp, self.camera_info_candidates)
+        depth_info_item = nearest_by_stamp(
+            reference_stamp, self.depth_camera_info_candidates)
+        contract = validate_rgbd_contract(
+            rgb_metadata, depth_item[0], rgb_info_item[0],
+            depth_info_item[0], self.float_parameter('max_sync_delta_sec'))
+        candidate_span = (
+            contract.timestamp_span_sec
+            if contract.timestamp_span_sec is not None else math.inf)
+        current_span = (
+            self.synchronized_span_sec
+            if self.synchronized_span_sec is not None else math.inf)
+        replace = contract.accepted or (
+            not self.synchronized_bundle
+            and candidate_span < current_span
         )
         if not replace:
             return
         self.rgb_message = rgb
-        self.depth_message = depth
-        self.synchronized_delta_sec = delta
-        if accepted:
-            self.synchronized_pair = True
+        self.depth_message = depth_item[1]
+        self.camera_info_message = rgb_info_item[1]
+        self.depth_camera_info_message = depth_info_item[1]
+        self.synchronized_span_sec = contract.timestamp_span_sec
+        if contract.accepted:
+            self.synchronized_bundle = True
 
     def camera_info_callback(self, message):
         """Keep the newest color CameraInfo message."""
-        self.camera_info_message = message
+        self.camera_info_candidates.append((
+            self.stream_metadata('rgb_info', message), message))
+        if self.latest_rgb_message is not None:
+            self.consider_synchronized_bundle(self.latest_rgb_message)
+
+    def depth_camera_info_callback(self, message):
+        """Keep aligned-depth CameraInfo for the four-stream contract."""
+        self.depth_camera_info_candidates.append((
+            self.stream_metadata('depth_info', message), message))
+        if self.latest_rgb_message is not None:
+            self.consider_synchronized_bundle(self.latest_rgb_message)
 
     def check_if_ready(self):
         """Finish when samples settle or when the timeout expires."""
@@ -248,8 +311,9 @@ class HardwareReadinessCheck(Node):
             return
         elapsed = time.monotonic() - self.start_monotonic
         have_synchronized_messages = all((
-            self.synchronized_pair,
+            self.synchronized_bundle,
             self.camera_info_message is not None,
+            self.depth_camera_info_message is not None,
         ))
         if (have_synchronized_messages
                 and elapsed >= self.float_parameter('settle_sec')):
@@ -289,7 +353,8 @@ class HardwareReadinessCheck(Node):
         checks = []
         self.add_topic_presence_checks(checks, timed_out)
         if all((self.rgb_message, self.depth_message,
-                self.camera_info_message)):
+                self.camera_info_message,
+                self.depth_camera_info_message)):
             self.add_image_geometry_checks(checks)
             self.add_depth_checks(checks)
             self.add_tf_checks(checks)
@@ -306,6 +371,7 @@ class HardwareReadinessCheck(Node):
                 'rgb': self.rgb_topic,
                 'aligned_depth': self.depth_topic,
                 'camera_info': self.camera_info_topic,
+                'depth_camera_info': self.depth_camera_info_topic,
             },
             'checks': checks,
         }
@@ -323,14 +389,19 @@ class HardwareReadinessCheck(Node):
         checks.append(item)
 
     def add_topic_presence_checks(self, checks, timed_out):
-        """Check that all three required sensor streams were observed."""
+        """Check that all four required sensor streams were observed."""
         for name, topic, message in (
                 ('rgb_received', self.rgb_topic,
                  self.latest_rgb_message),
                 ('aligned_depth_received', self.depth_topic,
                  self.latest_depth_message),
                 ('camera_info_received', self.camera_info_topic,
-                 self.camera_info_message)):
+                 self.camera_info_candidates[-1][1]
+                 if self.camera_info_candidates else None),
+                ('depth_camera_info_received',
+                 self.depth_camera_info_topic,
+                 self.depth_camera_info_candidates[-1][1]
+                 if self.depth_camera_info_candidates else None)):
             received = message is not None
             detail = f'received from {topic}' if received else (
                 f'no message from {topic}' +
@@ -342,6 +413,7 @@ class HardwareReadinessCheck(Node):
         rgb = self.rgb_message
         depth = self.depth_message
         info = self.camera_info_message
+        depth_info = self.depth_camera_info_message
         same_resolution = (
             rgb.width == depth.width and rgb.height == depth.height)
         self.append_check(
@@ -361,8 +433,19 @@ class HardwareReadinessCheck(Node):
                 'camera_info': [info.width, info.height],
             })
 
-        intrinsics_valid = (
-            len(info.k) == 9 and info.k[0] > 0.0 and info.k[4] > 0.0)
+        depth_info_matches = (
+            depth_info.width == rgb.width
+            and depth_info.height == rgb.height)
+        self.append_check(
+            checks, 'depth_camera_info_matches_rgb', depth_info_matches,
+            'aligned-depth CameraInfo dimensions must match the RGB grid',
+            measured={
+                'rgb': [rgb.width, rgb.height],
+                'depth_camera_info': [
+                    depth_info.width, depth_info.height],
+            })
+
+        intrinsics_valid = camera_info_intrinsics_valid(info)
         self.append_check(
             checks, 'camera_intrinsics_valid', intrinsics_valid,
             'fx and fy must be positive',
@@ -373,16 +456,26 @@ class HardwareReadinessCheck(Node):
                 'cy': float(info.k[5]),
             })
 
-        delta = self.synchronized_delta_sec
-        if delta is None:
-            delta = abs(
-                stamp_seconds(rgb.header.stamp)
-                - stamp_seconds(depth.header.stamp))
+        depth_intrinsics_valid = camera_info_intrinsics_valid(depth_info)
+        self.append_check(
+            checks, 'depth_camera_intrinsics_valid',
+            depth_intrinsics_valid,
+            'aligned-depth CameraInfo fx and fy must be finite and positive',
+            measured={
+                'fx': float(depth_info.k[0]),
+                'fy': float(depth_info.k[4]),
+                'cx': float(depth_info.k[2]),
+                'cy': float(depth_info.k[5]),
+            })
+
+        delta = self.synchronized_span_sec
         max_delta = self.float_parameter('max_sync_delta_sec')
         self.append_check(
-            checks, 'rgb_depth_timestamp_alignment', delta <= max_delta,
-            f'RGB/depth timestamp delta must be <= {max_delta:.3f} s',
-            measured={'delta_sec': delta})
+            checks, 'rgb_depth_camera_info_timestamp_alignment',
+            delta is not None and delta <= max_delta,
+            'RGB, aligned depth, and both CameraInfo timestamps must fit '
+            f'within {max_delta:.3f} s',
+            measured={'timestamp_span_sec': delta})
 
         depth_frame_consistent = aligned_depth_frame_matches_rgb(
             rgb.header.frame_id, depth.header.frame_id)
@@ -404,6 +497,17 @@ class HardwareReadinessCheck(Node):
                 'rgb_frame': rgb.header.frame_id,
                 'depth_frame': depth.header.frame_id,
                 'camera_info_frame': info.header.frame_id,
+            })
+
+        depth_info_frame_consistent = bool(rgb.header.frame_id) and (
+            depth_info.header.frame_id == rgb.header.frame_id)
+        self.append_check(
+            checks, 'rgb_depth_camera_info_frame_consistency',
+            depth_info_frame_consistent,
+            'aligned-depth CameraInfo must use the RGB optical frame',
+            measured={
+                'rgb_frame': rgb.header.frame_id,
+                'depth_camera_info_frame': depth_info.header.frame_id,
             })
 
     def add_depth_checks(self, checks):

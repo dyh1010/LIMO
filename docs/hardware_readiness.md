@@ -1,20 +1,41 @@
 # LIMO Pro / DaBai 实机配置与只读验收
 
-更新时间：2026-08-07
-状态：机器到货前模板；相机实际话题、TF 名称和外参数值待到货后填写。
+更新时间：2026-08-11
+状态：DaBai 真实话题、对齐深度和相机内部 TF 已完成只读验收；机械安装外参仍待实测。
+底盘当前采用 ROS1 Noetic `limo_base_node` 唯一占用 `/dev/ttyTHS0` 的基线。受限单向
+bridge、catkin wrapper 与 ROS1 watchdog 已在本地实现并通过离线测试，但尚未完成 Catkin
+构建、ROS1/ROS2 跨图运行、机器人全零、断链停车或实机运动验证，状态为
+`ROS1_ROS2_BASE_BRIDGE_IMPLEMENTED_LOCALLY_UNVERIFIED`。
+
+最新独立只读审计还发现 ROS2 源端 owner、导航结果闭环、epoch/nonce 防重放、vendor 前连续
+零证明和退出/UART 清理阻塞；实现专项修复和复核前禁止同步机器人或启动 bridge。
+
+V1 不等待 bridge 实机验收即可继续只读、感知和 dry-run 交付；这不授权 V1 绕过 bridge，
+也不把真实自动底盘运动纳入 V1 已完成能力。
 
 ## 1. 安全边界
 
-`hardware_readonly_acceptance.launch.py` 只启动可选的相机驱动和订阅型检查节点。它不会启动：
+`hardware_readonly_acceptance.launch.py` 只启动可选的相机驱动和订阅型 ROS2 检查节点。它不会启动：
 
-- `limo_base`、导航、公开或私有底盘命令端点；
+- ROS1 `limo_base_node`、ROS2 `limo_base`、导航、teleop、bridge、ROS1 watchdog 或底盘命令端点；
 - 机械臂、MoveIt、轨迹控制器或夹爪控制器；
 - 清理任务管理器或真实/模拟执行器；
 - RViz 或 Gazebo。
 
-检查节点只订阅 RGB、对齐深度、CameraInfo 和 TF，并查询 ROS graph。它还会检查配置中的
-底盘、机械臂和夹爪命令话题是否存在发布者或订阅者；发现任一命令端点时验收失败。禁止
-列表包含公开 `/cmd_vel*`、`/limo/vel_cmd` 和私有 `/cleanup/base/safe_cmd_vel`。
+检查节点只订阅 RGB、对齐深度、CameraInfo 和 TF，并查询 **ROS2 graph**。它还会检查配置中的
+底盘、机械臂和夹爪命令话题是否存在 ROS2 发布者或订阅者；发现任一命令端点时验收失败。
+禁止列表包含公开 `/cmd_vel*`、`/limo/vel_cmd`，以及私有
+`/cleanup/base/safe_cmd_vel`、`/cleanup/base/driver_cmd_vel`。
+
+该 checker 看不到 ROS1 master、ROS1 节点或 ROS1 话题，也不能仅凭 ROS2 图为空证明
+`/dev/ttyTHS0` 空闲。因此其 PASS **不代表** ROS1 `limo_base_node`、键盘 teleop 或其他
+ROS1 速度发布者已经停止。除非另有双图、进程和 UART 只读证据，ROS1 运行状态一律按
+`ROS1_RUNTIME_STATE_UNKNOWN_ASSUME_ACTIVE` 处理。
+
+当前底盘唯一允许的目标架构是：ROS2 安全网关 → 受限单向 bridge → ROS1
+`/cleanup/base/safe_cmd_vel` → ROS1 fail-closed timeout/watchdog → 私有
+`/cleanup/base/driver_cmd_vel` → ROS1 `limo_base_node`。ROS2 `limo_base` 仅保留为历史
+诊断路径，不是默认实机入口，并且永远不得与 ROS1 driver 并发占用 `/dev/ttyTHS0`。
 
 ## 已确认的机械臂与末端执行器
 
@@ -23,11 +44,11 @@
 | 项目 | 已确认型号 | 当前状态 |
 | --- | --- | --- |
 | 机械臂 | 大象机器人（Elephant Robotics）myCobot 280 M5 | 型号已确认；安装、供电、通信和驱动待实机核验 |
-| 末端执行器 | myCobot Gripper AG（`mycobot_gripper_ag`） | 型号已确认；TCP、夹持力和空矿泉水瓶适配待实测 |
+| 末端执行器 | 未冻结：原 AG 或完整替代夹爪候选 | 旧“AG 型号已确认”结论已过时；以 `gripper_control.md`、`v3_pick_place_acceptance.md` 和 `arm_gripper_field_acceptance_matrix.md` 为准，真实 backend 保持禁止 |
 
 这里的“M5”按用户提供的型号记录，后续采购单、铭牌和驱动文档应进一步确认其完整商品名称、控制器版本及固件版本。
 
-到货后，在允许任何运动指令前必须完成：
+在允许任何运动指令前仍必须完成：
 
 1. 确认 myCobot 280 M5 的额定电压、电流、独立电源和接地方案，禁止直接假定由 LIMO 车体供电。
 2. 确认机械臂与 LIMO 的安装板、螺孔、重心、工作半径及满伸展状态稳定性。
@@ -35,7 +56,9 @@
 4. 确认急停或等效断能方案能够同时阻止底盘和机械臂运动。
 5. 在空载、低速、限制工作空间条件下检查关节方向、零位、软限位和碰撞风险。
 6. 标定 `base_link -> arm_base_link` 和机械臂末端关节到 `gripper_tcp` 的变换。
-7. 用实际空矿泉水瓶验证 `mycobot_gripper_ag` 的开口范围、夹持力、瓶身滑落和释放可靠性。
+7. 先冻结“原 AG / 完整替代夹爪”二选一路径及最终协议；随后仅在单独授权的 V3-3
+   阶段验证批准工具的开口、夹持力、瓶身滑落和释放可靠性。不得沿用旧 AG 的
+   `gripper_type=1`、`0..100` 或历史 `255` 参数试错。
 
 上述项目完成前，机械臂和夹爪仍保持“型号已确认、运动未授权”状态；只读相机与 TF 验收流程不因此放开执行机构。
 
@@ -43,48 +66,30 @@
 `docs/gripper_control.md`。当前控制器默认 `backend=dry_run` 且
 `allow_hardware_motion=false`；仅指定真实后端不会打开串口或发送运动命令。
 
-## 2. DaBai 驱动模板
+## 2. DaBai 驱动模板（ROS1 Noetic）
 
-官方 LIMO Pro ROS 2 Foxy 手册给出的入口为：
-
-```bash
-ros2 launch orbbec_camera dabai.launch.py
-```
-
-当前 Humble WSL 环境尚未安装 `orbbec_camera`。到货后应优先使用机器原厂已验证的驱动版本，不要在确认原厂镜像和 USB 规则前随意替换。先查看驱动实际参数：
+2026-08-14 已确认机器人现场不是 Foxy/Humble，而是 ROS1 Noetic。以下是历史观测命令，
+仅用于说明当时如何启动，**禁止再次执行**：
 
 ```bash
-ros2 launch orbbec_camera dabai.launch.py --show-args
+# HISTORICAL / FORBIDDEN -- DO NOT RUN
+# HISTORICAL/NON_AUTHORITATIVE/DO NOT RUN: roslaunch astra_camera dabai_u3.launch
 ```
 
-仅启动相机的项目包装器：
+实际 launch 文件为
+`/home/agilex/agilex_ws/src/ros_astra_camera/launch/dabai_u3.launch`，SHA-256
+`75f9ada995ac961d0b4dddb7d86d591f57dc5392165663f4a905709a24231b2e`，只启动
+`/camera/camera` 的 `astra_camera_node`。旧包装器
+`scripts/start_dabai_camera.sh` 现已永久 fail-closed（固定非零退出），不能启动 ROS。
+未来唯一允许的 camera-only 路径是
+`docs/PERCEPTION_V2_ROS1_NOETIC_FIELD_RUNBOOK.md` 中的 host-owned
+`ros1_camera_only_atomic_launcher.py`：它将 live launch 复制到 sealed memfd，
+并以 `/proc/self/fd/<fd>` 绑定实际执行字节，禁止 ROS package-name 解析。
 
-```bash
-source /opt/ros/humble/setup.bash
-source ~/robotics/workspaces/limo_cleanup_ws/install/setup.bash
-
-ros2 launch limo_cleanup_bringup dabai_camera.launch.py
-```
-
-如果原厂包名或启动文件不同：
-
-```bash
-ros2 launch limo_cleanup_bringup dabai_camera.launch.py \
-  driver_package:=实际包名 \
-  driver_launch_file:=实际启动文件.launch.py
-```
-
-也可以使用：
-
-```bash
-~/robotics/workspaces/limo_cleanup_ws/scripts/start_dabai_camera.sh
-```
-
-脚本后的参数会原样传给供应商启动文件。只有 `--show-args` 明确列出的参数才能传入。例如驱动若确实提供 `depth_registration`，才使用：
-
-```bash
-scripts/start_dabai_camera.sh depth_registration:=true
-```
+ROS2 `orbbec_camera`、`dabai_camera.launch.py` 和旧的可替换
+`driver_package/driver_launch_file` 入口仅保留为离线迁移资产，不能作为现场 PASS。
+当前相机已由用户启动；视觉任务不得重启它或停止其他终端，除非进入单独安排的相机窗口。
+完整流程见 `docs/PERCEPTION_V2_ROS1_NOETIC_FIELD_RUNBOOK.md`。
 
 ## 3. 话题参数模板
 
@@ -153,6 +158,11 @@ ros2 launch limo_cleanup_bringup camera_extrinsics.launch.py \
 
 ## 6. 严格只读验收
 
+运行本节 ROS2 checker 前，必须在彼此隔离的 ROS1 与 ROS2 shell 中分别核对节点和命令
+话题，并从操作系统进程表与 `fuser /dev/ttyTHS0` 核对 UART owner。不得在同一 shell 中
+混合 source Noetic 与 Foxy，也不得用任一 ROS 图的空结果推断另一套 driver 不存在。
+若 ROS1 状态未确认，应停止在本节之前；相机 checker 不能替代该双栈前置检查。
+
 建议先单独启动相机，再在另一个终端运行验收：
 
 ```bash
@@ -189,6 +199,8 @@ scripts/run_hardware_readonly_acceptance.sh start_camera:=true
 - 启用外参比对后，TF 与独立实测值一致；
 - 所有配置的执行机构命令话题均无发布者和订阅者；报告中的
   `no_actuation_publishers`、`no_actuation_subscribers` 必须同时为 `PASS`。
+- 独立的 ROS1/ROS2 双图与 UART 检查已经确认 ROS1 teleop、第二底盘 driver 和未知速度
+  发布者均不存在；这一项不在 ROS2 JSON checker 的证明范围内，必须单独记录。
 
 只需临时检查相机、尚未提供底盘 TF 时，可以使用 `require_tf:=false`，但这种结果不能作为完整实机验收通过。
 
@@ -207,7 +219,9 @@ ros2 launch limo_cleanup_bringup real_perception_only.launch.py \
 任务管理器或 `CleanupTask` 就会处理收到的 RGB-D 帧。目标 Python 必须包含兼容的
 Torch 和 Ultralytics；使用独立环境时通过 `perception_python:=/实际/python` 覆盖。
 
-该启动文件不包含任务管理器、底盘、机械臂、夹爪或执行器。真实三维误差和安全验收通过前，不要把它与任何真实运动执行节点组合启动。
+该启动文件不包含任务管理器、底盘、机械臂、夹爪或执行器。真实三维误差通过且
+ROS1/ROS2 bridge、ROS1 watchdog、状态话题和 TF 唯一所有权完成验收前，不要把它与任何
+真实运动执行节点组合启动。
 
 ## 8. Foxy/ARM64 兼容与实机复验状态（2026-08-08）
 

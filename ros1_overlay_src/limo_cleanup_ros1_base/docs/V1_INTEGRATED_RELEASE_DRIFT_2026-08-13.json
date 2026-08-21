@@ -1,0 +1,257 @@
+{
+  "audit": {
+    "current_test_evidence": {
+      "bridge_package_pytest": "122 passed",
+      "bridge_cross_package": "9/9 groups PASS",
+      "linux_secure_validator": "VALIDATE_RELEASE_FILES_PASS:14",
+      "v1_offline": "113/113 PASS"
+    },
+    "git_state": "untracked",
+    "policy": "Do not accept a current digest merely because it exists. Accept only when source provenance, semantic review, and relevant fail-closed regression evidence all agree.",
+    "source_of_truth": [
+      "current workspace",
+      "Codex main task session 019ffae1-790d-7412-93f2-3d118ed02efa",
+      "Codex topology subtask session 019ffae2-2233-76f3-a444-4824daa762f3"
+    ],
+    "workspace": "C:/Users/DYH/Desktop/ai scout develop/limo_cleanup_ws"
+  },
+  "disposition": "accept_new_release",
+  "files": [
+    {
+      "current_sha256": "8477e7aaa6b772a035aa06f5a5d08fb4cdae16ac590329f613ab67d66de1a445",
+      "expected_sha256_before_audit": "fafaf4a6f1a3d74b03a729861702c803bc146947c004e20e0b470bb8e28c4604",
+      "git_status": "??",
+      "mtime_local": "2026-08-13T20:38:56.3322559+08:00",
+      "path": "launch/v1_navigation_core.launch",
+      "provenance": [
+        "session line 552: AMCL initialpose was remapped to /v1/validated_initialpose",
+        "session lines 638 and 648: move_base action/simple-goal namespace was made private while retaining canonical /move_base node ownership"
+      ],
+      "recommended_disposition": "accept_new_release",
+      "risk": "A wrong action or initial-pose namespace could bypass the validated pose/gateway boundary or break the owner contract.",
+      "semantic_diff": "The native core consumes only validated initial poses and exposes move_base action/simple-goal traffic on /v1/private_move_base* while command output remains /v1/nav_cmd_vel.",
+      "verification": [
+        "test_launch_contracts",
+        "test_guard_localization_contract",
+        "test_topology_policy",
+        "audit_v1_overlay.py"
+      ]
+    },
+    {
+      "current_sha256": "74cf5d1ae42cdbf95d32e4093452f6873d734140e227beaf783df9d09d17a8ca",
+      "expected_sha256_before_audit": "523a79499e7e8cd1a9fb1cc953204117967c87011f39ef4ee00885d7f32b54bb",
+      "git_status": "??",
+      "mtime_local": "2026-08-13T21:03:13.9920729+08:00",
+      "path": "launch/v1_navigation.launch",
+      "provenance": [
+        "session line 427: localization manager added",
+        "session line 623: gateway and both default-false forwarding gates added",
+        "session line 1022: guard heartbeat timeout added"
+      ],
+      "recommended_disposition": "accept_new_release",
+      "risk": "A permissive wrapper could start goal forwarding or omit READY/guard supervision.",
+      "semantic_diff": "The native wrapper remains inert by default and starts the localization manager, guard, and gateway only behind explicit navigation/preflight gates; gateway forwarding defaults false.",
+      "verification": [
+        "test_launch_contracts",
+        "test_guard_localization_contract",
+        "test_navigation_gateway_source",
+        "test_navigation_gateway_mock"
+      ]
+    },
+    {
+      "current_sha256": "8648ba3f354335cceb356a10b3b9d9f905bf6c5d43a6e4425fb6ce5827369e33",
+      "expected_sha256_before_audit": "6e8121ff36cb56d02b0fc7279325627aac5fbf4fe4ece63e33962f3c5d641642",
+      "git_status": "??",
+      "mtime_local": "2026-08-13T21:12:11.8949840+08:00",
+      "path": "config/amcl.yaml",
+      "provenance": [
+        "session line 1124: update_min_d 0.10 to 0.05 and update_min_a 0.20 to 0.10",
+        "session line 1152: interface snapshot SHA updated to this exact digest"
+      ],
+      "recommended_disposition": "accept_new_release",
+      "risk": "More frequent AMCL updates increase computation and may expose odometry noise; they must not be represented as an absolute-accuracy fix.",
+      "semantic_diff": "AMCL processes smaller odometry increments. Covariance thresholds, endpoint tolerances, particle limits, sensor range, transform tolerance, recovery behavior, and no-rotation policy were not loosened.",
+      "verification": [
+        "test_config_policy",
+        "test_launch_contracts.test_integrated_snapshot_interface_matches_native_core_inputs",
+        "validate_release_files",
+        "runtime_snapshot CONFIG_SHA256 equality test"
+      ]
+    },
+    {
+      "current_sha256": "c0a860407702d2ccac9f401e38dd8486b79aaf2062296c419b8ade79de921e5a",
+      "expected_sha256_before_audit": "a8afc876e75104d3fedab8c69134a7e09b7afcd2b29f10685472a2a87a2fe5ae",
+      "git_status": "??",
+      "mtime_local": "2026-08-13T21:58:11.8805035+08:00",
+      "path": "src/limo_v1_navigation/topology_policy.py",
+      "provenance": [
+        "subtask session 019ffae2-2233-76f3-a444-4824daa762f3 lines 1256/1257: private/public action prefixes, gateway exact owner, and public action exclusion added",
+        "subtask session 019ffae2-2233-76f3-a444-4824daa762f3 lines 1449/1450: localization manager added as the exact native status subscriber",
+        "session lines 652 and 659: public simple-goal bypass forbidden and private goal owner checked",
+        "main task session line 1742: exact mutually exclusive native/integrated action owners and mandatory mode-specific guard nodes added",
+        "main task session lines 1750, 1756, 1769-1774, and 1790: topology 8/8, V1 93/93, and cross-package 9-group regressions passed during the owner closure"
+      ],
+      "recommended_disposition": "accept_new_release",
+      "risk": "An owner mismatch could allow a double owner, wrong client, absent cancel path, or cross-mode speed/action loop.",
+      "semantic_diff": "All five action endpoints, simple-goal endpoints, speed topics, canonical nodes, and native/integrated guard/READY owners are exact and mutually exclusive; wrong, double, missing, or inactive-mode owners fail closed.",
+      "verification": [
+        "test_topology_policy 8/8",
+        "test_software_interface_contract 12/12",
+        "bridge topology cross-package group"
+      ]
+    },
+    {
+      "current_sha256": "57fb103069e702809dc8366ca2c07600a3c9f1bc530a92c2a9954972b18743cc",
+      "expected_sha256_before_audit": "03f0708f32a63dd0de48475c5fec2fe7737a54b6d28438bbbcfc87c2464fa5bc",
+      "git_status": "??",
+      "mtime_local": "2026-08-13T21:18:09.1496505+08:00",
+      "path": "config/v1_navigation_interface.json",
+      "provenance": [
+        "session line 1022: native wrapper args added",
+        "session line 1152: current AMCL SHA added",
+        "current frozen interface declares installed native-only and integrated runner-private snapshot ownership"
+      ],
+      "recommended_disposition": "accept_new_release",
+      "risk": "A stale interface digest would make the sealed runner consume a contract inconsistent with the installed native package or AMCL bytes.",
+      "semantic_diff": "The interface freezes native-only installed launches, bridge-runner-private integrated ownership, exact six-config snapshot hashes, and rosparam load order.",
+      "verification": [
+        "test_launch_contracts.test_integrated_snapshot_interface_matches_native_core_inputs",
+        "runtime_snapshot.validate_interface_payload",
+        "release/snapshot pin consistency test"
+      ]
+    },
+    {
+      "current_sha256": "75141531b0318e96a160d0dc7935c89877d6c43671d0f8aa5a6a63c4724aa240",
+      "expected_sha256_before_audit": "75141531b0318e96a160d0dc7935c89877d6c43671d0f8aa5a6a63c4724aa240",
+      "git_status": "??",
+      "mtime_local": "2026-08-12T00:49:23.0445842+08:00",
+      "path": "config/v1_navigation_profile.yaml",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    },
+    {
+      "current_sha256": "4c38280248e658b677f6c1a3c0631a825a4ac3e6ffc0916e32cbf10f55e14193",
+      "expected_sha256_before_audit": "4c38280248e658b677f6c1a3c0631a825a4ac3e6ffc0916e32cbf10f55e14193",
+      "git_status": "??",
+      "mtime_local": "2026-08-11T23:54:29.6065599+08:00",
+      "path": "config/costmap_common.yaml",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    },
+    {
+      "current_sha256": "7520f19ac21b7a36d0a3abf58ca39c78f005d5fcd824d0d9b5a21612eb26f576",
+      "expected_sha256_before_audit": "7520f19ac21b7a36d0a3abf58ca39c78f005d5fcd824d0d9b5a21612eb26f576",
+      "git_status": "??",
+      "mtime_local": "2026-08-11T23:54:31.1873345+08:00",
+      "path": "config/global_costmap.yaml",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    },
+    {
+      "current_sha256": "cfbebf667375cc8109abbf9d12d5a66cfc07356e77013a4cbb346c4ae2819891",
+      "expected_sha256_before_audit": "cfbebf667375cc8109abbf9d12d5a66cfc07356e77013a4cbb346c4ae2819891",
+      "git_status": "??",
+      "mtime_local": "2026-08-11T23:54:30.3957132+08:00",
+      "path": "config/local_costmap.yaml",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    },
+    {
+      "current_sha256": "e4c9e7e38982ae9ddc2f8c26f386fddb01e6b7b9d6b4639e2f8ef9baeab6c950",
+      "expected_sha256_before_audit": "e4c9e7e38982ae9ddc2f8c26f386fddb01e6b7b9d6b4639e2f8ef9baeab6c950",
+      "git_status": "??",
+      "mtime_local": "2026-08-11T23:54:31.9893297+08:00",
+      "path": "config/move_base.yaml",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    },
+    {
+      "current_sha256": "87b6d44cb250b0325bd71d7a67a1dca4fc7291ccdbee5db7182a11921cea0027",
+      "expected_sha256_before_audit": "87b6d44cb250b0325bd71d7a67a1dca4fc7291ccdbee5db7182a11921cea0027",
+      "git_status": "??",
+      "mtime_local": "2026-08-11T23:54:32.7781639+08:00",
+      "path": "config/planner.yaml",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    },
+    {
+      "current_sha256": "d99bc0eb6cc76a51c7fb122b84508373a49ecabb234f5231aebc23f6641f5ba7",
+      "expected_sha256_before_audit": "d99bc0eb6cc76a51c7fb122b84508373a49ecabb234f5231aebc23f6641f5ba7",
+      "git_status": "??",
+      "mtime_local": "2026-08-12T00:55:35.8204044+08:00",
+      "path": "launch/v1_runtime_preflight.launch",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    },
+    {
+      "current_sha256": "163d92b1c968886fc2a9ff450a98308edbfe3f81518c7ddf9e29d7c22d2c66cd",
+      "expected_sha256_before_audit": "163d92b1c968886fc2a9ff450a98308edbfe3f81518c7ddf9e29d7c22d2c66cd",
+      "git_status": "??",
+      "mtime_local": "2026-08-12T03:29:47.3926491+08:00",
+      "path": "scripts/v1_runtime_preflight.py",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    },
+    {
+      "current_sha256": "d484a4a8953d0a1bda41b08dc2da2c42a21626212c223ded531b5e52332fd413",
+      "expected_sha256_before_audit": "d484a4a8953d0a1bda41b08dc2da2c42a21626212c223ded531b5e52332fd413",
+      "git_status": "??",
+      "mtime_local": "2026-08-12T03:29:45.6261685+08:00",
+      "path": "src/limo_v1_navigation/config_policy.py",
+      "provenance": [
+        "No digest drift: expected_sha256_before_audit equals current_sha256; source bytes remain the previously sealed release input."
+      ],
+      "recommended_disposition": "keep_existing_pin",
+      "risk": "none observed",
+      "semantic_diff": "none",
+      "verification": ["SHA-256 match"]
+    }
+  ],
+  "post_audit_pin_state": {
+    "release_match_count": 14,
+    "release_mismatch_count": 0,
+    "runtime_snapshot_amcl_matches_release": true,
+    "runtime_snapshot_interface_matches_release": true
+  },
+  "schema": "limo_v1_integrated_release_drift/v1"
+}

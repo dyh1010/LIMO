@@ -28,10 +28,14 @@ class TrackedBaseController(Node):
         self.declare_parameter(
             'authorization_topic', '/cleanup/base/motion_authorized')
         self.declare_parameter('safety_topic', '/cleanup/base/safety_clear')
+        self.declare_parameter(
+            'topology_ready_topic', '/cleanup/navigation/topology_ready')
         self.declare_parameter('allow_base_motion', False)
+        self.declare_parameter('require_topology_ready', False)
         self.declare_parameter('publish_rate', 20.0)
         self.declare_parameter('command_timeout', 0.25)
         self.declare_parameter('heartbeat_timeout', 0.50)
+        self.declare_parameter('topology_timeout', 0.25)
         self.declare_parameter('max_linear_speed', 0.12)
         self.declare_parameter('max_angular_speed', 0.35)
         self.declare_parameter('max_linear_acceleration', 0.20)
@@ -43,12 +47,17 @@ class TrackedBaseController(Node):
             self.get_parameter('command_timeout').value)
         self.heartbeat_timeout = float(
             self.get_parameter('heartbeat_timeout').value)
+        self.topology_timeout = float(
+            self.get_parameter('topology_timeout').value)
+        self.require_topology_ready = bool(
+            self.get_parameter('require_topology_ready').value)
         publish_rate = float(self.get_parameter('publish_rate').value)
         if not math.isfinite(publish_rate) or publish_rate <= 0.0:
             raise ValueError('publish_rate must be finite and positive')
         for name, timeout in (
                 ('command_timeout', self.command_timeout),
-                ('heartbeat_timeout', self.heartbeat_timeout)):
+                ('heartbeat_timeout', self.heartbeat_timeout),
+                ('topology_timeout', self.topology_timeout)):
             if not math.isfinite(timeout) or timeout <= 0.0:
                 raise ValueError('{} must be finite and positive'.format(
                     name))
@@ -73,6 +82,8 @@ class TrackedBaseController(Node):
         self.authorization_time = -1.0
         self.safety_clear = False
         self.safety_time = -1.0
+        self.topology_ready = False
+        self.topology_time = -1.0
         self.last_tick = self._now()
         self.last_reason = None
 
@@ -81,6 +92,8 @@ class TrackedBaseController(Node):
         authorization_topic = str(
             self.get_parameter('authorization_topic').value)
         safety_topic = str(self.get_parameter('safety_topic').value)
+        topology_ready_topic = str(
+            self.get_parameter('topology_ready_topic').value)
         self.publisher = self.create_publisher(Twist, output_topic, 1)
         self.request_subscription = self.create_subscription(
             Twist, input_topic, self._on_request, 1)
@@ -88,6 +101,8 @@ class TrackedBaseController(Node):
             Bool, authorization_topic, self._on_authorization, 1)
         self.safety_subscription = self.create_subscription(
             Bool, safety_topic, self._on_safety, 1)
+        self.topology_subscription = self.create_subscription(
+            Bool, topology_ready_topic, self._on_topology_ready, 1)
         self.timer = self.create_timer(self.control_period, self._on_timer)
 
         self.get_logger().info(
@@ -139,6 +154,12 @@ class TrackedBaseController(Node):
         if not self.safety_clear:
             self._force_stop()
 
+    def _on_topology_ready(self, message: Bool) -> None:
+        self.topology_ready = bool(message.data)
+        self.topology_time = self._now()
+        if self.require_topology_ready and not self.topology_ready:
+            self._force_stop()
+
     def _publish(self, command: PlanarCommand) -> None:
         message = Twist()
         message.linear.x = command.linear_x
@@ -155,8 +176,12 @@ class TrackedBaseController(Node):
             authorization_time=self.authorization_time,
             safety_clear=self.safety_clear,
             safety_time=self.safety_time,
+            require_topology_ready=self.require_topology_ready,
+            topology_ready=self.topology_ready,
+            topology_time=self.topology_time,
             command_timeout=self.command_timeout,
             heartbeat_timeout=self.heartbeat_timeout,
+            topology_timeout=self.topology_timeout,
         ))
         if reason == 'allowed':
             dt = max(

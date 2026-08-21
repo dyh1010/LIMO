@@ -1,12 +1,49 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+# ROS1_NOETIC_CURRENT_FIELD_AUTHORITY
+# LEGACY_ROS2_OFFLINE_ONLY / NON_AUTHORITATIVE_DO_NOT_RUN
+# NOT_FIELD_OR_DELIVERY_EVIDENCE
+#
+# Retained only for an isolated ROS2 mock-graph regression. It never
+# authorizes real perception, a real executor, base/arm/gripper motion,
+# camera/device access, a field denominator, or delivery readiness. Current
+# operations begin at docs/PERCEPTION_V2_CURRENT_OPERATIONS_INDEX.md.
+
+set -euo pipefail
+
+readonly operations_index='docs/PERCEPTION_V2_CURRENT_OPERATIONS_INDEX.md'
+readonly isolated_domain='193'
+
+if [[ "${LIMO_ALLOW_LEGACY_ROS2_OFFLINE:-}" != '1' ]]; then
+  echo 'BLOCKED_LEGACY_ROS2_OFFLINE_OPT_IN_REQUIRED' >&2
+  echo "Read ${operations_index}." >&2
+  exit 64
+fi
 
 source /home/dyh/robotics/env/ros2_wsl.sh
 source /home/dyh/robotics/workspaces/limo_ws/install/setup.bash
 source /home/dyh/robotics/workspaces/limo_cleanup_ws/install/setup.bash
 
-set -u
+# Reassert isolation after every sourced environment so an underlay cannot
+# replace the graph scope selected by this legacy-only mock harness.
+export ROS_LOCALHOST_ONLY=1
+export ROS_DOMAIN_ID="${isolated_domain}"
+unset ROS_DISCOVERY_SERVER CYCLONEDDS_URI FASTRTPS_DEFAULT_PROFILES_FILE
+
+readonly -a mock_safety_args=(
+  use_mock_perception:=true
+  use_real_perception:=false
+  use_mock_executor:=true
+  use_detection_gate:=true
+  executor_dry_run:=true
+  allow_arm_motion:=false
+  use_gripper_controller:=false
+  gripper_backend:=dry_run
+  allow_gripper_motion:=false
+  confirmed_gripper_model:=UNRESOLVED_DO_NOT_CONNECT
+  use_tracked_base_controller:=false
+  allow_base_motion:=false
+)
 
 test_dir=$(mktemp -d /tmp/limo_cleanup_perception.XXXXXX)
 launch_pid=''
@@ -46,6 +83,7 @@ start_system() {
   local launch_log=$1
   shift
   setsid ros2 launch limo_cleanup_bringup cleanup_system.launch.py \
+    "${mock_safety_args[@]}" \
     "$@" > "$launch_log" 2>&1 &
   launch_pid=$!
   sleep 2
@@ -96,8 +134,8 @@ timeout_launch="$test_dir/timeout_launch.log"
 timeout_status="$test_dir/timeout_status.log"
 
 start_system "$timeout_launch" \
-  use_mock_perception:=false \
   mock_step_duration:=0.10 \
+  mock_detection_delay:=3.0 \
   detection_timeout:=0.60
 start_status_capture "$timeout_status"
 ros2 topic pub --once \

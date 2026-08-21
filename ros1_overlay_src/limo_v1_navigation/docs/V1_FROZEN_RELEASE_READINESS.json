@@ -1,0 +1,366 @@
+{
+  "active_software_blockers": [
+    {
+      "category": "release_integrity",
+      "id": "V1_FROZEN_RELEASE_HASH_DRIFT",
+      "status": "BLOCKED",
+      "template_only": true
+    },
+    {
+      "category": "vendor_provenance",
+      "failure_code": "TF_VENDOR_CONTRACT_UNVERIFIED",
+      "id": "V1_VENDOR_PROVENANCE_UNVERIFIED",
+      "status": "BLOCKED",
+      "template_only": true
+    }
+  ],
+  "check_matrix_pass": false,
+  "decision_model": "limo_v1_independent_blocker_attribution/v1",
+  "external_check_output_contract": {
+    "failed_nodeids_are_sorted_unique": true,
+    "raw_output_content_persisted": false,
+    "redacted_summary_content_persisted": true,
+    "pytest_failed_line_form": "FAILED <nodeid>",
+    "raw_integrity_fields": [
+      "returncode",
+      "stdout_bytes",
+      "stdout_sha256",
+      "stderr_bytes",
+      "stderr_sha256"
+    ],
+    "summary_head_line_limit": 12,
+    "summary_line_char_limit": 512,
+    "summary_redacts": [
+      "secret/token/password-style key-values",
+      "Bearer credentials",
+      "URL userinfo credentials"
+    ],
+    "summary_tail_line_limit": 12,
+    "template_only": true
+  },
+  "bridge_failure_attribution_contract": {
+    "allowed_failed_nodeids": [
+      "test/test_map_binding.py::test_release_files_match_the_frozen_hash_set"
+    ],
+    "exact_set_required": true,
+    "execution_error_required": null,
+    "expected_count_required": 122,
+    "fallback_category": "offline_regression",
+    "observed_count_required": 121,
+    "release_integrity_requires_exact_drift_binding": true,
+    "returncode_required": 1,
+    "template_only": true
+  },
+  "delivery_ready": false,
+  "deployment": {
+    "autostart": false,
+    "autostart_policy": "NO_AUTOSTART",
+    "native": {
+      "execution_status": "BLOCKED",
+      "template_only": true
+    }
+  },
+  "field_acceptance": {
+    "amcl_three_cold_start_convergence": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "cancel_and_driver_timeout": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "dynamic_obstacle_avoidance": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "navigation_control_endpoint_error": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "amcl_estimation_error": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "physical_total_endpoint_error": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "repeat_localization_error": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "scan_odom_tf_loss": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "static_obstacle_avoidance": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "zero_motion_absolute_localization_error": {
+      "real_machine_evidence": false,
+      "status": "NOT_RUN",
+      "template_only": true
+    }
+  },
+  "field_acceptance_complete": false,
+  "field_evidence_complete": false,
+  "evidence_lineage": {
+    "blocker_id": "EVIDENCE_LINEAGE_INTEGRITY_FAILED",
+    "authority_candidate": null,
+    "authority_protocol": {
+      "candidate_is_current": false,
+      "candidate_lifecycle": "NON_AUTHORITATIVE_PENDING_AUTHORITY_INDEX",
+      "claim_precedes_candidate": true,
+      "claim_schema": "limo_v1_frozen_release_authority_claim/v1",
+      "commit_point": "ATOMIC_FIXED_AUTHORITY_INDEX_LINK",
+      "index_schema": "limo_v1_frozen_release_authority_index/v2",
+      "incomplete_generation_decision": "BLOCKED_MANUAL_AUDIT_REQUIRED",
+      "template_only": true
+    },
+    "direct_authority_predecessor": {
+      "binding_verified": false,
+      "decision": "NOT_EVALUATED",
+      "errors": [
+        "template-only predecessor bytes have not been re-read"
+      ],
+      "index": {
+        "actual_bytes": null,
+        "actual_sha256": null,
+        "bytes_match": null,
+        "expected_bytes": 3825,
+        "expected_sha256": "2f35564fbd586698fad9bd0ebc5918dd299cf85882dc1ce25cf70b83fecfc4d9",
+        "hash_matches": null,
+        "lifecycle": "COMMITTED_PREDECESSOR_AUTHORITY_INDEX",
+        "must_not_be_overwritten": true,
+        "path": "evidence/v1_frozen_release_authority_61a65c02bd409da8ab4020343c8f71e26b738c82661459dd829cff519d4dc8f5.json",
+        "read_error": null,
+        "template_only": true
+      },
+      "last_valid_authority": "evidence/v1_frozen_release_authority_61a65c02bd409da8ab4020343c8f71e26b738c82661459dd829cff519d4dc8f5.json",
+      "relationship": "DIRECT_COMMITTED_PREDECESSOR",
+      "report": {
+        "actual_bytes": null,
+        "actual_sha256": null,
+        "bytes_match": null,
+        "expected_bytes": 43526,
+        "expected_sha256": "a934658607220d878f3a0016b584848e651a5794e69d99f8889d3e1cf603ee63",
+        "hash_matches": null,
+        "lifecycle": "LEGACY_PREDECESSOR_REPORT",
+        "must_not_be_overwritten": true,
+        "path": "evidence/v1_frozen_release_readiness_20260814_182000_lineage_authority_blocked.json",
+        "read_error": null,
+        "template_only": true
+      },
+      "successor_relationship": "PROPOSED_SUCCESSOR_TO",
+      "template_only": true
+    },
+    "decision": "NOT_EVALUATED",
+    "errors": [
+      "template-only lineage has no runtime hashes or candidate publication"
+    ],
+    "expected_stale_count": 4,
+    "exclusive_create_required": true,
+    "policy": "A generated report must hash and mark the named prior report stale/superseded; this template is not that execution evidence.",
+    "precommit_revalidation_required": true,
+    "required_for_software_release_pass": true,
+    "reserved_paths_never_targets": true,
+    "observed_stale_count": null,
+    "supersedes": [
+      {
+        "actual_sha256": null,
+        "expected_sha256": "c021787447b16d5def65796b3b0bac7883fc683106af1ce30cbb5de90d693012",
+        "hash_matches": null,
+        "lifecycle": "STALE_SUPERSEDED_FOR_READINESS_DECISIONS",
+        "must_not_be_overwritten": true,
+        "path": "evidence/v1_frozen_release_readiness_20260814_164500_vendor_provenance_final_blocked.json",
+        "read_error": null,
+        "reason": "pre-attribution report conflated independent release/vendor blockers with the two integrated software closures",
+        "retained_by_candidate_evidence_id": null,
+        "template_only": true
+      },
+      {
+        "actual_sha256": null,
+        "expected_sha256": "1258a75eb74606f524bf61ca383e6f079a4536874b386795567763728de08b33",
+        "hash_matches": null,
+        "lifecycle": "STALE_SUPERSEDED_FOR_READINESS_DECISIONS",
+        "must_not_be_overwritten": true,
+        "path": "evidence/v1_frozen_release_readiness_20260814_172500_vendor_resolution_attribution_blocked.json",
+        "read_error": null,
+        "reason": "pre-output-attribution report lacked bounded/redacted summaries and exact bridge failed-node proof",
+        "retained_by_candidate_evidence_id": null,
+        "template_only": true
+      },
+      {
+        "actual_sha256": null,
+        "expected_sha256": "0a7e6db032aba31cc1dd81f25849b61434624df118612ee889cd9c61a69a89de",
+        "hash_matches": null,
+        "lifecycle": "STALE_SUPERSEDED_FOR_READINESS_DECISIONS",
+        "must_not_be_overwritten": true,
+        "path": "evidence/v1_frozen_release_readiness_20260814_175500_safe_bridge_attribution_blocked.json",
+        "read_error": null,
+        "reason": "output persistence contract ambiguity corrected by 922d676e8fc0219d62bba7f75578f6877a73ee41db59443e9e4e59059ab41b4d",
+        "retained_by_candidate_evidence_id": null,
+        "template_only": true
+      },
+      {
+        "actual_sha256": null,
+        "expected_sha256": "922d676e8fc0219d62bba7f75578f6877a73ee41db59443e9e4e59059ab41b4d",
+        "hash_matches": null,
+        "lifecycle": "STALE_SUPERSEDED_FOR_READINESS_DECISIONS",
+        "must_not_be_overwritten": true,
+        "path": "evidence/v1_frozen_release_readiness_20260814_175800_safe_bridge_attribution_final_blocked.json",
+        "read_error": null,
+        "reason": "authoritative predecessor superseded by the unique successor that closes the machine-lineage gap",
+        "retained_by_candidate_evidence_id": null,
+        "template_only": true
+      }
+    ],
+    "template_only": true,
+    "verified": false
+  },
+  "field_authorization": {
+    "classes": {
+      "hardware_read_only": {
+        "decision": "BLOCKED",
+        "execution_ready": false,
+        "status": "NOT_RUN",
+        "template_only": true
+      },
+      "real_motion": {
+        "decision": "BLOCKED",
+        "execution_ready": false,
+        "status": "NOT_RUN",
+        "template_only": true
+      },
+      "zero_motion_localization": {
+        "decision": "BLOCKED",
+        "execution_ready": false,
+        "status": "NOT_RUN",
+        "template_only": true
+      }
+    },
+    "decision": "BLOCKED",
+    "dedicated_field_orchestrator_present": false,
+    "execution_ready": false,
+    "status": "NOT_RUN",
+    "template_only": true
+  },
+  "integrated_software_ready": false,
+  "integrated_combined_deployment": {
+    "closure_status": "PASS",
+    "execution_status": "BLOCKED",
+    "independent_active_blockers": [
+      {
+        "category": "release_integrity",
+        "id": "V1_FROZEN_RELEASE_HASH_DRIFT",
+        "status": "BLOCKED",
+        "template_only": true
+      },
+      {
+        "category": "vendor_provenance",
+        "failure_code": "TF_VENDOR_CONTRACT_UNVERIFIED",
+        "id": "V1_VENDOR_PROVENANCE_UNVERIFIED",
+        "status": "BLOCKED",
+        "template_only": true
+      }
+    ],
+    "resolved_software_blockers": [
+      {
+        "check": "integrated_topology_verifier_contract",
+        "expected_assertion_count": 8,
+        "id": "ROS1_TOPOLOGY_VERIFIER_NODE_NAME_COLLISION",
+        "status": "CLOSED",
+        "template_only": true
+      },
+      {
+        "check": "integrated_verifier_install_contract",
+        "expected_assertion_count": 7,
+        "id": "INSTALLED_RUNNER_WORKSPACE_SCRIPT_PATH_MISSING",
+        "status": "CLOSED",
+        "template_only": true
+      }
+    ],
+    "software_blockers": [],
+    "software_status": "TEMPLATE_ONLY",
+    "template_only": true
+  },
+  "generated_evidence_policy": "Only a fresh exclusive report from scripts/run_v1_frozen_offline_regression.py on Linux/POSIX may assert software_release_pass. This template is not execution evidence.",
+  "schema": "limo_v1_frozen_release_readiness/v1",
+  "software_release_pass": false,
+  "software_release_ready": false,
+  "status": "TEMPLATE_ONLY",
+  "release_integrity": {
+    "artifact_sha256": null,
+    "artifact_status": "BLOCKED_TEMPLATE_ONLY",
+    "decision": "BLOCKED",
+    "drift_active": true,
+    "bridge_release_hash_binding": {
+      "eligible": false,
+      "errors": [
+        "template only; exact current bytes were not evaluated"
+      ],
+      "expected_paths": [
+        "launch/v1_runtime_preflight.launch",
+        "scripts/v1_runtime_preflight.py",
+        "src/limo_v1_navigation/topology_policy.py"
+      ],
+      "records": [],
+      "sealed_release_pin_state": {
+        "matching_files": null,
+        "mismatch_paths": [],
+        "mismatching_files": null,
+        "path": "ros1_overlay_src/limo_cleanup_ros1_base/src/limo_cleanup_ros1_base/map_binding.py",
+        "records": [],
+        "source_sha256": null,
+        "template_only": true,
+        "total_files": 14,
+        "valid": false
+      },
+      "template_only": true
+    },
+    "expected_schema": "limo_v1_tf_edge_release_drift_blocker/v1",
+    "matching_files": null,
+    "mismatching_files": null,
+    "path": "ros1_overlay_src/limo_cleanup_ros1_base/docs/V1_TF_EDGE_RELEASE_DRIFT_BLOCKER_2026-08-14.json",
+    "secure_release_validator": {
+      "expected_count": 14,
+      "observed_count": null,
+      "status": "NOT_RUN"
+    },
+    "template_only": true,
+    "total_files": 14
+  },
+  "vendor_provenance": {
+    "artifact_sha256": null,
+    "artifact_status": "BLOCKED_TEMPLATE_ONLY",
+    "blocker_trust_anchor_matches": null,
+    "consumer_wrapper": {
+      "artifact_sha256": null,
+      "path": "ros1_overlay_src/limo_v1_navigation/launch/v1_base_sensors.launch",
+      "read_error": null,
+      "trust_anchor_matches": null,
+      "trust_anchor_sha256": null
+    },
+    "decision": "BLOCKED",
+    "expected_schema": "limo_v1_ros1_vendor_include_blocker/v1",
+    "failure_code": "TF_VENDOR_CONTRACT_UNVERIFIED",
+    "path": "ros1_overlay_src/limo_v1_navigation/docs/V1_ROS1_VENDOR_INCLUDE_BLOCKER.json",
+    "static_bundle_not_verified": true,
+    "template_only": true,
+    "topology_policy_trust_anchor": null,
+    "trust_anchor_matches": null,
+    "verification_scope": "BLOCKER/WRAPPER_TRUST_ANCHORS_AND_BLOCKER_SEMANTICS_ONLY; NO INDEPENDENT SOURCE_MANIFEST/PUBLISHER_PIN/RULES PATHS",
+    "verified": false,
+    "wrapper_trust_anchor_matches": null
+  }
+}

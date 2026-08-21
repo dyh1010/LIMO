@@ -22,17 +22,38 @@ ZERO_EPSILON = 1e-9
 MINIMUM_SAMPLES = 10
 
 
-def _endpoint_name(endpoint):
-    namespace = str(endpoint.node_namespace or '/').rstrip('/')
+def _fully_qualified_node_name(node_name, node_namespace):
+    namespace = str(node_namespace or '/').rstrip('/')
     if not namespace:
         namespace = '/'
     if namespace == '/':
-        return '/{}'.format(endpoint.node_name)
-    return '{}/{}'.format(namespace, endpoint.node_name)
+        return '/{}'.format(node_name)
+    return '{}/{}'.format(namespace, node_name)
+
+
+def _endpoint_name(endpoint):
+    return _fully_qualified_node_name(
+        endpoint.node_name, endpoint.node_namespace)
 
 
 def _endpoint_names(endpoints):
     return {_endpoint_name(endpoint) for endpoint in endpoints}
+
+
+def _rmw_identifier():
+    public_getter = getattr(
+        rclpy, 'get_rmw_implementation_identifier', None)
+    if public_getter is not None:
+        return str(public_getter())
+    try:
+        from rclpy.impl.implementation_singleton import rclpy_implementation
+    except ImportError:
+        return 'unknown'
+    private_getter = getattr(
+        rclpy_implementation, 'rmw_get_implementation_identifier', None)
+    if private_getter is None:
+        return 'unknown'
+    return str(private_getter())
 
 
 def _twist_values(message):
@@ -77,7 +98,8 @@ class Stage2TopologyVerifier(Node):
                     sorted(publisher_names),
                     EXPECTED_GATEWAY))
         if (len(subscribers) != 2 or subscriber_names != {
-                EXPECTED_DRIVER, self.get_fully_qualified_name()}):
+                EXPECTED_DRIVER, _fully_qualified_node_name(
+                    self.get_name(), self.get_namespace())}):
             raise RuntimeError(
                 '{} has {} subscriber endpoints from {}, expected exactly '
                 'driver plus verifier'.format(
@@ -122,17 +144,36 @@ def _spin_until(node, predicate, timeout):
 def run_verification():
     verifier = Stage2TopologyVerifier()
     try:
+        expected_verifier = _fully_qualified_node_name(
+            verifier.get_name(), verifier.get_namespace())
         ready = _spin_until(
             verifier,
             lambda: (
-                bool(verifier.get_publishers_info_by_topic(
-                    SAFE_COMMAND_TOPIC))
-                and bool(verifier.get_subscriptions_info_by_topic(
-                    SAFE_COMMAND_TOPIC))),
+                len(verifier.get_publishers_info_by_topic(
+                    SAFE_COMMAND_TOPIC)) == 1
+                and _endpoint_names(
+                    verifier.get_publishers_info_by_topic(
+                        SAFE_COMMAND_TOPIC)) == {EXPECTED_GATEWAY}
+                and len(verifier.get_subscriptions_info_by_topic(
+                    SAFE_COMMAND_TOPIC)) == 2
+                and _endpoint_names(
+                    verifier.get_subscriptions_info_by_topic(
+                        SAFE_COMMAND_TOPIC)) == {
+                            EXPECTED_DRIVER, expected_verifier}
+                and all(
+                    len(verifier.get_publishers_info_by_topic(topic)) == 1
+                    and _endpoint_names(
+                        verifier.get_publishers_info_by_topic(topic)) == {
+                            EXPECTED_DRIVER}
+                    for topic in STATE_TOPICS
+                )
+            ),
             8.0,
         )
         if not ready:
-            raise RuntimeError('stage-2 safe command endpoints not discovered')
+            raise RuntimeError(
+                'stage-2 endpoint metadata did not resolve to the exact '
+                'gateway, driver, verifier, and state topology')
         verifier.verify_topology()
 
         enough_samples = _spin_until(
@@ -171,6 +212,7 @@ def run_verification():
 def main():
     rclpy.init()
     try:
+        print('RMW_IMPLEMENTATION={}'.format(_rmw_identifier()))
         return run_verification()
     finally:
         rclpy.shutdown()

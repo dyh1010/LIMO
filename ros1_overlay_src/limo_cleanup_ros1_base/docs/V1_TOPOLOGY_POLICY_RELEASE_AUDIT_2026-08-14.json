@@ -1,0 +1,92 @@
+{
+  "schema": "limo_v1_topology_policy_release_audit/v1",
+  "generated_utc": "2026-08-14T05:26:51.6438449Z",
+  "audit_status": "BLOCKED_PENDING_TF_EDGE_POLICY_AND_FULL_REGRESSION",
+  "disposition": "do_not_update_pin",
+  "lifecycle": "STALE_SUPERSEDED_FOR_APPROVAL_PURPOSES",
+  "may_be_promoted_in_place": false,
+  "future_approval_requires_new_audit_file": true,
+  "future_approval_requires_new_evidence_id": true,
+  "blind_hash_refresh": false,
+  "release_file": "src/limo_v1_navigation/topology_policy.py",
+  "sha256": {
+    "previous_frozen": "c0a860407702d2ccac9f401e38dd8486b79aaf2062296c419b8ade79de921e5a",
+    "audited_candidate": "954669e7715978e77ee80870a59cbe480408a582d60b0d43d34dc14769d0f298"
+  },
+  "release_set_diff": {
+    "total_files": 14,
+    "matching_files": 13,
+    "mismatching_files": [
+      "src/limo_v1_navigation/topology_policy.py"
+    ]
+  },
+  "semantic_diff": [
+    {
+      "id": "named_constants",
+      "behavior": "UNCHANGED",
+      "detail": "Pre-core literal /map_server and /amcl names are represented by equal-valued dataclass fields."
+    },
+    {
+      "id": "required_localization_core",
+      "behavior": "FAIL_CLOSED_STRENGTHENING",
+      "detail": "Navigation active_nodes must include canonical /map_server, /amcl, and /move_base. /move_base was already required; map_server and AMCL are newly explicit."
+    },
+    {
+      "id": "competing_tf_or_slam_nodes",
+      "behavior": "FAIL_CLOSED_STRENGTHENING",
+      "detail": "Native and integrated navigation reject /slam_gmapping, /cartographer_node, and /robot_pose_ekf."
+    },
+    {
+      "id": "canonical_instance_aliases",
+      "behavior": "FAIL_CLOSED_STRENGTHENING",
+      "detail": "Canonical instance checks now cover /map_server and /amcl in addition to the existing /limo_base_node and /move_base checks; canonical underscore aliases are rejected."
+    }
+  ],
+  "explicitly_unchanged": [
+    "AMCL convergence and covariance thresholds",
+    "goal, cancel, status, feedback, and result ownership",
+    "native and integrated action-owner exclusivity",
+    "public /cmd_vel rejection",
+    "private velocity chain",
+    "READY, guard, stop, and cancel semantics",
+    "launch defaults and hardware gates",
+    "all motion publication behavior"
+  ],
+  "known_scope_limits": [
+    "canonical alias matching is intentionally limited to canonical_name plus underscore",
+    "the policy does not attribute individual TF edges to publishers",
+    "the policy does not validate the external vendor limo_start.launch bytes",
+    "offline topology PASS does not close runtime ownership"
+  ],
+  "blocking_reasons": [
+    "individual TF edges are not yet attributed to caller authority and transport topic",
+    "cross-/tf and /tf_static duplicate edges are not yet rejected by the frozen policy",
+    "dynamic versus static edge behavior is not yet machine-validated",
+    "vendor limo_start.launch bytes and recursive include chain remain unverified",
+    "post-change full bridge and secure-validator regression has not passed"
+  ],
+  "pre_pin_evidence": {
+    "v1_targeted_ownership_tests": "23/23 PASS",
+    "v1_frozen_core": "113/113 PASS",
+    "bridge_behavior_excluding_frozen_hash_assertion": "121/121 PASS",
+    "bridge_full": "121 PASS / 1 HASH FAIL",
+    "secure_release_validator": "13 MATCH / 1 HASH MISMATCH"
+  },
+  "required_post_pin_evidence": [
+    "bridge 122/122",
+    "secure validator 14/14",
+    "cross-package 9/9 groups",
+    "V1 frozen core 113/113",
+    "V1 delivery 25/25",
+    "V1 discovery 138/138",
+    "overlay/profile/catkin/py_compile/whitespace PASS"
+  ],
+  "vendor_include_blocker_independent": true,
+  "vendor_include_status": "PROVISIONAL_BLOCKED_ON_VENDOR_INCLUDE",
+  "safety": {
+    "ros_started": false,
+    "hardware_accessed": false,
+    "goal_sent": false,
+    "twist_published": false
+  }
+}

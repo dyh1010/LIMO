@@ -46,6 +46,8 @@ def generate_launch_description():
     rgb_topic = LaunchConfiguration('rgb_topic')
     depth_topic = LaunchConfiguration('depth_topic')
     camera_info_topic = LaunchConfiguration('camera_info_topic')
+    depth_camera_info_topic = LaunchConfiguration(
+        'depth_camera_info_topic')
     detector_device = LaunchConfiguration('detector_device')
     perception_python = LaunchConfiguration('perception_python')
     use_gripper_controller = LaunchConfiguration('use_gripper_controller')
@@ -53,7 +55,6 @@ def generate_launch_description():
     allow_gripper_motion = LaunchConfiguration('allow_gripper_motion')
     confirmed_gripper_model = LaunchConfiguration(
         'confirmed_gripper_model')
-    gripper_serial_port = LaunchConfiguration('gripper_serial_port')
     use_tracked_base_controller = LaunchConfiguration(
         'use_tracked_base_controller')
     allow_base_motion = LaunchConfiguration('allow_base_motion')
@@ -159,6 +160,11 @@ def generate_launch_description():
             description='Camera intrinsics matching the RGB image',
         ),
         DeclareLaunchArgument(
+            'depth_camera_info_topic',
+            default_value='/camera/depth/camera_info',
+            description='CameraInfo for depth aligned to the RGB grid',
+        ),
+        DeclareLaunchArgument(
             'detector_device',
             default_value='0',
             description='Ultralytics inference device, e.g. 0 or cpu',
@@ -176,7 +182,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'gripper_backend',
             default_value='dry_run',
-            description='Gripper backend: dry_run or pymycobot',
+            description='Gripper backend: dry_run only',
         ),
         DeclareLaunchArgument(
             'allow_gripper_motion',
@@ -185,13 +191,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'confirmed_gripper_model',
-            default_value='mycobot_gripper_ag',
-            description='Expected physical gripper model',
-        ),
-        DeclareLaunchArgument(
-            'gripper_serial_port',
-            default_value='/dev/elephant',
-            description='myCobot serial device',
+            default_value='UNRESOLVED_DO_NOT_CONNECT',
+            description='Final physical gripper model is not frozen',
         ),
         DeclareLaunchArgument(
             'use_tracked_base_controller',
@@ -251,6 +252,7 @@ def generate_launch_description():
                 'rgb_topic': rgb_topic,
                 'depth_topic': depth_topic,
                 'camera_info_topic': camera_info_topic,
+                'depth_camera_info_topic': depth_camera_info_topic,
                 'device': detector_device,
                 'always_active': False,
                 'confidence': ParameterValue(
@@ -281,7 +283,6 @@ def generate_launch_description():
                 'allow_hardware_motion': ParameterValue(
                     allow_gripper_motion, value_type=bool),
                 'confirmed_gripper_model': confirmed_gripper_model,
-                'serial_port': gripper_serial_port,
             }],
             condition=IfCondition(use_gripper_controller),
         ),

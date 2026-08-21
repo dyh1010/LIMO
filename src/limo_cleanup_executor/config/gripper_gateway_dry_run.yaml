@@ -1,0 +1,19 @@
+cleanup_gripper_gateway:
+  ros__parameters:
+    backend: dry_run
+    allow_simulated_motion: false
+    poll_hz: 20.0
+    feedback_hz: 20.0
+    dry_run_motion_duration_s: 0.20
+    state_max_age_s: 0.25
+    command_timeout_s: 5.0
+    stop_timeout_s: 2.0
+    stable_samples_required: 3
+    position_tolerance: 0.02
+    stationary_position_tolerance: 0.005
+    stationary_dwell_s: 0.20
+    reviewed_tool_model: DRY_RUN_TOOL
+    reviewed_tool_revision: DRY_RUN_REVISION
+    reviewed_controller_identity: DRY_RUN_CONTROLLER
+    reviewed_transport_identity: DRY_RUN_TRANSPORT
+    reviewed_protocol_identity: DRY_RUN_PROTOCOL

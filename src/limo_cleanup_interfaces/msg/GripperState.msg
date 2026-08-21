@@ -1,0 +1,45 @@
+builtin_interfaces/Time stamp
+
+string STATE_INITIALIZING=INITIALIZING
+string STATE_READY=READY
+string STATE_EXECUTING=EXECUTING
+string STATE_STOPPING=STOPPING
+string STATE_FAULT_LATCHED=FAULT_LATCHED
+string STATE_PHYSICAL_ESTOP_REQUIRED=PHYSICAL_ESTOP_REQUIRED
+string STATE_CLOSED=CLOSED
+
+string gateway_state
+bool valid
+string session_id
+uint64 sample_sequence
+builtin_interfaces/Time sample_stamp
+
+string tool_model
+string tool_revision
+string controller_identity
+string transport_identity
+string protocol_identity
+string controller_boot_id
+
+int8 connected
+int8 enabled
+int8 moving
+int8 opened_limit
+int8 closed_limit
+
+bool normalized_position_valid
+float64 normalized_position
+bool jaw_opening_valid
+float64 jaw_opening_m
+bool supply_voltage_valid
+float64 supply_voltage_v
+bool motor_current_valid
+float64 motor_current_a
+bool grip_force_valid
+float64 grip_force_n
+bool temperature_valid
+float64 temperature_c
+
+string active_command_id
+int32 fault_code
+string fault_reason

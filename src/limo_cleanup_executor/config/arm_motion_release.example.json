@@ -1,0 +1,117 @@
+{
+  "schema_version": 2,
+  "arm_model": "myCobot 280 M5",
+  "release_binding": {
+    "runtime_release_id": null,
+    "release_manifest_sha256": null
+  },
+  "source_binding": {
+    "interface_contract_sha256": null,
+    "acceptance_contract_sha256": null,
+    "gateway_policy_sha256": null,
+    "collision_model_sha256": null
+  },
+  "tool": {
+    "model": null,
+    "revision": null,
+    "assembly_sha256": null,
+    "mass_kg": null,
+    "center_of_mass_mm": null,
+    "inertia_kg_m2": null
+  },
+  "coordinate_contract": {
+    "reference_frame": null,
+    "reference_frame_id": null,
+    "end_type": null,
+    "endpoint_frame_id": null,
+    "controller_tool_reference": null,
+    "flange_to_tcp": null,
+    "translation_uncertainty_mm": null,
+    "rotation_uncertainty_deg": null,
+    "controller_readback_sha256": null,
+    "tcp_measurement_sha256": null,
+    "base_extrinsic_sha256": null
+  },
+  "controller_state": {
+    "controller_connected": null,
+    "power_on": null,
+    "moving": null,
+    "paused": null,
+    "error_code": null,
+    "all_servos_enabled": null,
+    "fresh_mode": null,
+    "stationary_samples": null,
+    "stationary_dwell_s": null,
+    "stationary_joint_tolerance_deg": null,
+    "state_max_age_s": null,
+    "readback_sha256": null
+  },
+  "motion_profile": {
+    "profile_id": null,
+    "tool_revision": null,
+    "acceleration_profile_manifest_sha256": null,
+    "acceleration_profile_runtime_release_id": null,
+    "max_speed_grade": null,
+    "approved_speed_grades": [],
+    "approved_tcp_modes": [],
+    "max_joint_speed_deg_s": null,
+    "max_tcp_speed_mm_s": null,
+    "max_joint_acceleration_deg_s2": null,
+    "max_tcp_acceleration_mm_s2": null,
+    "max_joint_stop_distance_deg": null,
+    "max_tcp_stop_distance_mm": null,
+    "path_mode_review_sha256": null,
+    "approval_sha256": null,
+    "cases": []
+  },
+  "real_backend_gate": {
+    "bounded_call_capability": {
+      "enforced": null,
+      "artifact": null,
+      "artifact_sha256": null
+    },
+    "deadline_enforcement_capability": {
+      "enforced": null,
+      "artifact": null,
+      "artifact_sha256": null
+    },
+    "native_cancel_capability": {
+      "enforced": null,
+      "artifact": null,
+      "artifact_sha256": null
+    },
+    "independent_stop_channel_capability": {
+      "enforced": null,
+      "artifact": null,
+      "artifact_sha256": null
+    },
+    "persistent_safety_latch_capability": {
+      "enforced": null,
+      "artifact": null,
+      "artifact_sha256": null
+    }
+  },
+  "joint_limits": {
+    "required_fresh_mode": null,
+    "controller_deg": [],
+    "project_deg": [],
+    "required_named_pose_margin_deg": null,
+    "controller_readback_sha256": null,
+    "collision_review_sha256": null
+  },
+  "cartesian_limits": {
+    "reference_frame_id": null,
+    "endpoint_frame_id": null,
+    "bounds": [],
+    "workspace_review_sha256": null,
+    "ik_collision_review_sha256": null
+  },
+  "named_poses": [],
+  "review": {
+    "review_id": null,
+    "reviewer": null,
+    "reviewed_at_utc": null,
+    "approval_sha256": null
+  },
+  "artifacts": []
+}

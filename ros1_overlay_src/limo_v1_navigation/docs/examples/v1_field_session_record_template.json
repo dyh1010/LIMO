@@ -1,0 +1,216 @@
+{
+  "schema": "limo_v1_field_session_record/v1",
+  "template_only": true,
+  "real_machine_evidence": false,
+  "status": "NOT_RUN",
+  "delivery_ready": false,
+  "record_creation": {
+    "copy_template_to_new_timestamped_file": true,
+    "exclusive_create_required": true,
+    "overwrite_allowed": false,
+    "record_path": "",
+    "record_sha256": ""
+  },
+  "release_boundary": {
+    "core_functionality_frozen": true,
+    "release_pin_refresh_authorized": false,
+    "autostart_policy": "NO_AUTOSTART",
+    "software_release_report_path": "",
+    "software_release_report_sha256": "",
+    "software_release_status": "NOT_RUN",
+    "software_pass_implies_field_pass": false,
+    "software_pass_implies_delivery_ready": false
+  },
+  "session_identity": {
+    "session_id": "",
+    "boot_id": "",
+    "robot_id": "",
+    "operator": "",
+    "observer_at_physical_stop": "",
+    "mode": "",
+    "active_map_id": "",
+    "started_at_utc": "",
+    "finished_at_utc": ""
+  },
+  "deployment_modes": {
+    "native": {
+      "design_audit_status": "PASS",
+      "execution_status": "BLOCKED",
+      "autostart": false,
+      "safe_defaults_verified_offline": true,
+      "block_reasons": [
+        "field_authorization_not_admitted",
+        "real_machine_preflight_not_run"
+      ]
+    },
+    "integrated": {
+      "design_audit_status": "PASS",
+      "execution_status": "BLOCKED",
+      "autostart": false,
+      "block_reasons": [
+        "field_authorization_not_admitted",
+        "real_machine_preflight_not_run"
+      ],
+      "resolved_software_blockers": [
+        "ROS1_TOPOLOGY_VERIFIER_NODE_NAME_COLLISION",
+        "INSTALLED_RUNNER_WORKSPACE_SCRIPT_PATH_MISSING"
+      ]
+    }
+  },
+  "authorization": {
+    "policy_document": "docs/V1_FIELD_AUTHORIZATION_STATE_MACHINE.md",
+    "checklist_template": "docs/examples/v1_field_authorization_checklist_template.json",
+    "dedicated_field_orchestrator_present": false,
+    "execution_ready": false,
+    "required_classes": [
+      "hardware_read_only",
+      "zero_motion_localization",
+      "real_motion"
+    ],
+    "classes": {
+      "hardware_read_only": {
+        "status": "NOT_RUN",
+        "decision": "BLOCKED",
+        "authorization_id": "",
+        "approval_reference": "",
+        "issued_at_utc": "",
+        "expires_at_utc": "",
+        "one_use": null,
+        "consumed": null,
+        "revoked": null
+      },
+      "zero_motion_localization": {
+        "status": "NOT_RUN",
+        "decision": "BLOCKED",
+        "authorization_id": "",
+        "approval_reference": "",
+        "issued_at_utc": "",
+        "expires_at_utc": "",
+        "one_use": null,
+        "consumed": null,
+        "revoked": null
+      },
+      "real_motion": {
+        "status": "NOT_RUN",
+        "decision": "BLOCKED",
+        "authorization_id": "",
+        "approval_reference": "",
+        "issued_at_utc": "",
+        "expires_at_utc": "",
+        "one_use": null,
+        "consumed": null,
+        "revoked": null
+      }
+    }
+  },
+  "preflight": {
+    "status": "NOT_RUN",
+    "process_owner_audit": "NOT_RUN",
+    "ros1_graph_audit": "NOT_RUN",
+    "ros2_graph_audit": "NOT_RUN",
+    "serial_owner_audit": "NOT_RUN",
+    "device_identity_audit": "NOT_RUN",
+    "map_profile_audit": "NOT_RUN",
+    "scan_odom_tf_audit": "NOT_RUN",
+    "unknown_process_disposition": "RECORD_AND_BLOCK",
+    "unknown_processes_terminated": false,
+    "evidence": []
+  },
+  "diagnostics": {
+    "status": "NOT_RUN",
+    "subscriber_only_capture": {
+      "status": "NOT_RUN",
+      "finite_duration_required": true,
+      "exclusive_output_required": true,
+      "path": "",
+      "sha256": ""
+    },
+    "process_and_device_evidence": [],
+    "launch_logs": [],
+    "preflight_logs": [],
+    "derived_reports": [],
+    "limitations_acknowledged": {
+      "capture_proves_process_owner": false,
+      "capture_proves_serial_owner": false,
+      "capture_proves_individual_nomotion_latency": false,
+      "capture_proves_full_scan_geometry": false,
+      "capture_proves_driver_command": false,
+      "capture_proves_avoidance": false,
+      "covariance_proves_absolute_accuracy": false
+    }
+  },
+  "rollback": {
+    "status": "NOT_RUN",
+    "ordered_states": [
+      "STOP_INGRESS",
+      "VERIFY_ZERO",
+      "STOP_NAV",
+      "STOP_DRIVER",
+      "VERIFY_UART",
+      "STOP_SAFETY"
+    ],
+    "current_state": "NOT_RUN",
+    "continuous_zero_proven": false,
+    "driver_exit_proven": false,
+    "uart_release_proven": false,
+    "unknown_processes_terminated": false,
+    "unknown_process_disposition": "RECORD_AND_BLOCK",
+    "retain_safety_chain_if_driver_survives": true,
+    "stop_safety_chain_permitted": false,
+    "physical_isolation_used": null,
+    "final_physical_state": "",
+    "evidence": []
+  },
+  "field_acceptance": {
+    "zero_motion_absolute_localization_error": {
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "repeat_localization_error": {
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "navigation_control_endpoint_error": {
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "amcl_estimation_error": {
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "physical_total_endpoint_error": {
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "cancel_and_driver_timeout": {
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "static_obstacle_avoidance": {
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "dynamic_obstacle_avoidance": {
+      "status": "NOT_RUN",
+      "template_only": true
+    },
+    "scan_odom_tf_loss": {
+      "status": "NOT_RUN",
+      "template_only": true
+    }
+  },
+  "decision": {
+    "software_release_pass": false,
+    "field_acceptance_complete": false,
+    "all_software_deployment_blockers_closed": true,
+    "all_field_deployment_blockers_closed": false,
+    "delivery_ready": false,
+    "status": "BLOCKED",
+    "block_reasons": [
+      "template_only",
+      "field_authorization_not_admitted",
+      "field_acceptance_not_run",
+      "real_machine_preflight_not_run"
+    ]
+  }
+}

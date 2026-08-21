@@ -1,0 +1,6 @@
+string reason
+string expected_session_id
+---
+bool accepted
+string gateway_state
+string detail

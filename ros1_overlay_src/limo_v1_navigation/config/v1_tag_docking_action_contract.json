@@ -1,0 +1,114 @@
+{
+  "schema": "limo_v1_tag_docking_action_contract/v1",
+  "lifecycle": "OFFLINE_CONTRACT_ONLY_NOT_IMPLEMENTED_AS_ROS_ACTION",
+  "default_enabled": false,
+  "motion_capable_when_future_runtime_is_authorized": true,
+  "transport": {
+    "ros_authority": "ROS1_NOETIC",
+    "suggested_action_name": "/v1/tag_docking",
+    "action_server_owner": "/v1_tag_docking_controller",
+    "precision_controller_owner": "vision_tag52h13_adapter",
+    "preapproach_navigation_owner": "/v1_navigation_gateway",
+    "direct_move_base_client_forbidden": true,
+    "direct_cmd_vel_or_twist_output_forbidden": true,
+    "ros_runtime_implemented": false
+  },
+  "frames": {
+    "tag_pose": "map",
+    "base_goal": "map",
+    "camera": "configured REP-103 optical frame",
+    "tag_convention": "X_LEFT_Y_DOWN_Z_OUT_OF_FRONT"
+  },
+  "goal": {
+    "schema": "limo_v1_tag_docking_goal/v1",
+    "required_fields": ["schema", "request_id", "target_family", "target_id", "standoff_m"],
+    "field_contract": {
+      "request_id": "nonempty unique string",
+      "target_family": "exactly tag52h13",
+      "target_id": "integer 0..11 mapped by measured configuration",
+      "standoff_m": "first demo exactly 0.40"
+    }
+  },
+  "tag_observation": {
+    "schema": "limo_v1_tag_docking_observation/v1",
+    "required_fields": [
+      "schema", "request_id", "target_family", "target_id",
+      "pose_map", "confidence", "source_stamp", "receipt_monotonic"
+    ],
+    "pose_fields": ["frame_id", "position_xyz", "orientation_xyzw"],
+    "freshness_basis": "consumer monotonic receipt age",
+    "future_or_stale_disposition": "ABORT_TAG_STALE"
+  },
+  "map_pose_adapter": {
+    "input_schema": "limo_v1_tag_pose_source_bundle/v1",
+    "owner": "host_consumer_not_detector",
+    "transform_equation": "T_map_tag=T_map_base_link*T_base_link_camera_optical*T_camera_optical_tag",
+    "required_bindings": [
+      "canonical observation SHA-256",
+      "target family and ID from the same observation",
+      "same-stamp map->base_link and base_link->camera optical TF geometry",
+      "consumer host_now_ns and max_age_ns freshness",
+      "host-pinned calibration identity SHA-256"
+    ],
+    "policy_output_type": "sealed BoundTagPose",
+    "policy_output_immutability": "read-only scalar properties plus mappingproxy and tuple pose geometry",
+    "bound_digest_fields": [
+      "target family/id/object/side", "timestamp_ns", "age_ns",
+      "confidence", "calibration_sha256", "source_sha256", "pose_map"
+    ],
+    "policy_recomputes_bound_digest_before_consumption": true,
+    "canonical_calibration_payload_is_only_extrinsic_source": true,
+    "tf_geometry_must_equal_canonical_calibration_geometry": true,
+    "duplicate_config_extrinsic_forbidden": true,
+    "raw_or_external_map_pose_forbidden": true,
+    "camera_pose_relabelled_as_map_forbidden": true,
+    "ros_runtime_implemented": false,
+    "motion_authorized": false
+  },
+  "feedback": {
+    "schema": "limo_v1_tag_docking_feedback/v1",
+    "required_fields": [
+      "schema", "request_id", "state", "target_visible",
+      "confidence", "camera_standoff_error_m", "lateral_error_m",
+      "yaw_error_deg", "geofence_clear", "localization_ready",
+      "stop_clear", "reason"
+    ]
+  },
+  "result": {
+    "schema": "limo_v1_tag_docking_result/v1",
+    "required_fields": [
+      "schema", "request_id", "terminal_state", "abort_reason",
+      "target_family", "target_id", "final_camera_standoff_m",
+      "final_lateral_error_m", "final_yaw_error_deg"
+    ],
+    "terminal_states": ["SUCCESS", "ABORT", "CANCELLED"]
+  },
+  "states": [
+    "SEARCH", "PREAPPROACH", "ALIGN", "APPROACH", "HOLD",
+    "SUCCESS", "ABORT", "CANCELLED"
+  ],
+  "allowed_transitions": [
+    ["SEARCH", "PREAPPROACH"], ["SEARCH", "ABORT"], ["SEARCH", "CANCELLED"],
+    ["PREAPPROACH", "ALIGN"], ["PREAPPROACH", "ABORT"], ["PREAPPROACH", "CANCELLED"],
+    ["ALIGN", "APPROACH"], ["ALIGN", "ABORT"], ["ALIGN", "CANCELLED"],
+    ["APPROACH", "HOLD"], ["APPROACH", "ABORT"], ["APPROACH", "CANCELLED"],
+    ["HOLD", "SUCCESS"], ["HOLD", "ABORT"], ["HOLD", "CANCELLED"]
+  ],
+  "abort_reasons": [
+    "CONFIG_INCOMPLETE", "MEASUREMENTS_UNVERIFIED", "INVALID_FAMILY",
+    "INVALID_TAG_ID", "TAG_NOT_VISIBLE", "TAG_STALE", "LOW_CONFIDENCE",
+    "TAG_POSE_INVALID", "EXTRINSIC_UNVERIFIED", "GEOFENCE_REJECTED",
+    "UNREACHABLE_BASE_POSE", "LOCALIZATION_NOT_READY", "STOP_LATCHED",
+    "NAVIGATION_REJECTED", "NAVIGATION_TIMEOUT", "TAG_LOST",
+    "DOCKING_TIMEOUT", "DISTANCE_INVALID", "CANCELLED", "INTERNAL_ERROR"
+  ],
+  "fail_closed_invariants": [
+    "tag36h11 IDs 0..3 never select a docking target",
+    "tag52h13 is not a fixed map anchor",
+    "missing measured config or camera extrinsic rejects before goal calculation",
+    "preapproach output is data only and must pass the existing READY/guard/stop gateway",
+    "precision control never bypasses the unique guarded velocity chain",
+    "tag loss, stale pose, low confidence, geofence violation, timeout or cancel terminates with zero-output intent",
+    "offline contract PASS is not field authorization"
+  ]
+}

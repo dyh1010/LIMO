@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>limo_v1_navigation</name>
+  <version>0.1.0</version>
+  <description>Fail-closed ROS1 Noetic mapping and navigation overlay for LIMO V1.</description>
+  <maintainer email="dyh@todo.todo">dyh</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>amcl</depend>
+  <depend>actionlib_msgs</depend>
+  <depend>base_local_planner</depend>
+  <depend>costmap_2d</depend>
+  <depend>geometry_msgs</depend>
+  <depend>global_planner</depend>
+  <depend>gmapping</depend>
+  <depend>limo_bringup</depend>
+  <depend>map_server</depend>
+  <depend>actionlib</depend>
+  <depend>move_base</depend>
+  <depend>move_base_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>rosgraph</depend>
+  <depend>rospy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf2_msgs</depend>
+  <depend>tf2_ros</depend>
+
+  <test_depend>python3-pytest</test_depend>
+</package>

@@ -19,6 +19,8 @@ class ResolvedGripperCommand:
 
 
 def _finite_float(value: float, name: str) -> float:
+    if type(value) not in (int, float):
+        raise GripperCommandError(f'{name} must be a built-in number')
     result = float(value)
     if not math.isfinite(result):
         raise GripperCommandError(f'{name} must be finite')
@@ -69,7 +71,7 @@ def validate_raw_calibration(closed_value: int, open_value: int) -> None:
     for value, name in (
             (closed_value, 'closed_value'),
             (open_value, 'open_value')):
-        if isinstance(value, bool) or not isinstance(value, int):
+        if type(value) is not int:
             raise GripperCommandError(f'{name} must be an integer')
         if value < 0 or value > 100:
             raise GripperCommandError(f'{name} must be between 0 and 100')
@@ -90,13 +92,18 @@ def normalized_to_raw(
 def raw_to_normalized(
         raw_value: int, closed_value: int, open_value: int) -> float:
     validate_raw_calibration(closed_value, open_value)
-    if isinstance(raw_value, bool) or not isinstance(raw_value, int):
+    if type(raw_value) is not int:
         raise GripperCommandError('raw_value must be an integer')
     if raw_value < 0 or raw_value > 100:
         raise GripperCommandError('raw_value must be between 0 and 100')
     value = (
         (raw_value - closed_value) / (open_value - closed_value))
-    return min(1.0, max(0.0, value))
+    lower = min(closed_value, open_value)
+    upper = max(closed_value, open_value)
+    if raw_value < lower or raw_value > upper:
+        raise GripperCommandError(
+            'raw_value is outside the calibrated endpoint range')
+    return value
 
 
 def position_reached(

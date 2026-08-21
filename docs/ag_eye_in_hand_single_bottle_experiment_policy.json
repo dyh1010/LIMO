@@ -1,0 +1,181 @@
+{
+  "schema": "limo_ag_eye_in_hand_single_bottle_experiment/v1",
+  "policy_id": "AG_EIH_SINGLE_EMPTY_BOTTLE_OFFLINE_V1",
+  "status": "OFFLINE_ONLY_REAL_EXECUTION_BLOCKED",
+  "runtime_family": "ROS1_NOETIC_FUTURE_FIELD_ONLY",
+  "authorizes_connection": false,
+  "authorizes_power": false,
+  "authorizes_motion": false,
+  "authorizes_field_execution": false,
+  "hardware_candidate": {
+    "arm": "Elephant Robotics myCobot 280 M5",
+    "gripper": "Elephant Robotics original AG adaptive gripper",
+    "wrist_camera_mount_candidate": "Intel RealSense D405 side-upper eye-in-hand",
+    "wrist_camera_identity_status": "REQUIRED_NOT_VERIFIED",
+    "object": "one empty 60 mm-class plastic water bottle"
+  },
+  "protocol_candidate": {
+    "authority": "Elephant Robotics AG product and communication pages",
+    "status": "CANDIDATE_NOT_FIELD_AUTHORIZED",
+    "write_api_exact": "set_gripper_value(value, speed)",
+    "write_frame_exact": "FE FE 04 67 VV SS FA",
+    "write_argument_count": 2,
+    "read_position_api_exact": "get_gripper_value()",
+    "read_position_frame_exact": "FE FE 02 65 FA",
+    "read_moving_api_exact": "is_gripper_moving()",
+    "read_moving_frame_exact": "FE FE 02 69 FA",
+    "forbidden_extension_field": "gripper_type",
+    "forbidden_examples": [
+      "set_gripper_value(value, speed, type)",
+      "get_gripper_value(type)",
+      "FE FE 05 67 VV SS TT FA",
+      "FE FE 03 65 TT FA"
+    ],
+    "automatic_protocol_detection": false,
+    "fallback_to_extension_frame": false,
+    "command_return_is_ack": false,
+    "software_close_is_stop": false,
+    "torque_or_current_write_authorized": false,
+    "calibration_or_homing_authorized": false
+  },
+  "mount_contract": {
+    "strategy": "SIDE_UPPER_BEHIND_FINGERTIP_PLANE",
+    "exact_transform_status": "MEASUREMENT_REQUIRED",
+    "camera_body_inside_collision_model": true,
+    "connector_inside_collision_model": true,
+    "cable_inside_swept_envelope": true,
+    "two_point_strain_relief_required": true,
+    "vendor_minimum_bend_radius_required": true,
+    "finger_swept_volume_intersection_forbidden": true,
+    "direct_grasp_center_line_of_sight_required": true,
+    "open_closed_self_occlusion_masks_required": true,
+    "arm_link_occlusion_masks_required": true,
+    "payload_and_center_of_mass_reapproval_required": true,
+    "required_static_cases": [
+      "gripper_open",
+      "gripper_at_candidate_bottle_width",
+      "bottle_held",
+      "wrist_named_pose_pregrasp",
+      "wrist_named_pose_grasp",
+      "wrist_named_pose_lift",
+      "wrist_roll_pitch_yaw_limits"
+    ]
+  },
+  "vision_contract": {
+    "global_camera_can_be_occluded_by_arm": true,
+    "global_camera_role": "coarse_bottle_candidate_only",
+    "eye_in_hand_role": "pregrasp_reacquisition_and_relative_pose_refinement",
+    "online_learning_during_motion": false,
+    "autonomous_exploration": false,
+    "single_actionable_object_required": true,
+    "fresh_frame_after_each_motion_required": true,
+    "same_bottle_identity_continuity_required": true,
+    "camera_intrinsics_required": true,
+    "hand_eye_transform_required": true,
+    "timestamp_and_frame_identity_required": true,
+    "synthetic_or_template_transform_forbidden": true
+  },
+  "physical_safety_contract": {
+    "base_mechanical_lock_required": true,
+    "base_power_isolation_required": true,
+    "arm_workspace_clear_required": true,
+    "one_operator_one_safety_observer_required": true,
+    "human_power_isolator_in_reach_required": true,
+    "software_stop_is_not_physical_isolation": true,
+    "one_motion_per_explicit_authorization": true,
+    "no_person_in_swept_volume": true,
+    "no_grasped_payload_other_than_one_empty_test_bottle": true,
+    "first_anomaly_no_retry": true
+  },
+  "field_steps": [
+    {
+      "id": "S00",
+      "name": "offline_identity_and_hash_review",
+      "motion": false,
+      "observation": "Exact arm, AG, camera, firmware, policy and source identities are recorded.",
+      "stop_condition": "Any identity is missing, mutable, inconsistent or self-reported without evidence.",
+      "human_isolation": "All actuator power remains physically isolated."
+    },
+    {
+      "id": "S01",
+      "name": "power_off_mount_and_cable_envelope",
+      "motion": false,
+      "observation": "D405 candidate mount, connector, cable service loop and strain relief are inside the reviewed collision envelope and outside finger sweep.",
+      "stop_condition": "Loose mount, cable rub, unreviewed protrusion, unknown bend radius, finger-volume intersection or unapproved mass/center-of-mass change.",
+      "human_isolation": "Safety observer retains physical power isolation; no energized fitting."
+    },
+    {
+      "id": "S02",
+      "name": "base_lock_and_empty_workspace",
+      "motion": false,
+      "observation": "Base is mechanically locked and power-isolated; arm sweep is empty; one empty bottle is fixed in the approved test fixture.",
+      "stop_condition": "Base can roll, another object/person enters the envelope, bottle pose is not fixed, or physical isolator is unavailable.",
+      "human_isolation": "Named observer holds the accessible physical disconnect."
+    },
+    {
+      "id": "S03",
+      "name": "camera_only_stationary_admission",
+      "motion": false,
+      "observation": "Fresh eye-in-hand images, exact intrinsics and immutable frame identity show the gripper and single bottle without control output.",
+      "stop_condition": "Multiple/zero bottles, stale frame, exposure failure, stream loss, unresolved self-occlusion, missing calibration or ambiguous camera identity.",
+      "human_isolation": "Actuator power remains isolated throughout camera admission."
+    },
+    {
+      "id": "S04",
+      "name": "read_only_arm_and_ag_admission",
+      "motion": false,
+      "observation": "Future field session proves unique transport owner, trustworthy stationary arm state and zero-payload AG query framing without writes.",
+      "stop_condition": "Any extended query frame, invalid/out-of-range reply, moving state, unhealthy transport, identity drift, timeout or second owner.",
+      "human_isolation": "Observer can remove actuator energy immediately; read-only admission never proves STOP."
+    },
+    {
+      "id": "S05",
+      "name": "single_open_command",
+      "motion": true,
+      "observation": "After separate action-level authorization, exactly one bounded two-argument AG write is issued and a fresh image confirms expected direction without collision.",
+      "stop_condition": "Unexpected direction/range, continued motion, stale feedback, camera/cable shift, noise, heat, current anomaly, frame ambiguity or loss of physical isolation.",
+      "human_isolation": "First anomaly causes immediate human power isolation; no reverse command and no retry."
+    },
+    {
+      "id": "S06",
+      "name": "single_pregrasp_motion",
+      "motion": true,
+      "observation": "One separately authorized low-speed move reaches the reviewed pregrasp pose; a new eye-in-hand frame reacquires the same single bottle and collision clearance remains positive.",
+      "stop_condition": "Bottle identity changes, target exits ROI, arm/gripper occlusion is unresolved, clearance is unmeasured, trajectory deviates, stream freezes or any unexpected motion occurs.",
+      "human_isolation": "Observer isolates power on first anomaly; software STOP alone is insufficient."
+    },
+    {
+      "id": "S07",
+      "name": "incremental_visual_approach",
+      "motion": true,
+      "observation": "Each separately authorized bounded approach increment is followed by stationary fresh-frame relative-pose and clearance recomputation.",
+      "stop_condition": "No fresh frame, non-monotonic relative motion, bottle ambiguity, self-occlusion beyond validated masks, cable envelope violation, ground/finger clearance loss or pose uncertainty over the approved bound.",
+      "human_isolation": "Only one increment may be outstanding; isolate physically before diagnosis after any anomaly."
+    },
+    {
+      "id": "S08",
+      "name": "single_empty_bottle_close",
+      "motion": true,
+      "observation": "Exactly one separately authorized two-argument AG close write targets the empty bottle; images and independent observation confirm centered contact without bottle collapse or tool interference.",
+      "stop_condition": "No centered contact, bottle deformation, slip, unexpected continued travel, heat/noise/current anomaly, untrusted feedback or any extended frame emission.",
+      "human_isolation": "Physical disconnect is the primary abnormal-stop path; do not issue a second uncontrolled close or reverse command."
+    },
+    {
+      "id": "S09",
+      "name": "stationary_hold_evidence",
+      "motion": false,
+      "observation": "A bounded dwell records images, bottle pose, tool pose, feedback, temperature and observer assessment without changing commands.",
+      "stop_condition": "Slip, deformation, rising temperature, transport health loss, identity drift, stale sample or uncertain motion state.",
+      "human_isolation": "Any uncertainty latches physical isolation required; ordinary ACK or close cannot clear it."
+    },
+    {
+      "id": "S10",
+      "name": "release_and_power_safe_end_state",
+      "motion": true,
+      "observation": "Only after a separately reviewed release plan, one authorized release action leaves the bottle supported and the system reaches a documented power-safe state.",
+      "stop_condition": "Unsupported bottle, unclear release direction, missing clearance, stale camera, untrusted state or inability to verify final energy state.",
+      "human_isolation": "End by verified physical isolation; connection close is not de-energization."
+    }
+  ],
+  "release_statement": "This policy is a future field run card only. Offline validation cannot authorize connection, power, motion, field PASS or delivery PASS."
+}

@@ -1,0 +1,3 @@
+# Locked fail-closed state. Replace only after V1 map freeze and measurement.
+map_id: NOT_AVAILABLE_MAP_NOT_FROZEN
+waypoints: {}

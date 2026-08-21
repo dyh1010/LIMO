@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "manifest_id": "limo-ros1-dual-model-bindings-v1",
+  "runtime_family": "ROS1",
+  "ros_distro": "noetic",
+  "read_only": true,
+  "authorizes_motion": false,
+  "delivery_ready": false,
+  "runtime": "ultralytics-8.3.21",
+  "load_policy": {
+    "regular_file_required": true,
+    "sha256_required": true,
+    "single_exact_class_required": true,
+    "missing_model_is_fatal": true,
+    "hash_mismatch_is_fatal": true,
+    "silent_fallback_or_relabel_forbidden": true,
+    "automatic_download_forbidden": true
+  },
+  "models": {
+    "plastic_bottle": {
+      "class_name": "plastic_bottle",
+      "filename": "nongfu_yolov8n_best.pt",
+      "deployment_path": "/home/agilex/limo_cleanup_ws/models/nongfu_yolov8n_best.pt",
+      "size_bytes": 6244778,
+      "sha256": "abe7eaf409e3d24d255a627823f4b107a8884008ab659901c6c50479b2153512",
+      "backend": "ultralytics-yolo-pt"
+    },
+    "trash_bin": {
+      "class_name": "trash_bin",
+      "filename": "trash_bin_yolov8n_best.pt",
+      "deployment_path": "/home/agilex/limo_cleanup_ws/models/trash_bin_yolov8n_best.pt",
+      "size_bytes": 6231338,
+      "sha256": "24beb4a7941ba5d783f1937128b5f0f4307b035137889c78be1993cad76b8bc5",
+      "backend": "ultralytics-yolo-pt"
+    }
+  }
+}

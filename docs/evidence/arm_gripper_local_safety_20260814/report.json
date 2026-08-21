@@ -1,0 +1,157 @@
+{
+  "schema_id": "limo.arm_gripper_local_safety_evidence",
+  "schema_version": 1,
+  "evidence_date": "2026-08-14",
+  "evidence_status": "STALE_NOT_RELEASE_EVIDENCE",
+  "superseded_reason": "four STOP/close/activation windows plus gripper moving-with-unhealthy-or-identity-drift and arm stale-stationary-credit masking a newer STOP/motion were reproduced after this report; all totals and hashes are historical only",
+  "scope": "local_pure_fake_static_and_contract_only",
+  "release_authorization": false,
+  "hardware_authorization": false,
+  "boundary": {
+    "ssh_since_permanent_boundary": false,
+    "target_access_since_permanent_boundary": false,
+    "device_or_actuator_access_observed_in_task": false,
+    "ros_graph_access_since_permanent_boundary": false,
+    "vendor_runtime_or_backend_loaded_since_permanent_boundary": false,
+    "real_action_or_service_sent": false,
+    "power_enable_home_probe_or_motion_sent": false
+  },
+  "historical_ssh_before_permanent_boundary": {
+    "established": true,
+    "purpose": [
+      "single_v3_isolated_dry_run",
+      "fixed_v3_path_existence_checks",
+      "ordinary_process_list_read_only_checks"
+    ],
+    "preserved_command_availability": [
+      "/usr/bin/awk",
+      "/usr/bin/colcon",
+      "/usr/bin/grep",
+      "/usr/bin/ps",
+      "/usr/bin/python3"
+    ],
+    "ros2_check_result": "missing_before_foxy_source",
+    "failed_read_only_audit_attempts": 2,
+    "failed_attempt_effect": "intended_audit_logic_not_executed_state_unchanged",
+    "residual_process_status": "UNKNOWN_BLOCKED",
+    "further_connection_permitted": false
+  },
+  "safety_state": {
+    "real_arm_backend": "DISABLED_BLOCKED",
+    "real_gripper_backend": "DISABLED_BLOCKED",
+    "unproven_transport_software_stop_success_allowed": false,
+    "physical_stop_and_energy_isolation": "BLOCKED",
+    "required_real_transport_capabilities": [
+      "exact_native_method_deadlines",
+      "native_cancel_enforced",
+      "independent_stop_channel",
+      "independent_stop_lock_domain",
+      "persistent_safety_latch",
+      "exact_release_and_profile_binding"
+    ]
+  },
+  "tests": {
+    "arm_unittest": {
+      "run": 235,
+      "passed": 231,
+      "failed": 0,
+      "skipped": 4
+    },
+    "gripper_pytest_style_fake": {
+      "collected": 145,
+      "passed": 145,
+      "failed": 0,
+      "skipped": 0
+    },
+    "gripper_unittest": {
+      "run": 144,
+      "passed": 143,
+      "failed": 0,
+      "skipped": 1
+    },
+    "combined": {
+      "run": 524,
+      "passed": 519,
+      "failed": 0,
+      "skipped": 5
+    },
+    "invocation_corrections": [
+      "two_module_search_path_failures_before_collection",
+      "one_mixed_framework_unittest_collection_with_three_missing_pytest_import_errors"
+    ]
+  },
+  "static_gates": {
+    "scoped_files": 59,
+    "sha256_entries": 58,
+    "git_diff_check_passed": true,
+    "conflict_markers": 0,
+    "trailing_whitespace": 0,
+    "tab_lines": 0,
+    "missing_final_newline": 0,
+    "python_files": 32,
+    "python_38_ast_passed": 32,
+    "in_memory_compile_passed": 32,
+    "dynamic_import_or_timeout_thread_hits": 0,
+    "backend_file_open_or_enumeration_hits": 0,
+    "ros_factory_vendor_or_device_entry_hits": 0,
+    "bash_n": "SKIPPED_MISSING_BASH"
+  },
+  "lock_scope": {
+    "arm_core": {"lock_blocks": 38, "external_call_violations": 0},
+    "gripper_core": {"lock_blocks": 41, "external_call_violations": 0},
+    "arm_node": {"lock_blocks": 2, "external_call_violations": 0},
+    "gripper_node": {"lock_blocks": 3, "external_call_violations": 0}
+  },
+  "gripper_manifest": {
+    "tool_architecture": "COMPLETE_REPLACEMENT",
+    "complete_replacement": true,
+    "legacy_ag_components_retained": false,
+    "ag_retention_map_sha256": null,
+    "schema_valid": true,
+    "structural_errors": 0,
+    "release_ready": false,
+    "blockers": 227,
+    "native_command_range": null,
+    "jaw_opening_range_m": null,
+    "installed_tool_mass_kg": null,
+    "rated_current_a": null,
+    "runtime_release_id": null,
+    "approved_speed_grades": null
+  },
+  "cad": {
+    "files": 35,
+    "bytes": 8058955,
+    "unique_hashes": 35,
+    "sldprt": 33,
+    "sldasm": 1,
+    "swp": 1,
+    "step_or_stp": 0,
+    "pdf": 0,
+    "assembly_size_bytes": 2035041,
+    "assembly_sha256": "d5f513c69b3590378791cfec8e0853567f8377676429772ed7e38d1653e94d98"
+  },
+  "foxy_v3": {
+    "result": "FAIL_BEFORE_BUILD",
+    "status": 2,
+    "build_entered": false,
+    "test_entered": false,
+    "smoke_entered": false,
+    "rerun_permitted": false,
+    "residual_process_status": "UNKNOWN_BLOCKED",
+    "bundle_sha256": "1fbd5d6cefbbe8abb6f009ed89faae34670704c8f93396f20540a16a976ab72e",
+    "runner_sha256": "325eec2bc95098aa51b9459ba6ce932e8a88a1cac5c9f174f10759c1eda151ce",
+    "summary_sha256": "edc2432b2148affae3a4112556fd2971c92e9f68117238f0a85c2f95ed2027e8"
+  },
+  "unresolved_blockers": [
+    "independent_physical_stop_and_energy_isolation",
+    "vendor_native_bounded_deadline_and_cancel_evidence",
+    "protected_signed_monotonic_latch_storage",
+    "privileged_full_store_rollback_resistance",
+    "windows_power_loss_directory_durability",
+    "final_gripper_model_controller_protocol_and_electrical_identity",
+    "final_limits_tcp_mass_collision_and_durability_evidence",
+    "ros_foxy_build_test_smoke",
+    "target_residual_process_status"
+  ],
+  "sha256_manifest": "SHA256SUMS.txt"
+}

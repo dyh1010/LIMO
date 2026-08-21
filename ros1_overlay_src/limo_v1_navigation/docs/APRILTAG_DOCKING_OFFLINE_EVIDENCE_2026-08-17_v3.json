@@ -1,0 +1,91 @@
+{
+  "schema_version": "limo_apriltag_docking_offline_evidence/v3",
+  "evidence_date": "2026-08-17",
+  "scope": "offline_static_and_pure_fake_only",
+  "status": "PASS_FOR_OFFLINE_IMMUTABLE_SOURCE_BINDING_AND_CANONICAL_CALIBRATION_ONLY",
+  "supersedes": {
+    "path": "docs/APRILTAG_DOCKING_OFFLINE_EVIDENCE_2026-08-17_v2.json",
+    "bytes": 5415,
+    "sha256": "58de68f554ab5064c0228909c472c8287b559c53f3eb7973f53621122e80f209",
+    "reason": "v3 adds deep immutable BoundTagPose, policy-side canonical digest verification, and a single canonical calibration payload whose geometry is mechanically matched to TF",
+    "must_not_be_overwritten": true
+  },
+  "closed_integrity_gaps": {
+    "bound_pose": {
+      "public_scalars": "read_only_properties",
+      "nested_pose": "mappingproxy_with_tuple_geometry",
+      "bound_digest_algorithm": "SORTED_COMPACT_ASCII_JSON_SHA256",
+      "digest_fields": [
+        "target_family", "target_id", "object_id", "side_index", "side_label",
+        "timestamp_ns", "age_ns", "confidence", "calibration_sha256",
+        "source_sha256", "pose_map"
+      ],
+      "policy_behavior": "recompute digest and consume one immutable snapshot",
+      "public_mutation": "REJECT",
+      "nested_mutation": "REJECT",
+      "post_seal_internal_tamper": "REJECT_BY_DIGEST",
+      "source_alias_after_binding": "NO_EFFECT",
+      "TOCTOU": "REJECT_OR_SNAPSHOT_ISOLATED"
+    },
+    "calibration": {
+      "sole_source": "canonical full limo_apriltag_docking_calibration_intake/v1 payload",
+      "identity_basis": "SORTED_COMPACT_ASCII_JSON_V1",
+      "tf_geometry_comparison": "exact normalized translation tuple and quaternion tuple equality",
+      "correct_sha_wrong_translation": "REJECT",
+      "correct_sha_wrong_rotation": "REJECT",
+      "calibration_payload_drift_with_stale_tf": "REJECT",
+      "v1_duplicate_extrinsic_config": "REMOVED",
+      "normalized_config_binding": "mappingproxy plus tuples derived from the same payload"
+    }
+  },
+  "source_identity": {
+    "src/limo_v1_navigation/tag_docking_policy.py": {"bytes": 24265, "sha256": "5839248289cd321c30017ed9423214a9f03685fa2e8fcecb9aa60e215c281ba0"},
+    "src/limo_v1_navigation/tag_docking_adapter.py": {"bytes": 17613, "sha256": "3bff2c7d3d6ff2cadf57bc02483fe22dfdf1596b34202260fc0840484f68a222"},
+    "src/limo_v1_navigation/apriltag_host_adapter_contract.py": {"bytes": 7247, "sha256": "ee05775ac993d8e29a528b70a5b894b7318f62548f3576dd8dc660ff5402cec5"},
+    "src/limo_v1_navigation/apriltag_docking_contract.py": {"bytes": 19876, "sha256": "d1998dc4687e5778a3fa01e1740717dc9860a27d12e4c49ea26891e6a2f2aa9f"},
+    "config/v1_apriltag_docking.template.json": {"bytes": 3459, "sha256": "2f765aca5925b8862d6c696bc07ddc384b7191169c639d67ed31136534e3fd20"},
+    "config/v1_apriltag_docking.schema.json": {"bytes": 6948, "sha256": "756f310a972decad54488b29916281bb073a684bb5f0b92b2c4e83c8f4874556"},
+    "config/v1_tag_docking_action_contract.json": {"bytes": 5069, "sha256": "0439ddd259e865525fc2cce340e6920c1a1eb7f81f19790c4191785f8c9b205c"},
+    "config/apriltag_tag_docking_inventory.json": {"bytes": 1502, "sha256": "9eb600c98edd86d5046a6199f33267936d96c310d984ad13bbf23d6986ed680f"},
+    "fixtures/apriltag_cross_contract_mapping_fixture.json": {"bytes": 583, "sha256": "775dd57675521e9a4b10d9961a58a11f07f807f3321ef19627add44dd2cc3cb7"},
+    "test/test_tag_docking_policy_adapter.py": {"bytes": 17728, "sha256": "bb662b74037c9d146dca754af2735cfaa7ee0a3251254bddad661818dc3025b4"},
+    "test/test_apriltag_host_adapter_contract.py": {"bytes": 8072, "sha256": "9e9d1429e25774640e52bfaeecc332f01563c057aa39ad42065c505fbf8a7f73"},
+    "test/test_apriltag_docking_contract.py": {"bytes": 13500, "sha256": "4f7040f3bfd426462daafe24cf3d16aaada52825715a5aaffd5c0f9fb57679a9"},
+    "docs/APRILTAG_TAG_DOCKING_OFFLINE_READINESS.md": {"bytes": 6815, "sha256": "059eaceb096b1de3ef66d4783294f81c603a3186f5e1b9dc9b346d29680a9086"},
+    "../../docs/APRILTAG_TAG_DOCKING_DEMO_PREP_2026-08-18.md": {"bytes": 6553, "sha256": "723d76352fd46bf2ffddc9df2bfb8d5b6e91141f5373e3ab3c7eb52a4fb15473"}
+  },
+  "tests": {
+    "strict_calibration_contract": {"collected": 9, "passed": 9, "failed": 0, "errors": 0, "skipped": 0},
+    "mapping_digest_immutability_and_low_level_adapter": {"collected": 11, "passed": 11, "failed": 0, "errors": 0, "skipped": 0},
+    "host_owned_calibration_geometry_adapter": {"collected": 6, "passed": 6, "failed": 0, "errors": 0, "skipped": 0},
+    "directed_total": {"collected": 26, "passed": 26, "failed": 0, "errors": 0, "skipped": 0},
+    "package_excluding_known_release_integrity_suite": {"collected": 156, "passed": 156, "failed": 0, "errors": 0, "skipped": 0},
+    "full_package_discovery": {
+      "collected": 164,
+      "passed": 162,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "known_independent_failures": [
+        "test_frozen_release_readiness.FrozenReleaseReadinessTests.test_integrated_closures_fail_closed_and_do_not_imply_field_ready",
+        "test_frozen_release_readiness.FrozenReleaseReadinessTests.test_matrix_has_every_required_check_and_exact_counts"
+      ]
+    },
+    "in_memory_python_compile": "7/7_PASS",
+    "strict_json_parse": "5/5_PASS",
+    "forbidden_ros_or_motion_api_scan": "0_matches_PASS",
+    "duplicate_config_extrinsic_surface_scan": "0_matches_PASS"
+  },
+  "safety": {
+    "ros_started": false,
+    "network_used": false,
+    "hardware_accessed": false,
+    "goal_sent": false,
+    "twist_published": false,
+    "motion_authorized": false,
+    "field_ready": false,
+    "delivery_ready": false,
+    "release_pin_updated": false,
+    "audit_tools_modified": false
+  }
+}

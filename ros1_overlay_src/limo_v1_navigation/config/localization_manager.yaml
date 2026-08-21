@@ -1,0 +1,26 @@
+chain_timeout_s: 15.0
+initial_pose_timeout_s: 300.0
+convergence_timeout_s: 45.0
+message_timeout_s: 0.5
+future_tolerance_s: 0.10
+stable_window_s: 3.0
+stable_min_samples: 8
+
+# PoseWithCovariance covariance entries are variances, not standard deviations.
+# 0.010 m^2 corresponds to 0.10 m one-sigma, so READY alone is not proof of
+# centimetre-level absolute localization accuracy.
+max_covariance_x: 0.010
+max_covariance_y: 0.010
+max_covariance_yaw: 0.010
+max_stable_position_span_m: 0.050
+max_stable_yaw_span_rad: 0.050
+max_ready_position_jump_m: 0.100
+max_ready_yaw_jump_rad: 0.100
+
+nomotion_update_period_s: 1.0
+min_nomotion_updates: 10
+max_consecutive_nomotion_failures: 2
+max_initial_covariance_xy: 4.0
+max_initial_covariance_yaw: 3.0
+initial_pose_authorization_timeout_s: 30.0
+nomotion_service_timeout_s: 2.0

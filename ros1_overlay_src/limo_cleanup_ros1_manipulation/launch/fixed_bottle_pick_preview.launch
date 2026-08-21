@@ -1,0 +1,12 @@
+<launch>
+  <arg name="policy_path" default="$(find limo_cleanup_ros1_manipulation)/config/fixed_bottle_pick_offline.json"/>
+  <arg name="gripper_source_path"/>
+  <node pkg="limo_cleanup_ros1_manipulation"
+        type="fixed_bottle_pick_preview_node.py"
+        name="cleanup_fixed_bottle_pick_preview"
+        output="screen"
+        required="true">
+    <param name="policy_path" value="$(arg policy_path)"/>
+    <param name="gripper_source_path" value="$(arg gripper_source_path)"/>
+  </node>
+</launch>

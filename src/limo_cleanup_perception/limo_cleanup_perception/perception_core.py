@@ -1,5 +1,6 @@
 """Pure 2D perception decisions shared by offline and ROS detectors."""
 
+import math
 from dataclasses import dataclass
 from enum import Enum
 from typing import Iterable, List, Optional, Sequence, Tuple
@@ -135,7 +136,11 @@ def bottle_is_in_bin(
         bottle: Detection2D, bins: Iterable[Detection2D],
         overlap_threshold: float = 0.30,
         horizontal_margin_ratio: float = 0.0,
-        opening_height_ratio: float = 0.62) -> bool:
+        opening_height_ratio: float = 0.62,
+        bottle_depth_m: float = None,
+        bin_depth_m: float = None,
+        max_depth_difference_m: float = 0.20,
+        require_depth: bool = False) -> bool:
     """Classify a visible bottle as disposed using a conservative ROI."""
     if bottle.area <= 0.0:
         return False
@@ -147,7 +152,16 @@ def bottle_is_in_bin(
             opening.x1 <= center_x <= opening.x2
             and opening.y1 <= center_y <= opening.y2)
         overlap = intersection_area(bottle, opening) / bottle.area
-        if center_inside and overlap >= overlap_threshold:
+        depth_consistent = (
+            (not require_depth
+             and bottle_depth_m is None and bin_depth_m is None)
+            or (isinstance(bottle_depth_m, (int, float))
+                and isinstance(bin_depth_m, (int, float))
+                and math.isfinite(bottle_depth_m)
+                and math.isfinite(bin_depth_m)
+                and abs(bottle_depth_m - bin_depth_m)
+                <= max_depth_difference_m))
+        if center_inside and overlap >= overlap_threshold and depth_consistent:
             return True
     return False
 
@@ -171,20 +185,74 @@ def classify_bottles(
     return BottleClassification(tuple(active), tuple(already_in_bin))
 
 
+def classify_bottles_with_depth(
+        bottles: Iterable[Detection2D], bins: Iterable[Detection2D],
+        bottle_depths, bin_depths,
+        overlap_threshold: float = 0.30,
+        horizontal_margin_ratio: float = 0.0,
+        opening_height_ratio: float = 0.62,
+        max_depth_difference_m: float = 0.20) -> BottleClassification:
+    """Require both 2D opening overlap and compatible metric depth."""
+    bin_list = tuple(bins)
+    active: List[Detection2D] = []
+    already_in_bin: List[Detection2D] = []
+    for bottle in bottles:
+        contained = False
+        for bin_detection in bin_list:
+            if bottle_is_in_bin(
+                    bottle, (bin_detection,), overlap_threshold,
+                    horizontal_margin_ratio, opening_height_ratio,
+                    bottle_depths.get(bottle), bin_depths.get(bin_detection),
+                    max_depth_difference_m, True):
+                contained = True
+                break
+        (already_in_bin if contained else active).append(bottle)
+    return BottleClassification(tuple(active), tuple(already_in_bin))
+
+
 def select_target_bottle(
         bottles: Sequence[Detection2D]) -> Optional[Detection2D]:
-    """Prefer a nearby-looking bottle, then confidence, deterministically."""
-    if not bottles:
+    """Select a valid bottle by confidence with deterministic tie-breaks."""
+    # Invalid or non-bottle candidates are ignored fail-closed. Area is only a
+    # tie-breaker, so a huge low-confidence box cannot outrank a stronger box.
+    valid = [
+        item for item in bottles
+        if (
+            item.label == 'plastic_bottle'
+            and math.isfinite(item.confidence)
+            and 0.0 <= item.confidence <= 1.0
+            and all(math.isfinite(value) for value in (
+                item.x1, item.y1, item.x2, item.y2))
+            and item.width > 0.0
+            and item.height > 0.0
+        )
+    ]
+    if not valid:
         return None
     return max(
-        bottles,
-        key=lambda item: (item.area, item.confidence, item.y2, -item.x1),
+        valid,
+        key=lambda item: (item.confidence, item.area, item.y2, -item.x1),
     )
 
 
 def select_target_bin(
         bins: Sequence[Detection2D]) -> Optional[Detection2D]:
-    """Prefer the largest visible bin, then confidence."""
-    if not bins:
+    """Select a valid bin by confidence with deterministic tie-breaks."""
+    valid = [
+        item for item in bins
+        if (
+            item.label == 'trash_bin'
+            and math.isfinite(item.confidence)
+            and 0.0 <= item.confidence <= 1.0
+            and all(math.isfinite(value) for value in (
+                item.x1, item.y1, item.x2, item.y2))
+            and item.width > 0.0
+            and item.height > 0.0
+        )
+    ]
+    if not valid:
         return None
-    return max(bins, key=lambda item: (item.area, item.confidence))
+    return max(
+        valid,
+        key=lambda item: (item.confidence, item.area, item.y2, -item.x1),
+    )

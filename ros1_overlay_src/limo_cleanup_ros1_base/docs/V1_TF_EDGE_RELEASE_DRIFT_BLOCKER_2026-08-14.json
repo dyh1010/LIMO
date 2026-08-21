@@ -1,0 +1,141 @@
+{
+  "schema": "limo_v1_tf_edge_release_drift_blocker/v1",
+  "generated_utc": "2026-08-14T11:21:19.3069742Z",
+  "status": "BLOCKED_PIN_UPDATE_PROHIBITED_PENDING_ALL_GREEN",
+  "disposition": "do_not_update_pin",
+  "release_pin_updated": false,
+  "approval_audit_created": false,
+  "superseded_audit": {
+    "path": "docs/V1_TOPOLOGY_POLICY_RELEASE_AUDIT_2026-08-14.json",
+    "required_lifecycle": "STALE_SUPERSEDED_FOR_APPROVAL_PURPOSES",
+    "may_be_promoted_in_place": false
+  },
+  "release_set": {
+    "total_files": 14,
+    "matching_files": 11,
+    "mismatching_files": 3
+  },
+  "files": [
+    {
+      "path": "src/limo_v1_navigation/topology_policy.py",
+      "expected_sha256": "c0a860407702d2ccac9f401e38dd8486b79aaf2062296c419b8ade79de921e5a",
+      "current_sha256": "08c96aadaa6ed81c97ed16741e7960133b86e4b1ced5232fba3428a7018488b8",
+      "semantic_diff": [
+        "retains the edge/callerid/exact-topic and dynamic-versus-static TF policy, but production validation now accepts only an opaque contract returned by the artifact loader rather than a bare TfEdgeRule with provenance_verified=true",
+        "hash-anchors the exact installed blocker bytes in reviewed topology-policy source; the currently anchored blocker is BLOCKED_ON_VENDOR_INCLUDE and cannot be self-edited to VERIFIED",
+        "rehashes three independent JSON manifests, every referenced raw launch file, and the static-transform executable, and emits their actual hashes in a detached provenance record",
+        "binds every source-manifest package/path to the canonical file selected by the in-process ROS1 rospkg resolver and binds the publisher pin to exactly one raw find_node candidate before canonicalization",
+        "hash-anchors and parses the actual v1_base_sensors.launch consumer wrapper, including its inert authorization gate, unique vendor include, private cmd_vel remap, and forced pub_odom_tf=true argument",
+        "rejects include child arguments, launch/group TF remaps, group attributes around static TF, package/type substitutions, nonstandard static-transform packages, launch-prefix and all other unmodeled static-publisher node semantics",
+        "binds each $(find package)/path include expression to the exact child logical path and rejects duplicate or ambiguous edges, self-loops, cycles, unreachable artifacts, and raw/include-graph mismatches",
+        "fails closed when an include inherits an unresolved launch/group namespace, condition, or remap before a static TF node is parsed from the child launch",
+        "rejects unresolved static-TF namespace, substitution, conditional, or remap semantics and requires source, publisher pin, installed blocker edge pin, and rules manifest to agree exactly"
+      ],
+      "unchanged_contracts": [
+        "goal/action ownership",
+        "velocity ownership",
+        "READY/guard/stop/cancel semantics",
+        "AMCL covariance thresholds",
+        "motion publication behavior"
+      ],
+      "risk": [
+        "intentional fail-closed blocking remains until a new reviewed blocker trust anchor and real vendor artifacts exist",
+        "unsupported roslaunch constructs require an independently resolved artifact or a future reviewed parser extension",
+        "changing the blocker from BLOCKED to VERIFIED necessarily changes its hash and therefore also requires a reviewed topology-policy/release-pin change"
+      ],
+      "recommended_disposition": "KEEP_BLOCKED_DO_NOT_UPDATE_PIN"
+    },
+    {
+      "path": "scripts/v1_runtime_preflight.py",
+      "expected_sha256": "163d92b1c968886fc2a9ff450a98308edbfe3f81518c7ddf9e29d7c22d2c66cd",
+      "current_sha256": "bccab1373bf4addca818e6e288fb95c8b5d3d0e39f5fc8135e9bb75a8886a40b",
+      "semantic_diff": [
+        "retains distinct subscriber-only /tf and /tf_static callbacks with callback-bound callerid, source/receipt time, latching, and geometry",
+        "requires three fixed package-share artifact inputs through the shared loader and exposes no blocker-file override in the runtime wrapper",
+        "resolves both source-tree and standard catkin install-space package-share layouts, otherwise fails before ROS subscriptions",
+        "adds the byte-bound blocker/source/pin/rules/raw-launch/executable provenance record to the structured PASS report"
+      ],
+      "unchanged_contracts": [
+        "no Publisher",
+        "no ServiceProxy",
+        "no action client",
+        "no Twist",
+        "no goal or velocity publication"
+      ],
+      "risk": [
+        "larger bounded JSON evidence output",
+        "runtime preflight remains blocked until a verified vendor rule artifact exists"
+      ],
+      "recommended_disposition": "KEEP_BLOCKED_DO_NOT_UPDATE_PIN"
+    },
+    {
+      "path": "launch/v1_runtime_preflight.launch",
+      "expected_sha256": "d99bc0eb6cc76a51c7fb122b84508373a49ecabb234f5231aebc23f6641f5ba7",
+      "current_sha256": "e19b1dc709d4e5a2405b44d47fe8ecd861b9c60e4fd11eb80d4ebc3ccd7cf47d",
+      "semantic_diff": [
+        "adds independent empty fail-closed defaults for vendor_tf_rules_file, vendor_source_manifest_file, and vendor_publisher_pin_file",
+        "passes all three explicit values to the existing read-only preflight node with no auto-discovery",
+        "adds no node, publisher, service, action, goal or motion endpoint"
+      ],
+      "risk": [
+        "legacy invocations without the new verified artifact now block instead of overclaiming TF ownership"
+      ],
+      "recommended_disposition": "KEEP_BLOCKED_DO_NOT_UPDATE_PIN"
+    }
+  ],
+  "offline_evidence": {
+    "targeted_tf_launch_field_runbook": "34/34 test methods PASS after provenance hardening",
+    "vendor_loader_negative_matrix": "both loaders reject self-signed blocker, formatted fake hashes, provenance self-claims, missing/nonexistent artifacts, raw/executable/wrapper hash mismatch, non-VERIFIED status, rule/pin/source mismatch, package-root and node-executable resolution mismatch or ambiguity, include-child mismatch, self-loop/cycle, wrapper include/remap/gate/forced-arg drift, and unresolved include-arg/namespace/substitution/condition/remap/launch-prefix semantics",
+    "tf_negative_subcases": "existing edge/callerid/cross-topic/static-dynamic/time failure matrix remains PASS; a bare self-reported TfEdgeRule is now rejected",
+    "v1_frozen_core": "113/113 PASS",
+    "v1_delivery_audit": "25/25 PASS",
+    "v1_package_discovery": "138/138 PASS",
+    "bridge_behavior": "121/121 non-hash tests PASS",
+    "bridge_full": "121 PASS / 1 frozen-hash FAIL",
+    "secure_release_validator": "11/14 MATCH; the same 3 files mismatch",
+    "cross_package": "9/9 groups PASS",
+    "overlay_static": "PASS",
+    "profile_static": "PASS",
+    "catkin_static": "PASS",
+    "py_compile": "PASS",
+    "no_index_whitespace": "PASS",
+    "exclusive_regression_report": {
+      "status": "COMPLETED_BEFORE_EVIDENCE_LINK_REFRESH",
+      "path": "evidence/v1_frozen_release_readiness_20260814_164200_vendor_provenance_blocked.json",
+      "sha256": "ba244522948795331cc5dd82a7edea48e1a4bac8ab3b2039f2f92d2718189ccf",
+      "software_release_pass": false,
+      "delivery_ready": false
+    }
+  },
+  "independent_vendor_blocker": {
+    "status": "PROVISIONAL_BLOCKED_ON_VENDOR_INCLUDE",
+    "path": "ros1_overlay_src/limo_v1_navigation/docs/V1_ROS1_VENDOR_INCLUDE_BLOCKER.json",
+    "raw_vendor_bytes_verified": false,
+    "resolved_include_chain_verified": false,
+    "installed_tf_publisher_pin_verified": false,
+    "trusted_blocker_sha256": "c72ae71479ca93305a6ca9c616ba7cb1b638699ceed7e0f3c0deb7e745e4f21f",
+    "trusted_blocker_status": "BLOCKED_ON_VENDOR_INCLUDE",
+    "trusted_consumer_wrapper_sha256": "36d270c0350926825a6648f3f1353bf19ae71c063396314eab48b49a03efa3dd",
+    "consumer_wrapper_current_hash_matches_anchor": true,
+    "source_manifest_verified": false,
+    "rules_manifest_verified": false,
+    "publisher_executable_bytes_verified": false,
+    "runtime_owner_pass_eligible": false
+  },
+  "next_release_steps": [
+    "retain the three existing expected hashes; this report is a blocker and never authorizes a pin refresh",
+    "obtain real archived vendor artifacts and create a new reviewed blocker whose hash is anchored by a separately reviewed topology-policy release",
+    "after explicit pin-update authority, update only the three reviewed expected hashes and create a new approval audit/evidence id rather than promoting the stale audit",
+    "rerun bridge 122/122, secure validator 14/14 and the complete frozen matrix",
+    "only after full green create a new approval audit file and new evidence id; never promote the superseded audit in place"
+  ],
+  "safety": {
+    "ros_started": false,
+    "hardware_accessed": false,
+    "serial_accessed": false,
+    "goal_sent": false,
+    "twist_published": false,
+    "rotation_triggered": false,
+    "recovery_triggered": false
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "schema": "limo_v1_endpoint_evidence_manifest/v1",
+  "template_only": true,
+  "real_machine_evidence": false,
+  "status": "NOT_RUN",
+  "endpoint_measurement_schema": "limo_v1_endpoint_measurement/v1",
+  "yaw_not_thresholded": true,
+  "pass_independence": {
+    "endpoint_pass_implies_repeatability_pass": false,
+    "endpoint_pass_implies_static_avoidance_pass": false,
+    "endpoint_pass_implies_dynamic_avoidance_pass": false
+  },
+  "trial_template": {
+    "session_id": "",
+    "trial_id": "",
+    "request_id": "",
+    "authorization": {"id": "", "scope": ""},
+    "robot_id": "",
+    "overlay_revision": "",
+    "active_map_id": "",
+    "map_yaml_sha256": "",
+    "map_image_sha256": "",
+    "navigation_config_sha256": "",
+    "endpoint_measurement_input": {"path": "", "sha256": ""},
+    "goal_evidence": {
+      "frame_id": "map",
+      "source_stamp": "",
+      "clock_domain": "",
+      "gateway_accept_time": "",
+      "raw_path": "",
+      "raw_sha256": ""
+    },
+    "amcl_final_evidence": {
+      "frame_id": "map",
+      "source_stamp": "",
+      "clock_domain": "",
+      "raw_path": "",
+      "raw_sha256": "",
+      "selection_rule": ""
+    },
+    "ground_truth_evidence": {
+      "frame_id": "map",
+      "measurement_time": "",
+      "clock_domain": "",
+      "instrument": "",
+      "instrument_serial": "",
+      "calibration_id": "",
+      "calibration_path": "",
+      "calibration_sha256": "",
+      "measurement_method": "",
+      "robot_reference_point": "",
+      "frame_transform_path": "",
+      "frame_transform_sha256": "",
+      "raw_path": "",
+      "raw_sha256": ""
+    },
+    "stationary_stop_window": {
+      "clock_domain": "",
+      "start_time": "",
+      "end_time": "",
+      "stationary_definition": "",
+      "command_evidence_path": "",
+      "command_evidence_sha256": ""
+    },
+    "action_result": {
+      "terminal_state": "",
+      "terminal_time": "",
+      "clock_domain": "",
+      "raw_path": "",
+      "raw_sha256": ""
+    },
+    "derived_report": {
+      "schema": "limo_v1_endpoint_error_report/v1",
+      "path": "",
+      "sha256": ""
+    },
+    "position_check_results": {
+      "amcl_absolute_localization": "NOT_RUN",
+      "navigation_control_endpoint": "NOT_RUN",
+      "physical_total_endpoint": "NOT_RUN"
+    },
+    "yaw_not_thresholded": true,
+    "result": "NOT_RUN",
+    "block_reason": ""
+  },
+  "trials": []
+}

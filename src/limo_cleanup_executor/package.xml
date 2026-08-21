@@ -10,6 +10,7 @@
   <depend>rclpy</depend>
   <depend>action_msgs</depend>
   <depend>limo_cleanup_interfaces</depend>
+  <depend>std_msgs</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

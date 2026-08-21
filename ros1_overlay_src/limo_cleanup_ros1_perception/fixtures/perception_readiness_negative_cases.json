@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "matrix_id": "limo-v2-ros1-noetic-readiness-negative-v1",
+  "runtime_family": "ROS1",
+  "read_only": true,
+  "authorizes_motion": false,
+  "delivery_ready": false,
+  "cases": [
+    {"id": "missing_topic", "mutation": "remove_one_of_exact_six_topics", "must_fail": true},
+    {"id": "extra_topic", "mutation": "add_seventh_topic", "must_fail": true},
+    {"id": "zero_message_connection", "mutation": "retain_connection_with_zero_messages", "must_fail": true},
+    {"id": "callerid_mismatch", "mutation": "change_camera_stream_callerid", "must_fail": true},
+    {"id": "old_latched_camera_info", "mutation": "prepend_out_of_window_latched_camera_info", "must_fail": true},
+    {"id": "header_time_reversal", "mutation": "decrease_header_stamp_on_one_stream", "must_fail": true},
+    {"id": "cross_connection_splice", "mutation": "pair_messages_from_different_connections", "must_fail": true},
+    {"id": "camera_info_intrinsics_change", "mutation": "change_K_D_R_or_P_inside_capture", "must_fail": true},
+    {"id": "frame_id_mismatch", "mutation": "bind_rgb_and_depth_from_incompatible_frames", "must_fail": true},
+    {"id": "unpaired_rate_70_percent", "mutation": "leave_70_percent_of_raw_frames_unpaired", "must_fail": true},
+    {"id": "mixed_tf_owner", "mutation": "add_non_camera_tf_callerid_or_edge", "must_fail": true},
+    {"id": "tf_chain_missing", "mutation": "remove_required_camera_to_target_edge", "must_fail": true},
+    {"id": "model_hash_mismatch", "mutation": "replace_one_bound_model_hash", "must_fail": true},
+    {"id": "cross_capture_evidence_splice", "mutation": "mix_capture_task_model_tf_or_truth_hashes", "must_fail": true},
+    {"id": "less_than_30_unique_frames", "mutation": "set_scene_unique_bound_frames_to_29", "must_fail": true},
+    {"id": "missing_ground_truth", "mutation": "remove_independent_scene_ground_truth", "must_fail": true},
+    {"id": "missing_depth_or_latency", "mutation": "remove_depth_xyz_or_latency_metrics", "must_fail": true},
+    {"id": "control_publisher_declared", "mutation": "add_forbidden_publish_topic", "must_fail": true}
+  ]
+}

@@ -1,0 +1,494 @@
+{
+  "schema": "limo_v1_ros1_runtime_ownership/v1",
+  "document_status": "PROVISIONAL_BLOCKED",
+  "blocker_code": "BLOCKED_ON_VENDOR_INCLUDE",
+  "claim_scope": "DESIGN_INTENT_NOT_RUNTIME_VERIFIED",
+  "vendor_include_blocker": "V1_ROS1_VENDOR_INCLUDE_BLOCKER.json",
+  "vendor_artifact_binding_contract": {
+    "status": "BLOCKED_ON_VENDOR_INCLUDE",
+    "runtime_pass_eligible": false,
+    "installed_blocker": {
+      "path_source": "PACKAGE_SHARE/docs/V1_ROS1_VENDOR_INCLUDE_BLOCKER.json",
+      "status_required": "VERIFIED",
+      "exact_bytes_hash_anchored_by_topology_policy": true,
+      "current_anchored_status": "BLOCKED_ON_VENDOR_INCLUDE"
+    },
+    "required_absolute_path_inputs": [
+      "vendor_source_manifest_file",
+      "vendor_publisher_pin_file",
+      "vendor_tf_rules_file"
+    ],
+    "schemas": {
+      "source_manifest": "limo_v1_ros1_vendor_source_manifest/v1",
+      "publisher_pin": "limo_v1_ros1_vendor_tf_publisher_pin/v1",
+      "rules_manifest": "limo_v1_ros1_vendor_tf_rules/v2",
+      "verified_result": "limo_v1_ros1_vendor_tf_verified_contract/v1"
+    },
+    "required_status": "VERIFIED",
+    "hash_format_only_sufficient": false,
+    "self_reported_provenance_accepted": false,
+    "actual_bytes_rehashed": [
+      "installed_blocker",
+      "source_manifest",
+      "publisher_pin",
+      "rules_manifest",
+      "every_referenced_raw_launch",
+      "publisher_executable"
+    ],
+    "semantic_binding": [
+      "include_expression_to_exact_child_logical_path",
+      "complete_acyclic_recursive_include_graph",
+      "callerid_parent_child_topic_behavior_exact_match",
+      "unsupported_namespace_substitution_condition_or_remap_fails_closed"
+    ],
+    "required_resolution_evidence": {
+      "enforcement": "RELEASE_REVIEW_ONLY",
+      "loader_consumes": false,
+      "status": "BLOCKED_ON_VENDOR_INCLUDE",
+      "required_archived_outputs": [
+        "rospack_find_package_roots",
+        "roslaunch_--files",
+        "roslaunch_--nodes",
+        "roslaunch_--dump-params"
+      ],
+      "must_bind": [
+        "same_package_roots_and_raw_launch_hashes",
+        "resolved_node_name_package_type_arguments_and_remaps",
+        "publisher_executable_absolute_path_and_sha256"
+      ],
+      "automatically_satisfies_runtime_machine_gate": false,
+      "path_or_package_type_text_alone_sufficient": false,
+      "runtime_callerid_can_supply_missing_resolution": false
+    },
+    "runtime_machine_gate": {
+      "enforcement": "LOADER_FAIL_CLOSED",
+      "trusted_installed_blocker_sha256_required": true,
+      "required_independent_artifacts": [
+        "vendor_source_manifest_file",
+        "vendor_publisher_pin_file",
+        "vendor_tf_rules_file"
+      ],
+      "actual_bytes_required": [
+        "three_manifests",
+        "every_referenced_raw_launch",
+        "publisher_executable"
+      ],
+      "strict_supported_xml_subset_required": true,
+      "unmodelled_constructs_fail_closed": [
+        "include_argument",
+        "remap",
+        "namespace_or_condition",
+        "substitution",
+        "launch_prefix"
+      ],
+      "ros_package_root_gate": "ROSPACK_FIND_MUST_MATCH_MANIFEST_ABSOLUTE_PATH",
+      "ros_node_executable_gate": "ROSLIB_FIND_NODE_MUST_RETURN_ONE_PATH_MATCHING_PIN",
+      "release_review_dumps_consumed": false
+    },
+    "failure_code": "TF_VENDOR_CONTRACT_UNVERIFIED"
+  },
+  "runtime_baseline": {
+    "default_middleware": "ROS1_NOETIC",
+    "default_mode": "native",
+    "ros1_master_cardinality": "EXACTLY_ONE_SESSION_OWNED",
+    "ros2_foxy_live_runtime_assumed": false,
+    "ros2_foxy_allowed_scopes": [
+      "OFFLINE_CODE",
+      "EXPLICIT_INTEGRATED_BRIDGE_MODE"
+    ],
+    "integrated_mode_requires_explicit_selection": true,
+    "field_access_authorized_by_this_document": false
+  },
+  "stage_tf_ownership": {
+    "sensing_only": {
+      "map_to_odom": "ABSENT",
+      "odom_to_base_link": "/limo_base_node",
+      "base_link_to_laser_link": "PROVISIONAL_BLOCKED_ON_VENDOR_INCLUDE"
+    },
+    "mapping": {
+      "map_to_odom": "/slam_gmapping",
+      "odom_to_base_link": "/limo_base_node",
+      "base_link_to_laser_link": "PROVISIONAL_BLOCKED_ON_VENDOR_INCLUDE"
+    },
+    "localization": {
+      "map_to_odom": "/amcl",
+      "odom_to_base_link": "/limo_base_node",
+      "base_link_to_laser_link": "PROVISIONAL_BLOCKED_ON_VENDOR_INCLUDE"
+    },
+    "navigation_native": {
+      "map_to_odom": "/amcl",
+      "odom_to_base_link": "/limo_base_node",
+      "base_link_to_laser_link": "PROVISIONAL_BLOCKED_ON_VENDOR_INCLUDE"
+    }
+  },
+  "tf_edge_observation_contract": {
+    "schema": "limo_v1_ros1_tf_edge_observation/v1",
+    "enforcement_scope": [
+      "V1_RUNTIME_PREFLIGHT",
+      "V1_PERCEPTION_ONLY_FIELD_CAPTURE"
+    ],
+    "continuous_guard_or_ready_claimed": false,
+    "message_type": "tf2_msgs/TFMessage",
+    "observation_granularity": "EACH_TFMESSAGE_EACH_TRANSFORM",
+    "authority_source": "connection_header.callerid",
+    "topic_source": "CALLBACK_BOUND_EXACT_/tf_OR_/tf_static",
+    "required_observation_fields": [
+      "parent_frame",
+      "child_frame",
+      "callerid",
+      "topic",
+      "source_stamp",
+      "receipt_monotonic",
+      "geometry_fingerprint"
+    ],
+    "frame_normalization": "STRIP_LEADING_SLASH_THEN_REQUIRE_NONEMPTY",
+    "protected_child_frames": ["odom", "base_link", "laser_link"],
+    "tf2_lookup_proves": "CONNECTIVITY_ONLY_NOT_AUTHORITY_TOPIC_OR_CARDINALITY",
+    "cardinality_rules": {
+      "parents_per_protected_child": "EXACTLY_ONE_WHEN_REQUIRED_ZERO_WHEN_FORBIDDEN",
+      "authorities_per_protected_child": "EXACTLY_ONE_WHEN_REQUIRED_ZERO_WHEN_FORBIDDEN",
+      "topics_per_edge": "EXACTLY_ONE",
+      "same_edge_across_/tf_and_/tf_static": "FAIL_CLOSED",
+      "unknown_or_missing_callerid": "FAIL_CLOSED",
+      "wrong_parent_or_child": "FAIL_CLOSED",
+      "alias_authority_for_expected_edge": "FAIL_CLOSED",
+      "same_authority_conflicting_edge_for_protected_child": "FAIL_CLOSED"
+    },
+    "temporal_rules": {
+      "DYNAMIC_/tf": {
+        "source_stamp": "FINITE_STRICTLY_ADVANCING_AND_FRESH",
+        "receipt": "FRESH",
+        "geometry": "FINITE_MAY_CHANGE"
+      },
+      "STATIC_PERIODIC_/tf": {
+        "source_stamp": "FINITE_STRICTLY_ADVANCING",
+        "receipt": "REPEATED_AND_FRESH",
+        "geometry": "INVARIANT"
+      },
+      "STATIC_LATCHED_/tf_static": {
+        "source_stamp": "ZERO_OR_OLD_ALLOWED_NOT_USED_FOR_DYNAMIC_FRESHNESS",
+        "receipt": "AT_LEAST_ONE_SESSION_OBSERVATION_AND_GRAPH_OWNER_PRESENT",
+        "geometry": "INVARIANT_IF_REPEATED"
+      }
+    },
+    "block_codes": [
+      "TF_AUTHORITY_UNKNOWN",
+      "TF_CHILD_MULTIPLE_OWNERS",
+      "TF_CHILD_MULTIPLE_PARENTS",
+      "TF_EDGE_MULTIPLE_TOPICS",
+      "TF_EDGE_OWNER_MISMATCH",
+      "TF_EDGE_TOPIC_MISMATCH",
+      "TF_EDGE_BEHAVIOR_MISMATCH",
+      "TF_EDGE_REQUIRED_MISSING",
+      "TF_EDGE_FORBIDDEN_PRESENT",
+      "TF_VENDOR_CONTRACT_UNVERIFIED"
+    ]
+  },
+  "tf_edge_rules": [
+    {
+      "id": "odom_to_base_link",
+      "parent_frame": "odom",
+      "child_frame": "base_link",
+      "expected_authority": "/limo_base_node",
+      "required_topic": "/tf",
+      "temporal_semantics": "DYNAMIC",
+      "vendor_source_pin_required_for_ownership_closure": true
+    },
+    {
+      "id": "base_link_to_laser_link",
+      "parent_frame": "base_link",
+      "child_frame": "laser_link",
+      "expected_authority": null,
+      "historical_candidate_authority": "/base_link_to_laser_link",
+      "authority_status": "PROVISIONAL_BLOCKED_ON_VENDOR_INCLUDE",
+      "selected_topic": null,
+      "candidate_topics_pending_pin": ["/tf", "/tf_static"],
+      "candidate_topics_are_runtime_allowlist": false,
+      "temporal_semantics": "STATIC",
+      "runtime_pass_eligible": false
+    },
+    {
+      "id": "map_to_odom_mapping",
+      "parent_frame": "map",
+      "child_frame": "odom",
+      "expected_authority": "/slam_gmapping",
+      "required_topic": "/tf",
+      "temporal_semantics": "DYNAMIC",
+      "required_stages": ["mapping"]
+    },
+    {
+      "id": "map_to_odom_localization",
+      "parent_frame": "map",
+      "child_frame": "odom",
+      "expected_authority": "/amcl",
+      "required_topic": "/tf",
+      "temporal_semantics": "DYNAMIC",
+      "required_stages": ["localization", "navigation_native"]
+    },
+    {
+      "id": "map_to_odom_absent",
+      "parent_frame": "map",
+      "child_frame": "odom",
+      "presence": "FORBIDDEN",
+      "required_stages": ["sensing_only"]
+    }
+  ],
+  "ownership_rows": [
+    {
+      "id": "ros1_master",
+      "stages": ["sensing_only", "mapping", "localization", "navigation_native"],
+      "process_or_component": "roscore/rosmaster/rosout",
+      "canonical_node": "/rosout",
+      "publishes": ["/rosout_agg"],
+      "subscribes": ["/rosout"],
+      "tf_edges": [],
+      "cardinality": "EXACTLY_ONE_SESSION_OWNED_MASTER",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "base_driver",
+      "stages": ["sensing_only", "mapping", "localization", "navigation_native"],
+      "process_or_component": "limo_start.launch/limo_base_node",
+      "canonical_node": "/limo_base_node",
+      "publishes": ["/odom", "/tf"],
+      "subscribes": ["/v1/driver_cmd_vel"],
+      "tf_edges": ["odom->base_link"],
+      "cardinality": "EXACTLY_ONE",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "lidar",
+      "stages": ["sensing_only", "mapping", "localization", "navigation_native"],
+      "process_or_component": "ydlidar_ros_driver",
+      "canonical_node": "/ydlidar_lidar_publisher",
+      "publishes": ["/scan"],
+      "subscribes": [],
+      "tf_edges": [],
+      "cardinality": "EXACTLY_ONE",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "laser_static_tf",
+      "stages": ["sensing_only", "mapping", "localization", "navigation_native"],
+      "process_or_component": "vendor-resolved static transform publisher",
+      "canonical_node": null,
+      "historical_candidate_node": "/base_link_to_laser_link",
+      "owner_status": "PROVISIONAL_BLOCKED_ON_VENDOR_INCLUDE",
+      "publishes": [],
+      "subscribes": [],
+      "tf_edges": ["base_link->laser_link"],
+      "tf_transport": "PROVISIONAL_UNRESOLVED_/tf_VS_/tf_static",
+      "selected_transport": null,
+      "candidate_transports_pending_pin": ["/tf", "/tf_static"],
+      "candidate_transports_are_runtime_allowlist": false,
+      "temporal_semantics": "STATIC",
+      "historical_transport_observation": "/tf_RATE_BASED_STATIC_TRANSFORM_PUBLISHER",
+      "runtime_pass_eligible": false,
+      "cardinality": "EXACTLY_ONE_PER_CHILD_FRAME_AFTER_VERIFIED_PIN",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "mapping_slam",
+      "stages": ["mapping"],
+      "process_or_component": "gmapping",
+      "canonical_node": "/slam_gmapping",
+      "publishes": ["/map", "/map_metadata", "/tf"],
+      "subscribes": ["/scan"],
+      "tf_edges": ["map->odom"],
+      "cardinality": "EXACTLY_ONE_IN_MAPPING_ONLY",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "map_server",
+      "stages": ["localization", "navigation_native"],
+      "process_or_component": "map_server",
+      "canonical_node": "/map_server",
+      "publishes": ["/map", "/map_metadata"],
+      "subscribes": [],
+      "tf_edges": [],
+      "cardinality": "EXACTLY_ONE",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "amcl",
+      "stages": ["localization", "navigation_native"],
+      "process_or_component": "amcl",
+      "canonical_node": "/amcl",
+      "publishes": ["/amcl_pose", "/particlecloud", "/tf"],
+      "subscribes": ["/map", "/scan", "/v1/validated_initialpose"],
+      "tf_edges": ["map->odom"],
+      "cardinality": "EXACTLY_ONE",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "move_base_and_costmaps",
+      "stages": ["navigation_native"],
+      "process_or_component": "move_base with global/local costmap plugins",
+      "canonical_node": "/move_base",
+      "publishes": ["/v1/nav_cmd_vel", "/v1/private_move_base/status", "/v1/private_move_base/feedback", "/v1/private_move_base/result"],
+      "subscribes": ["/v1/private_move_base/goal", "/v1/private_move_base/cancel", "/v1/private_move_base_simple/goal", "/scan", "/map", "/odom"],
+      "tf_edges": [],
+      "cardinality": "EXACTLY_ONE_WITH_NO_SEPARATE_COSTMAP_OWNER",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "localization_manager",
+      "stages": ["localization", "navigation_native"],
+      "process_or_component": "v1_localization_manager.py",
+      "canonical_node": "/v1_localization_manager",
+      "publishes": ["/v1/validated_initialpose", "/v1/localization/ready", "/v1/localization/status", "/v1/localization/diagnostics"],
+      "subscribes": ["/initialpose", "/amcl_pose", "/scan", "/odom", "/map_metadata", "/v1/private_move_base/status"],
+      "tf_edges": [],
+      "cardinality": "EXACTLY_ONE",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "goal_gateway",
+      "stages": ["navigation_native"],
+      "process_or_component": "v1_navigation_gateway.py",
+      "canonical_node": "/v1_navigation_gateway",
+      "publishes": ["/v1/private_move_base/goal", "/v1/private_move_base/cancel", "/v1/navigation/status", "/v1/navigation/error"],
+      "subscribes": ["/v1/navigation/goal", "/v1/navigation/cancel", "/v1/private_move_base/status", "/v1/private_move_base/feedback", "/v1/private_move_base/result", "/v1/localization/ready", "/v1/cmd_guard/stop_latched"],
+      "tf_edges": [],
+      "cardinality": "EXACTLY_ONE_NATIVE_ACTION_CLIENT",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "velocity_guard",
+      "stages": ["navigation_native"],
+      "process_or_component": "v1_cmd_guard.py",
+      "canonical_node": "/v1_cmd_guard",
+      "publishes": ["/v1/driver_cmd_vel", "/v1/cmd_guard/stop_latched"],
+      "subscribes": ["/v1/nav_cmd_vel", "/v1/localization/ready", "/scan", "/odom"],
+      "tf_edges": [],
+      "cardinality": "EXACTLY_ONE",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "public_cmd_vel",
+      "stages": ["sensing_only", "mapping", "localization", "navigation_native"],
+      "process_or_component": "forbidden public velocity surface",
+      "canonical_node": null,
+      "publishes": ["/cmd_vel"],
+      "subscribes": ["/cmd_vel"],
+      "tf_edges": [],
+      "cardinality": "ZERO_PUBLISHERS_AND_ZERO_SUBSCRIBERS",
+      "duplicate_disposition": "FAIL_CLOSED",
+      "wrong_owner_disposition": "FAIL_CLOSED"
+    }
+  ],
+  "native_velocity_chain": [
+    "/move_base",
+    "/v1/nav_cmd_vel",
+    "/v1_cmd_guard",
+    "/v1/driver_cmd_vel",
+    "/limo_base_node"
+  ],
+  "native_goal_chain": [
+    "/v1/navigation/goal",
+    "/v1_navigation_gateway",
+    "/v1/private_move_base",
+    "/move_base"
+  ],
+  "forbidden_runtime": [
+    {
+      "id": "robot_pose_ekf",
+      "stages": ["sensing_only", "mapping", "localization", "navigation_native"],
+      "match": "/robot_pose_ekf and aliases",
+      "reason": "duplicate or competing odom->base_link TF owner",
+      "disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "slam_during_localization_or_navigation",
+      "stages": ["localization", "navigation_native"],
+      "match": "/slam_gmapping or /cartographer_node and aliases",
+      "reason": "duplicate or competing map->odom owner",
+      "disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "duplicate_localization_core",
+      "stages": ["localization", "navigation_native"],
+      "match": "/map_server_* or /amcl_* in addition to the canonical nodes",
+      "reason": "duplicate map or localization owner",
+      "disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "duplicate_navigation_core",
+      "stages": ["navigation_native"],
+      "match": "/move_base_* in addition to /move_base",
+      "reason": "duplicate planner, costmap, action, or velocity owner",
+      "disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "public_velocity_surface",
+      "stages": ["sensing_only", "mapping", "localization", "navigation_native"],
+      "match": "any publisher or subscriber on /cmd_vel",
+      "reason": "bypasses the private guarded velocity chain",
+      "disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "legacy_vendor_navigation_launch",
+      "stages": ["localization", "navigation_native"],
+      "match": "limo_navigation_diff.launch or other old combined navigation launch",
+      "reason": "can spawn duplicate map_server, AMCL, robot_pose_ekf, RViz, and public velocity endpoints",
+      "disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "ros2_native_runtime_owner",
+      "stages": ["sensing_only", "mapping", "localization", "navigation_native"],
+      "match": "ROS2/Foxy base driver, Nav2, or ROS2-generated duplicate TF/velocity owner",
+      "reason": "ROS1/Noetic is the default field runtime; ROS2 is offline or explicit bridge only",
+      "disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "bridge_nodes_in_native_mode",
+      "stages": ["navigation_native"],
+      "match": "/dynamic_bridge, /cleanup_ros1_safe_cmd_vel_watchdog, or /cleanup_ros1_navigation_adapter",
+      "reason": "native and integrated ownership modes are mutually exclusive",
+      "disposition": "FAIL_CLOSED"
+    },
+    {
+      "id": "native_nodes_in_integrated_mode",
+      "stages": ["navigation_integrated"],
+      "match": "/v1_navigation_gateway, /v1_cmd_guard, /v1_localization_manager, or V1 native speed topics",
+      "reason": "native and integrated ownership modes are mutually exclusive",
+      "disposition": "FAIL_CLOSED"
+    }
+  ],
+  "verification_limits": {
+    "vendor_raw_source_archived": false,
+    "current_vendor_hash_verified": false,
+    "resolved_include_chain_verified": false,
+    "runtime_graph_verified": false,
+    "tf_edge_publishers_attributed": false,
+    "tf_topic_per_edge_verified": false,
+    "tf_temporal_semantics_verified": false,
+    "tf_per_child_cardinality_verified": false,
+    "vendor_tf_publisher_pin_verified": false,
+    "vendor_rules_manifest_verified": false,
+    "vendor_artifact_hash_binding_verified": false,
+    "vendor_executable_bytes_verified": false,
+    "vendor_rospack_package_roots_verified": false,
+    "vendor_roslaunch_node_resolution_verified": false,
+    "nomotion_service_provider_verified": false,
+    "arbitrary_renamed_processes_detected_by_name": false,
+    "offline_software_pass_closes_runtime_ownership": false
+  },
+  "safety": {
+    "ros_started_by_this_document": false,
+    "hardware_accessed_by_this_document": false,
+    "goal_sent_by_this_document": false,
+    "twist_published_by_this_document": false
+  }
+}

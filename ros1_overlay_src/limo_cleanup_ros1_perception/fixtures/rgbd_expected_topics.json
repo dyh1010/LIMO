@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "manifest_id": "limo-dabai-ros1-raw-rgbd-six-topics-v1",
+  "ros_major": 1,
+  "ros_distro": "noetic",
+  "bag_format": "rosbag1-v2",
+  "inspection_scope": "sensor_only_short_sample",
+  "read_only": true,
+  "authorizes_motion": false,
+  "publishes_ros_messages": false,
+  "starts_ros_graph": false,
+  "driver_callerid": "/camera/camera",
+  "min_accepted_bundles": 30,
+  "max_sync_span_sec": 0.15,
+  "max_record_header_skew_sec": 0.75,
+  "max_unpaired_rate": 0.05,
+  "tf_policy": {
+    "allowed_frame_prefix": "camera",
+    "require_unique_parent_per_child": true,
+    "require_unique_owner_per_child": true,
+    "forbid_static_dynamic_child_overlap": true,
+    "forbidden_frame_ids": [
+      "map",
+      "odom",
+      "base_footprint",
+      "base_link",
+      "laser_link",
+      "imu_link",
+      "arm_base_link",
+      "gripper_link"
+    ]
+  },
+  "topics": [
+    {
+      "role": "rgb",
+      "name": "/camera/color/image_raw",
+      "type": "sensor_msgs/Image",
+      "md5sum": "060021388200f6f0f447d0fcd9c64743",
+      "callerid": "/camera/camera",
+      "latching": false
+    },
+    {
+      "role": "raw_depth",
+      "name": "/camera/depth/image_raw",
+      "type": "sensor_msgs/Image",
+      "md5sum": "060021388200f6f0f447d0fcd9c64743",
+      "callerid": "/camera/camera",
+      "latching": false
+    },
+    {
+      "role": "rgb_camera_info",
+      "name": "/camera/color/camera_info",
+      "type": "sensor_msgs/CameraInfo",
+      "md5sum": "c9a58c1b0b154e0e6da7578cb991d214",
+      "callerid": "/camera/camera",
+      "latching": false
+    },
+    {
+      "role": "depth_camera_info",
+      "name": "/camera/depth/camera_info",
+      "type": "sensor_msgs/CameraInfo",
+      "md5sum": "c9a58c1b0b154e0e6da7578cb991d214",
+      "callerid": "/camera/camera",
+      "latching": false
+    },
+    {
+      "role": "tf",
+      "name": "/tf",
+      "type": "tf2_msgs/TFMessage",
+      "md5sum": "94810edda583a504dfda3829e70d7eec",
+      "callerid": "/camera/camera",
+      "latching": false
+    },
+    {
+      "role": "tf_static",
+      "name": "/tf_static",
+      "type": "tf2_msgs/TFMessage",
+      "md5sum": "94810edda583a504dfda3829e70d7eec",
+      "callerid": "/camera/camera",
+      "latching": true
+    }
+  ]
+}

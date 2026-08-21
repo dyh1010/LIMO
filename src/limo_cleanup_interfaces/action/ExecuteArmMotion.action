@@ -1,0 +1,27 @@
+uint8 KIND_NAMED_JOINT_POSE=1
+uint8 KIND_BOUNDED_TCP_MOVE=2
+
+uint8 MODE_MOVE_J=0
+uint8 MODE_MOVE_L=1
+
+uint8 kind
+string named_pose
+float64[6] tcp_target
+uint8 tcp_mode
+uint8 speed_grade
+string authorization_id
+string expected_session_id
+---
+bool success
+string command_id
+string final_state
+string detail
+float64[6] measured_joint_angles_deg
+float64[6] measured_tcp_pose
+---
+string command_id
+string state
+float32 progress
+string detail
+float64[6] measured_joint_angles_deg
+float64[6] measured_tcp_pose

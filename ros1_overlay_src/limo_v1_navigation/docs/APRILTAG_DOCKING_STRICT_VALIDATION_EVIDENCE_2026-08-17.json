@@ -1,0 +1,85 @@
+{
+  "schema_version": "limo_apriltag_docking_strict_validation_evidence/v1",
+  "evidence_date": "2026-08-17",
+  "scope": "offline_static_and_pure_fake_only",
+  "status": "PASS_FOR_OFFLINE_SCHEMA_AND_FRESHNESS_ONLY",
+  "source_identity": {
+    "src/limo_v1_navigation/apriltag_docking_contract.py": {
+      "bytes": 19876,
+      "sha256": "d1998dc4687e5778a3fa01e1740717dc9860a27d12e4c49ea26891e6a2f2aa9f"
+    },
+    "scripts/validate_apriltag_docking_static.py": {
+      "bytes": 4629,
+      "sha256": "960c96c12752d33e8d45fc233ccb83dd5e66019fa937de0697f7299500b4d063"
+    },
+    "test/test_apriltag_docking_contract.py": {
+      "bytes": 13500,
+      "sha256": "4f7040f3bfd426462daafe24cf3d16aaada52825715a5aaffd5c0f9fb57679a9"
+    },
+    "fixtures/apriltag_tag_docking_calibration_ready.json": {
+      "bytes": 2350,
+      "sha256": "75c2e9cd2efe1ec1af5f7d654d5f268e4cf5668694f6ab10908259c22b161f87"
+    },
+    "fixtures/apriltag_static_observations_valid.json": {
+      "bytes": 966,
+      "sha256": "0a25234f92b78b1aaad6987ecfc89f1c9a41160b97101f00865847b9071382ca"
+    }
+  },
+  "strict_calibration_matrix": {
+    "valid_fixture_positive": "PASS",
+    "required_field_delete_cases": 95,
+    "required_field_null_cases": 100,
+    "required_field_false_cases": 100,
+    "explicit_type_range_frame_quaternion_measurement_cases": 27,
+    "all_negative_cases": "ABORT"
+  },
+  "freshness_matrix": {
+    "owner": "consumer_host_now_ns",
+    "max_age_semantics": "age_ns_must_be_less_than_max_age_ns",
+    "old_observation_and_both_tf_same_timestamp": "ABORT_observation_stale",
+    "future_timestamp": "ABORT_observation_from_future"
+  },
+  "tests": {
+    "apriltag_contract": {
+      "collected": 9,
+      "passed": 9,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "package_excluding_known_release_integrity_suite": {
+      "collected": 139,
+      "passed": 139,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "full_package_discovery": {
+      "collected": 147,
+      "passed": 145,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "known_independent_failures": [
+        "test_frozen_release_readiness.FrozenReleaseReadinessTests.test_integrated_closures_fail_closed_and_do_not_imply_field_ready",
+        "test_frozen_release_readiness.FrozenReleaseReadinessTests.test_matrix_has_every_required_check_and_exact_counts"
+      ],
+      "classification": "pre_existing_release_integrity_blockers_not_apriltag_contract_failures"
+    },
+    "in_memory_python_compile": "3/3_PASS",
+    "strict_json_parse": "4/4_PASS",
+    "forbidden_ros_or_motion_api_scan": "0_matches_PASS"
+  },
+  "safety": {
+    "ros_started": false,
+    "ssh_used": false,
+    "hardware_accessed": false,
+    "goal_sent": false,
+    "twist_published": false,
+    "motion_authorized": false,
+    "field_ready": false,
+    "delivery_ready": false,
+    "release_pin_updated": false,
+    "audit_tools_modified": false
+  }
+}

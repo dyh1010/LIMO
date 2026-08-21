@@ -1,0 +1,47 @@
+{
+  "schema_version": "limo_apriltag_docking_calibration_intake/v1",
+  "status": "UNFILLED_ABORT",
+  "recorded_timestamp_ns": null,
+  "camera_intrinsics": {
+    "camera_frame": "camera_color_optical_frame",
+    "image_width_px": null,
+    "image_height_px": null,
+    "fx": null,
+    "fy": null,
+    "cx": null,
+    "cy": null,
+    "distortion_model": null,
+    "distortion_coefficients": null,
+    "calibration_timestamp_ns": null
+  },
+  "base_link_to_camera_extrinsics": {
+    "parent_frame": "base_link",
+    "child_frame": "camera_color_optical_frame",
+    "translation_m": {"x": null, "y": null, "z": null},
+    "orientation_xyzw": {"x": null, "y": null, "z": null, "w": null},
+    "calibration_timestamp_ns": null
+  },
+  "tag_installation_checklist": {
+    "field_tag_size_m": null,
+    "object_tag_size_m": null,
+    "installation_verified_timestamp_ns": null,
+    "fixed_field_tag_measurements": [
+      {"family": "tag36h11", "id": 0, "frame_id": "map", "position_m": {"x": null, "y": null, "z": null, "yaw": null}, "measurement_timestamp_ns": null, "measured_verified": false},
+      {"family": "tag36h11", "id": 1, "frame_id": "map", "position_m": {"x": null, "y": null, "z": null, "yaw": null}, "measurement_timestamp_ns": null, "measured_verified": false},
+      {"family": "tag36h11", "id": 2, "frame_id": "map", "position_m": {"x": null, "y": null, "z": null, "yaw": null}, "measurement_timestamp_ns": null, "measured_verified": false},
+      {"family": "tag36h11", "id": 3, "frame_id": "map", "position_m": {"x": null, "y": null, "z": null, "yaw": null}, "measurement_timestamp_ns": null, "measured_verified": false}
+    ],
+    "object_dimensions_m": [
+      {"object_index": 0, "length": null, "width": null, "height": null, "measured_verified": false},
+      {"object_index": 1, "length": null, "width": null, "height": null, "measured_verified": false},
+      {"object_index": 2, "length": null, "width": null, "height": null, "measured_verified": false}
+    ],
+    "object_tag_center_height_m": null,
+    "tag_flatness_checked": false,
+    "tag_nonreflective_checked": false,
+    "tag_unoccluded_checked": false,
+    "tag_faces_outward_checked": false
+  },
+  "abort_if_any_required_value_missing": true,
+  "notes": "Fill on site before any movement. This template never authorizes motion."
+}

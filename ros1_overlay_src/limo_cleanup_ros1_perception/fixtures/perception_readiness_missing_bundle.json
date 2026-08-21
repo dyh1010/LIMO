@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "bundle_id": null,
+  "runtime_family": "ROS1",
+  "ros_distro": "noetic",
+  "evidence_scope": "formal_four_scene_rosbag1_rgbd_acceptance",
+  "read_only": true,
+  "authorizes_motion": false,
+  "publishes_ros_messages": false,
+  "delivery_ready": false,
+  "source_binding": null,
+  "model_binding": null,
+  "output_contract": null,
+  "ros1_field_install_validation": null,
+  "hardware_readiness": null,
+  "expected_topic_manifest": null,
+  "scenes": {}
+}

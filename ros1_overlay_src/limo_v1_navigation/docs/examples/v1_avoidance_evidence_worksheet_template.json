@@ -1,0 +1,170 @@
+{
+  "schema": "limo_v1_avoidance_evidence_worksheet/v1",
+  "template_only": true,
+  "real_machine_evidence": false,
+  "status": "NOT_RUN",
+  "motion_authorization_required": true,
+  "physical_estop_operator_required": true,
+  "software_stop_is_physical_estop": false,
+  "pass_independence": {
+    "static_avoidance_pass_implies_endpoint_pass": false,
+    "dynamic_avoidance_pass_implies_endpoint_pass": false,
+    "avoidance_pass_implies_repeatability_pass": false,
+    "static_avoidance_pass_implies_dynamic_avoidance_pass": false,
+    "dynamic_avoidance_pass_implies_static_avoidance_pass": false
+  },
+  "common_required_rosbag_topics": [
+    "/scan",
+    "/amcl_pose",
+    "/odom",
+    "/tf",
+    "/tf_static"
+  ],
+  "mode_specific_required_rosbag_topics": {
+    "native": [
+      "/v1/localization/ready",
+      "/v1/localization/status",
+      "/v1/navigation/status",
+      "/v1/navigation/error",
+      "/v1/cmd_guard/stop_latched",
+      "/v1/driver_cmd_vel"
+    ],
+    "integrated": [
+      "/cleanup/navigation/bridge_status",
+      "/cleanup/base/driver_cmd_vel"
+    ]
+  },
+  "static_avoidance": {
+    "required_valid_trials": 3,
+    "acceptance": {
+      "zero_contact_required": true,
+      "exercised_obstacle_required": true
+    },
+    "trial_template": {
+      "session_id": "",
+      "trial_id": "",
+      "request_id": "",
+      "authorization_id": "",
+      "authorization_scope": "",
+      "mode": "",
+      "robot_id": "",
+      "overlay_revision": "",
+      "active_map_id": "",
+      "map_yaml_sha256": "",
+      "map_image_sha256": "",
+      "navigation_config_sha256": "",
+      "obstacle": {
+        "soft_material": "",
+        "dimensions_m": "",
+        "placement_frame": "map",
+        "placement": "",
+        "placement_evidence_path": "",
+        "placement_evidence_sha256": ""
+      },
+      "nominal_path": {
+        "obstacle_intersects_corridor": null,
+        "evidence_path": "",
+        "evidence_sha256": ""
+      },
+      "obstacle_observed": null,
+      "goal_active_during_encounter": null,
+      "robot_approached_obstacle": null,
+      "minimum_clearance_m": null,
+      "clearance_evidence_path": "",
+      "clearance_evidence_sha256": "",
+      "contact_detected": null,
+      "contact_detection_method": "",
+      "contact_evidence_path": "",
+      "contact_evidence_sha256": "",
+      "action_terminal_state": "",
+      "raw_rosbag_path": "",
+      "raw_rosbag_sha256": "",
+      "video_path": "",
+      "video_sha256": "",
+      "endpoint_report_path": "",
+      "endpoint_report_sha256": "",
+      "result": "NOT_RUN",
+      "block_reason": ""
+    },
+    "trials": []
+  },
+  "dynamic_avoidance": {
+    "required_valid_trials": 5,
+    "acceptance": {
+      "zero_contact_required": true,
+      "exercised_obstacle_required": true,
+      "maximum_response_s": 0.8
+    },
+    "timing_contract": {
+      "clock_domain": "single_rosbag_record_time",
+      "t0_eligibility_definition": "the recorded request is active and the sole driver command is finite planar nonzero throughout [t0-0.25 seconds, t0)",
+      "pre_t0_nonzero_window_s": 0.25,
+      "pre_t0_nonzero_command_required": true,
+      "t0_definition": "first rosbag record time at which full-scan geometry proves the obstacle entered the predeclared checksummed protective boundary",
+      "t1_definition": "first rosbag record time at or after t0 at which the topology-validated mode-specific sole driver command is exactly planar zero and remains uninterrupted zero for at least 0.25 seconds",
+      "response_formula": "response_s = t1 - t0",
+      "zero_hold_s": 0.25,
+      "clock_mismatch_result": "BLOCKED"
+    },
+    "allowed_driver_command_topics": {
+      "native": "/v1/driver_cmd_vel",
+      "integrated": "/cleanup/base/driver_cmd_vel"
+    },
+    "trial_template": {
+      "session_id": "",
+      "trial_id": "",
+      "request_id": "",
+      "authorization_id": "",
+      "authorization_scope": "",
+      "mode": "",
+      "driver_command_topic": "",
+      "robot_id": "",
+      "overlay_revision": "",
+      "active_map_id": "",
+      "map_yaml_sha256": "",
+      "map_image_sha256": "",
+      "navigation_config_sha256": "",
+      "obstacle": {
+        "soft_material": "",
+        "dimensions_m": "",
+        "path_frame": "map",
+        "measured_path": "",
+        "measured_speed_mps": null,
+        "path_evidence_path": "",
+        "path_evidence_sha256": ""
+      },
+      "protective_boundary": {
+        "id": "",
+        "definition_path": "",
+        "definition_sha256": ""
+      },
+      "obstacle_crossed_path": null,
+      "request_active_at_t0": null,
+      "pre_t0_command_nonzero": null,
+      "pre_t0_command_evidence_path": "",
+      "pre_t0_command_evidence_sha256": "",
+      "t0_rosbag_record_time": null,
+      "t1_rosbag_record_time": null,
+      "clock_domain": "single_rosbag_record_time",
+      "response_s": null,
+      "zero_hold_s": null,
+      "minimum_clearance_m": null,
+      "clearance_evidence_path": "",
+      "clearance_evidence_sha256": "",
+      "contact_detected": null,
+      "contact_detection_method": "",
+      "contact_evidence_path": "",
+      "contact_evidence_sha256": "",
+      "action_terminal_state": "",
+      "raw_rosbag_path": "",
+      "raw_rosbag_sha256": "",
+      "video_path": "",
+      "video_sha256": "",
+      "endpoint_report_path": "",
+      "endpoint_report_sha256": "",
+      "result": "NOT_RUN",
+      "block_reason": ""
+    },
+    "trials": []
+  }
+}

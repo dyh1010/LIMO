@@ -104,10 +104,18 @@ class TouchOnlySmokeProbe(Node):
                 'success detail did not declare dry-run: {}'.format(
                     final.detail))
 
-        print('PASS: touch_only task propagated for plastic_bottle')
-        print('PASS: ordered states={}'.format(','.join(REQUIRED_STATES)))
-        print('PASS: no grasp/drop/bin/gripper state was observed')
-        print('PASS: final result explicitly declared dry-run')
+        print(
+            'LEGACY_ROS2_OFFLINE_ONLY_MOCK_CHECK: touch_only task '
+            'propagated for plastic_bottle')
+        print(
+            'LEGACY_ROS2_OFFLINE_ONLY_MOCK_CHECK: ordered states={}'.format(
+                ','.join(REQUIRED_STATES)))
+        print(
+            'LEGACY_ROS2_OFFLINE_ONLY_MOCK_CHECK: no '
+            'grasp/drop/bin/gripper state was observed')
+        print(
+            'LEGACY_ROS2_OFFLINE_ONLY_MOCK_CHECK: final result explicitly '
+            'declared dry-run')
 
 
 def main() -> int:

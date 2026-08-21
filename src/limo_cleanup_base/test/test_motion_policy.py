@@ -95,6 +95,30 @@ def test_permission_is_fail_closed_until_every_gate_is_fresh():
     assert permission_reason(PermissionInputs(
         **{**base, 'safety_time': 9.0}
     )) == 'safety_heartbeat_stale'
+    assert permission_reason(PermissionInputs(
+        **{
+            **base,
+            'require_topology_ready': True,
+            'topology_ready': False,
+            'topology_time': 9.9,
+        }
+    )) == 'topology_not_ready'
+    assert permission_reason(PermissionInputs(
+        **{
+            **base,
+            'require_topology_ready': True,
+            'topology_ready': True,
+            'topology_time': 9.0,
+        }
+    )) == 'topology_heartbeat_stale'
+    assert permission_reason(PermissionInputs(
+        **{
+            **base,
+            'require_topology_ready': True,
+            'topology_ready': True,
+            'topology_time': 9.9,
+        }
+    )) == 'allowed'
 
 
 def test_permission_rejects_future_or_non_finite_timestamps():

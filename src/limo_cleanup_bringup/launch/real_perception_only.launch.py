@@ -45,6 +45,8 @@ def generate_launch_description():
                 'depth_topic': LaunchConfiguration('depth_topic'),
                 'camera_info_topic': LaunchConfiguration(
                     'camera_info_topic'),
+                'depth_camera_info_topic': LaunchConfiguration(
+                    'depth_camera_info_topic'),
                 'device': LaunchConfiguration('detector_device'),
                 'always_active': ParameterValue(
                     LaunchConfiguration('always_active'), value_type=bool),
@@ -85,6 +87,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'camera_info_topic',
             default_value='/camera/color/camera_info'),
+        DeclareLaunchArgument(
+            'depth_camera_info_topic',
+            default_value='/camera/depth/camera_info'),
         DeclareLaunchArgument(
             'bottle_model_path',
             default_value=(

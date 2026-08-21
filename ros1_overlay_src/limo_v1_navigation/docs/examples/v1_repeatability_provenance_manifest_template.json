@@ -1,0 +1,72 @@
+{
+  "schema": "limo_v1_repeatability_provenance_manifest/v1",
+  "template_only": true,
+  "real_machine_evidence": false,
+  "status": "NOT_RUN",
+  "allowed_measurement_classes": [
+    "within_run_stationary_jitter",
+    "cross_relocalization_repeatability"
+  ],
+  "absolute_accuracy_proven": false,
+  "pass_independence": {
+    "repeatability_pass_implies_endpoint_pass": false,
+    "repeatability_pass_implies_static_avoidance_pass": false,
+    "repeatability_pass_implies_dynamic_avoidance_pass": false
+  },
+  "record_template": {
+    "session_id": "",
+    "run_id": "",
+    "measurement_class": "",
+    "authorization_id": "",
+    "authorization_scope": "",
+    "robot_id": "",
+    "overlay_revision": "",
+    "active_map_id": "",
+    "map_yaml_sha256": "",
+    "map_image_sha256": "",
+    "amcl_config_sha256": "",
+    "source_capture": {"jsonl_path": "", "jsonl_sha256": ""},
+    "conversion": {
+      "tool": "",
+      "version": "",
+      "tool_sha256": "",
+      "exact_command": ""
+    },
+    "derived_csv": {"path": "", "sha256": "", "header": "x,y,yaw"},
+    "fixed_mark": {
+      "id": "",
+      "frame_id": "map",
+      "truth_available": false,
+      "truth_x": null,
+      "truth_y": null,
+      "truth_yaw": null,
+      "measurement_method": "",
+      "instrument": "",
+      "calibration_id": "",
+      "robot_reference_point": ""
+    },
+    "ready_evidence": {
+      "status_path": "",
+      "status_sha256": "",
+      "clock_domain": "",
+      "window_start": "",
+      "window_end": "",
+      "ready_remained_true": null,
+      "ready_loss_reason": ""
+    },
+    "sample_window": {
+      "clock_domain": "",
+      "start_time": "",
+      "end_time": "",
+      "sample_count": 0
+    },
+    "derived_report": {
+      "schema": "limo_v1_localization_repeatability/v1",
+      "path": "",
+      "sha256": ""
+    },
+    "result": "NOT_RUN",
+    "block_reason": ""
+  },
+  "records": []
+}

@@ -1,0 +1,38 @@
+cleanup_arm_gateway:
+  ros__parameters:
+    backend: dry_run
+    allow_simulated_motion: false
+    poll_hz: 10.0
+    feedback_hz: 10.0
+    dry_run_motion_duration_s: 0.20
+    max_speed_grade: 10
+    approved_speed_grades: [10]
+    state_max_age_s: 0.25
+    command_timeout_s: 5.0
+    stop_timeout_s: 2.0
+    max_stop_attempts: 3
+    stop_retry_interval_s: 0.50
+    stop_retry_backoff_factor: 2.0
+    stable_samples_required: 3
+    stationary_dwell_s: 0.20
+    stationary_joint_tolerance_deg: 0.01
+    joint_tolerance_deg: 0.5
+    tcp_translation_tolerance_mm: 1.0
+    tcp_rotation_tolerance_deg: 1.0
+    acceleration_profile_id: DRY_RUN_ONLY
+    runtime_release_id: DRY_RUN_RELEASE_V1
+    release_manifest_sha256: 0db63372cc24980532f650205fbb3537d02609ac62d52d76704e6dc7eaff9f83
+    acceleration_profile_manifest_sha256: cfd2f55631a9406ac5191bb09c38c3f3f678b8788ace2920d4966b3b3d56260e
+    acceleration_profile_runtime_release_id: DRY_RUN_RELEASE_V1
+    joint_min_deg: [-160.0, -160.0, -160.0, -160.0, -160.0, -160.0]
+    joint_max_deg: [160.0, 160.0, 160.0, 160.0, 160.0, 160.0]
+    tcp_min: [-250.0, -250.0, 0.0, -180.0, -180.0, -180.0]
+    tcp_max: [250.0, 250.0, 400.0, 180.0, 180.0, 180.0]
+    allowed_tcp_modes: [0]
+    required_reference_frame: 0
+    required_end_type: 0
+    required_fresh_mode: 0
+    named_pose_names: [inspection]
+    named_pose_values: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    initial_angles_deg: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    initial_tcp_pose: [100.0, 0.0, 200.0, 0.0, 0.0, 0.0]

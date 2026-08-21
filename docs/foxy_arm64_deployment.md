@@ -1,3 +1,10 @@
+> [!CAUTION]
+> **降级声明 / DEMOTION BANNER — `LEGACY_ROS2_OFFLINE_ONLY`**
+>
+> **当前现场权威默认 / Current field-authority default: ROS1 Noetic.**
+> 本文仅保留为 2026-08-07 的历史 ROS 2/Foxy 迁移记录与版本 provenance；下方正文仅记录历史事实。
+> **历史且非权威 / HISTORICAL AND NON-AUTHORITATIVE：**本文不得作为当前 ROS1 build/install、相机运行、四场景、TF/3D、latency、field 或 delivery PASS，也不构成任何现场或交付授权。
+
 # ROS 2 Foxy / ARM64 部署审计
 
 > 2026-08-07 离线修复更新：三个 Foxy launch API 阻塞和四处

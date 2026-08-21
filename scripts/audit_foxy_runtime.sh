@@ -2,6 +2,29 @@
 # Read-only ROS 2 Foxy/ARM64 deployment audit.
 # This script never starts hardware drivers, opens serial devices, publishes,
 # calls services/actions, or sends commands to any actuator.
+# ROS1_NOETIC_CURRENT_FIELD_AUTHORITY
+# LEGACY_ROS2_OFFLINE_ONLY / NON_AUTHORITATIVE_DO_NOT_RUN
+# NOT_NOETIC_BUILD_INSTALL_FIELD_OR_DELIVERY_EVIDENCE
+#
+# The historical audit body is retained below for provenance only.  Generic
+# offline opt-in cannot source Foxy, inspect an overlay/package index, import
+# project runtime modules, or query a ROS graph.  Current operators must enter
+# through docs/PERCEPTION_V2_CURRENT_OPERATIONS_INDEX.md.
+
+set -euo pipefail
+
+readonly operations_index='docs/PERCEPTION_V2_CURRENT_OPERATIONS_INDEX.md'
+
+if [[ "${LIMO_ALLOW_LEGACY_ROS2_OFFLINE:-}" != '1' ]]; then
+  echo 'BLOCKED_LEGACY_ROS2_OFFLINE_OPT_IN_REQUIRED' >&2
+  echo "Read ${operations_index}." >&2
+  exit 64
+fi
+
+echo 'BLOCKED_FOXY_RUNTIME_AUDIT_REQUIRES_SEPARATE_EXPLICIT_FIELD_OR_BRIDGE_AUTHORITY' >&2
+echo 'No ROS source, overlay, package, graph, topic, model, camera, device, network, or hardware query was performed.' >&2
+echo "Read ${operations_index}." >&2
+exit 65
 
 set -u
 

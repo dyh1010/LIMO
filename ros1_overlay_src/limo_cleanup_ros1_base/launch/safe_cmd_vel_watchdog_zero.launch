@@ -1,0 +1,16 @@
+<launch>
+  <!-- Zero-only bridge stage. This file intentionally exposes no motion-enable arg. -->
+  <node pkg="limo_cleanup_ros1_base"
+        type="fail_closed_cmd_vel_watchdog.py"
+        name="cleanup_ros1_safe_cmd_vel_watchdog"
+        output="screen"
+        required="true">
+    <param name="input_topic" value="/cleanup/base/safe_cmd_vel" />
+    <param name="output_topic" value="/cleanup/base/driver_cmd_vel" />
+    <param name="allow_nonzero" value="false" />
+    <param name="lease_timeout" value="0.25" />
+    <param name="publish_rate" value="20.0" />
+    <param name="max_linear_speed" value="0.12" />
+    <param name="max_angular_speed" value="0.35" />
+  </node>
+</launch>

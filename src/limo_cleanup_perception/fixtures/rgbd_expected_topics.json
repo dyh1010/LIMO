@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+  "read_only": true,
+  "authorizes_motion": false,
+  "publishes_ros_messages": false,
+  "topics": [
+    {
+      "role": "rgb",
+      "name": "/camera/color/image_raw",
+      "type": "sensor_msgs/msg/Image",
+      "serialization_format": "cdr",
+      "qos": {
+        "reliability": ["BEST_EFFORT", "RELIABLE"],
+        "durability": ["VOLATILE"],
+        "liveliness": ["AUTOMATIC"]
+      }
+    },
+    {
+      "role": "aligned_depth",
+      "name": "/camera/depth/image_raw",
+      "type": "sensor_msgs/msg/Image",
+      "serialization_format": "cdr",
+      "qos": {
+        "reliability": ["BEST_EFFORT", "RELIABLE"],
+        "durability": ["VOLATILE"],
+        "liveliness": ["AUTOMATIC"]
+      }
+    },
+    {
+      "role": "rgb_camera_info",
+      "name": "/camera/color/camera_info",
+      "type": "sensor_msgs/msg/CameraInfo",
+      "serialization_format": "cdr",
+      "qos": {
+        "reliability": ["BEST_EFFORT", "RELIABLE"],
+        "durability": ["VOLATILE"],
+        "liveliness": ["AUTOMATIC"]
+      }
+    },
+    {
+      "role": "depth_camera_info",
+      "name": "/camera/depth/camera_info",
+      "type": "sensor_msgs/msg/CameraInfo",
+      "serialization_format": "cdr",
+      "qos": {
+        "reliability": ["BEST_EFFORT", "RELIABLE"],
+        "durability": ["VOLATILE"],
+        "liveliness": ["AUTOMATIC"]
+      }
+    },
+    {
+      "role": "tf",
+      "name": "/tf",
+      "type": "tf2_msgs/msg/TFMessage",
+      "serialization_format": "cdr",
+      "qos": {
+        "reliability": ["RELIABLE"],
+        "durability": ["VOLATILE"],
+        "liveliness": ["AUTOMATIC"]
+      }
+    },
+    {
+      "role": "tf_static",
+      "name": "/tf_static",
+      "type": "tf2_msgs/msg/TFMessage",
+      "serialization_format": "cdr",
+      "qos": {
+        "reliability": ["RELIABLE"],
+        "durability": ["TRANSIENT_LOCAL"],
+        "liveliness": ["AUTOMATIC"]
+      }
+    }
+  ]
+}

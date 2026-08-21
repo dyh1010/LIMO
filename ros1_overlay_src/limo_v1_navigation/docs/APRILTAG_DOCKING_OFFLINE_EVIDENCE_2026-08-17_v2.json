@@ -1,0 +1,87 @@
+{
+  "schema_version": "limo_apriltag_docking_offline_evidence/v2",
+  "evidence_date": "2026-08-17",
+  "scope": "offline_static_and_pure_fake_only",
+  "status": "PASS_FOR_OFFLINE_MAPPING_SOURCE_BINDING_AND_GEOMETRY_ONLY",
+  "supersedes": {
+    "path": "docs/APRILTAG_DOCKING_STRICT_VALIDATION_EVIDENCE_2026-08-17.json",
+    "bytes": 2943,
+    "sha256": "4b975cbebf04230f0e1a9cc503dc8bff2ccd81ef2c5cdf1bb9663d78bb2d84ce",
+    "reason": "strict calibration evidence remains valid but is superseded for current AprilTag readiness decisions by exact mapping and host-owned map-pose source binding",
+    "must_not_be_overwritten": true
+  },
+  "contracts": {
+    "side_labels": ["front", "right", "back", "left"],
+    "object_relation": "object_id=id//4",
+    "side_relation": "side_index=id%4",
+    "mapping_coverage": "tag52h13 IDs exactly 0..11 in canonical order",
+    "unbound_side_vocabulary_forbidden": true,
+    "strict_json": {
+      "duplicate_keys": "REJECT",
+      "NaN_or_Infinity": "REJECT",
+      "trailing_second_value": "REJECT",
+      "bool_as_integer": "REJECT"
+    },
+    "map_pose_source": {
+      "input_schema": "limo_v1_tag_pose_source_bundle/v1",
+      "host_record_schema": "limo_apriltag_host_observation_record/v1",
+      "transform_equation": "T_map_tag=T_map_base_link*T_base_link_camera_optical*T_camera_optical_tag",
+      "observation_binding": "canonical sorted compact JSON SHA-256",
+      "calibration_identity_basis": "SORTED_COMPACT_ASCII_JSON_V1",
+      "policy_input": "sealed BoundTagPose only",
+      "raw_or_external_pose_map": "REJECT"
+    }
+  },
+  "source_identity": {
+    "src/limo_v1_navigation/tag_docking_policy.py": {"bytes": 24301, "sha256": "3ea7e8464f36a4f1e916d08609d19f61e02c074b3613e4064fdd24b225dfc861"},
+    "src/limo_v1_navigation/tag_docking_adapter.py": {"bytes": 9183, "sha256": "bcd1831d90347c41b8d003a66f9a46c7cea865cd2b8abb2cfa19341e49206f17"},
+    "src/limo_v1_navigation/apriltag_host_adapter_contract.py": {"bytes": 7652, "sha256": "24a6bfaa79f6c1fa8a76749fc05a06c49c643537f5a12028b9afaa118b83b7dc"},
+    "src/limo_v1_navigation/apriltag_docking_contract.py": {"bytes": 19876, "sha256": "d1998dc4687e5778a3fa01e1740717dc9860a27d12e4c49ea26891e6a2f2aa9f"},
+    "config/v1_apriltag_docking.template.json": {"bytes": 4013, "sha256": "e4d23a63599baf63ffbf9433ce0f52178167a6918376b5d665ba58abada92ffd"},
+    "config/v1_apriltag_docking.schema.json": {"bytes": 8335, "sha256": "daf364eb9235509d212d52347fed05ddf22a9e0433d70e7680490fe841b69df9"},
+    "config/v1_tag_docking_action_contract.json": {"bytes": 4544, "sha256": "709fa59cce256d99d8ee0f47f61ab66c190a699c1b27b4e3c8ad4863b424d91d"},
+    "config/apriltag_tag_docking_inventory.json": {"bytes": 1502, "sha256": "9eb600c98edd86d5046a6199f33267936d96c310d984ad13bbf23d6986ed680f"},
+    "fixtures/apriltag_cross_contract_mapping_fixture.json": {"bytes": 583, "sha256": "775dd57675521e9a4b10d9961a58a11f07f807f3321ef19627add44dd2cc3cb7"},
+    "test/test_tag_docking_policy_adapter.py": {"bytes": 14438, "sha256": "cadde18f08420d7ab59b166cf71e029f0355742173cb660610dafe0fc4ed42aa"},
+    "test/test_apriltag_host_adapter_contract.py": {"bytes": 6643, "sha256": "e3f4dd838cbfb07d664418f1cfd9e7d3870ae5900e002b9ea7a30d1352fc0027"},
+    "test/test_apriltag_docking_contract.py": {"bytes": 13500, "sha256": "4f7040f3bfd426462daafe24cf3d16aaada52825715a5aaffd5c0f9fb57679a9"},
+    "docs/APRILTAG_TAG_DOCKING_OFFLINE_READINESS.md": {"bytes": 5936, "sha256": "730b666885aab8d50b5498429d3b0d03522f598affa2f8634fdff824eebb1696"},
+    "../../docs/APRILTAG_TAG_DOCKING_DEMO_PREP_2026-08-18.md": {"bytes": 6112, "sha256": "6535c03a709aa1b14cda177988cf0205b5d56857f9e4cb90c63c96d048522873"}
+  },
+  "tests": {
+    "strict_calibration_contract": {"collected": 9, "passed": 9, "failed": 0, "errors": 0, "skipped": 0},
+    "mapping_strict_json_and_low_level_adapter": {"collected": 9, "passed": 9, "failed": 0, "errors": 0, "skipped": 0},
+    "host_owned_cross_contract_adapter": {"collected": 5, "passed": 5, "failed": 0, "errors": 0, "skipped": 0},
+    "directed_total": {"collected": 23, "passed": 23, "failed": 0, "errors": 0, "skipped": 0},
+    "package_excluding_known_release_integrity_suite": {"collected": 153, "passed": 153, "failed": 0, "errors": 0, "skipped": 0},
+    "full_package_discovery": {
+      "collected": 161,
+      "passed": 159,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "known_independent_failures": [
+        "test_frozen_release_readiness.FrozenReleaseReadinessTests.test_integrated_closures_fail_closed_and_do_not_imply_field_ready",
+        "test_frozen_release_readiness.FrozenReleaseReadinessTests.test_matrix_has_every_required_check_and_exact_counts"
+      ],
+      "classification": "pre_existing_release_integrity_blockers_not_AprilTag_contract_failures"
+    },
+    "in_memory_python_compile": "7/7_PASS",
+    "strict_json_parse": "5/5_PASS",
+    "forbidden_ros_or_motion_api_scan": "0_matches_PASS",
+    "unbound_side_vocabulary_scan": "0_matches_PASS",
+    "policy_signature": "compute_base_goal(config,bound_tag_pose,camera_standoff_m,phase)_PASS"
+  },
+  "safety": {
+    "ros_started": false,
+    "network_used": false,
+    "hardware_accessed": false,
+    "goal_sent": false,
+    "twist_published": false,
+    "motion_authorized": false,
+    "field_ready": false,
+    "delivery_ready": false,
+    "release_pin_updated": false,
+    "audit_tools_modified": false
+  }
+}

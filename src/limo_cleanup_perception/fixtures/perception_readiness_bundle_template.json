@@ -1,0 +1,501 @@
+{
+  "schema_version": 1,
+  "evidence_scope": "formal_four_scene_rgbd_acceptance",
+  "read_only": true,
+  "authorizes_motion": false,
+  "publishes_ros_messages": false,
+  "release_binding": {
+    "release_id": "FILL_RELEASE_ID",
+    "source_manifest_artifact_sha256": "FILL",
+    "source_set_sha256": "FILL",
+    "manifest_generated_at_unix_sec": 0
+  },
+  "software_binding": {
+    "models": {
+      "plastic_bottle": {
+        "path": "nongfu_yolov8n_best.pt",
+        "size_bytes": 6244778,
+        "sha256": "abe7eaf409e3d24d255a627823f4b107a8884008ab659901c6c50479b2153512"
+      },
+      "trash_bin": {
+        "path": "trash_bin_yolov8n_best.pt",
+        "size_bytes": 6231338,
+        "sha256": "24beb4a7941ba5d783f1937128b5f0f4307b035137889c78be1993cad76b8bc5"
+      }
+    },
+    "sources": [
+      {
+        "path": "dual_model_detector.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "offline_dual_detector.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "perception_core.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "perception_evaluator.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "evidence_binding.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "perception_frame_collector.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "perception_frame_io.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "perception_readiness.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "typed_raw_binding.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "rgbd_bag_indexer.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "rgbd_contract.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "target_contract.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      },
+      {
+        "path": "orchestration_contract.py",
+        "size_bytes": 0,
+        "sha256": "FILL"
+      }
+    ],
+    "runtime_preflight": {
+      "path": "runtime_preflight.json",
+      "size_bytes": 0,
+      "sha256": "FILL"
+    }
+  },
+  "ros_build_validation": {
+    "path": "ros_build_validation.json",
+    "size_bytes": 0,
+    "sha256": "FILL"
+  },
+  "ros1_field_install_validation": {
+    "path": "ros1_noetic_field_install_validation.json",
+    "size_bytes": 0,
+    "sha256": "FILL"
+  },
+  "hardware_readiness": {
+    "path": "hardware_readiness.json",
+    "size_bytes": 0,
+    "sha256": "FILL"
+  },
+  "extrinsics_measurement_reference": {
+    "path": "camera_extrinsics_reference",
+    "size_bytes": 0,
+    "sha256": "FILL"
+  },
+  "scenes": {
+    "background": {
+      "arrangement": {
+        "capture_id": "FILL",
+        "scene_label": "background",
+        "independently_arranged": true,
+        "operator": "FILL",
+        "reviewer": "FILL",
+        "started_unix_sec": 0,
+        "ended_unix_sec": 0
+      },
+      "frames": null,
+      "collector_manifest": null,
+      "typed_raw_binding": null,
+      "rgbd_artifact": null,
+      "raw_capture": {
+        "capture_id": "FILL",
+        "scene_label": "background",
+        "storage_identifier": "sqlite3",
+        "storage_file": null,
+        "inspection": null
+      },
+      "ground_truth": null,
+      "tf_artifact": null,
+      "xyz_ground_truth": null,
+      "depth_quality": null,
+      "evidence_binding": {
+        "schema_version": 1,
+        "scene": "background",
+        "capture_id": "FILL",
+        "capture_binding_id": "FILL",
+        "capture_window": {
+          "started_unix_sec": 0,
+          "ended_unix_sec": 0
+        },
+        "release_id": "FILL",
+        "source_set_sha256": "FILL",
+        "model_sha256": {
+          "plastic_bottle": "FILL",
+          "trash_bin": "FILL"
+        },
+        "raw_capture_sha256": "FILL",
+        "raw_inspection_sha256": "FILL",
+        "expected_topic_manifest": {
+          "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+          "schema_version": 1,
+          "size_bytes": 0,
+          "sha256": "FILL"
+        },
+        "artifacts": {
+          "frames": null,
+          "collector_manifest": null,
+          "typed_raw_binding": null,
+          "rgbd_artifact": null,
+          "ground_truth": null,
+          "tf_artifact": null,
+          "xyz_ground_truth": null,
+          "depth_quality": null,
+          "depth_measurement_reference": null
+        }
+      },
+      "latency": {
+        "capture_provenance": {
+          "capture_binding_id": "FILL",
+          "capture_id": "FILL",
+          "scene": "background",
+          "task_id": "FILL",
+          "capture_window": {
+            "started_unix_sec": 0,
+            "ended_unix_sec": 0
+          },
+          "release_id": "FILL",
+          "source_set_sha256": "FILL",
+          "model_sha256": {
+            "plastic_bottle": "FILL",
+            "trash_bin": "FILL"
+          },
+          "raw_capture_sha256": "FILL",
+          "raw_inspection_sha256": "FILL",
+          "expected_topic_manifest": {
+            "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+            "schema_version": 1,
+            "size_bytes": 0,
+            "sha256": "FILL"
+          }
+        },
+        "clock_domain": "system_time_unix",
+        "use_sim_time": false,
+        "sensor_stamp_clock": "CLOCK_REALTIME",
+        "receipt_clock": "CLOCK_REALTIME",
+        "synchronization_source": "chrony",
+        "synchronization_status": "synchronized",
+        "verified_at_unix_sec": 0
+      },
+      "depth_measurement_reference": null
+    },
+    "bin_only": {
+      "arrangement": {
+        "capture_id": "FILL",
+        "scene_label": "bin_only",
+        "independently_arranged": true,
+        "operator": "FILL",
+        "reviewer": "FILL",
+        "started_unix_sec": 0,
+        "ended_unix_sec": 0
+      },
+      "frames": null,
+      "collector_manifest": null,
+      "typed_raw_binding": null,
+      "rgbd_artifact": null,
+      "raw_capture": {
+        "capture_id": "FILL",
+        "scene_label": "bin_only",
+        "storage_identifier": "sqlite3",
+        "storage_file": null,
+        "inspection": null
+      },
+      "ground_truth": null,
+      "tf_artifact": null,
+      "xyz_ground_truth": null,
+      "depth_quality": null,
+      "evidence_binding": {
+        "schema_version": 1,
+        "scene": "bin_only",
+        "capture_id": "FILL",
+        "capture_binding_id": "FILL",
+        "capture_window": {
+          "started_unix_sec": 0,
+          "ended_unix_sec": 0
+        },
+        "release_id": "FILL",
+        "source_set_sha256": "FILL",
+        "model_sha256": {
+          "plastic_bottle": "FILL",
+          "trash_bin": "FILL"
+        },
+        "raw_capture_sha256": "FILL",
+        "raw_inspection_sha256": "FILL",
+        "expected_topic_manifest": {
+          "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+          "schema_version": 1,
+          "size_bytes": 0,
+          "sha256": "FILL"
+        },
+        "artifacts": {
+          "frames": null,
+          "collector_manifest": null,
+          "typed_raw_binding": null,
+          "rgbd_artifact": null,
+          "ground_truth": null,
+          "tf_artifact": null,
+          "xyz_ground_truth": null,
+          "depth_quality": null,
+          "depth_measurement_reference": null
+        }
+      },
+      "latency": {
+        "capture_provenance": {
+          "capture_binding_id": "FILL",
+          "capture_id": "FILL",
+          "scene": "bin_only",
+          "task_id": "FILL",
+          "capture_window": {
+            "started_unix_sec": 0,
+            "ended_unix_sec": 0
+          },
+          "release_id": "FILL",
+          "source_set_sha256": "FILL",
+          "model_sha256": {
+            "plastic_bottle": "FILL",
+            "trash_bin": "FILL"
+          },
+          "raw_capture_sha256": "FILL",
+          "raw_inspection_sha256": "FILL",
+          "expected_topic_manifest": {
+            "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+            "schema_version": 1,
+            "size_bytes": 0,
+            "sha256": "FILL"
+          }
+        },
+        "clock_domain": "system_time_unix",
+        "use_sim_time": false,
+        "sensor_stamp_clock": "CLOCK_REALTIME",
+        "receipt_clock": "CLOCK_REALTIME",
+        "synchronization_source": "chrony",
+        "synchronization_status": "synchronized",
+        "verified_at_unix_sec": 0
+      },
+      "depth_measurement_reference": null
+    },
+    "bottle_in_bin": {
+      "arrangement": {
+        "capture_id": "FILL",
+        "scene_label": "bottle_in_bin",
+        "independently_arranged": true,
+        "operator": "FILL",
+        "reviewer": "FILL",
+        "started_unix_sec": 0,
+        "ended_unix_sec": 0
+      },
+      "frames": null,
+      "collector_manifest": null,
+      "typed_raw_binding": null,
+      "rgbd_artifact": null,
+      "raw_capture": {
+        "capture_id": "FILL",
+        "scene_label": "bottle_in_bin",
+        "storage_identifier": "sqlite3",
+        "storage_file": null,
+        "inspection": null
+      },
+      "ground_truth": null,
+      "tf_artifact": null,
+      "xyz_ground_truth": null,
+      "depth_quality": null,
+      "evidence_binding": {
+        "schema_version": 1,
+        "scene": "bottle_in_bin",
+        "capture_id": "FILL",
+        "capture_binding_id": "FILL",
+        "capture_window": {
+          "started_unix_sec": 0,
+          "ended_unix_sec": 0
+        },
+        "release_id": "FILL",
+        "source_set_sha256": "FILL",
+        "model_sha256": {
+          "plastic_bottle": "FILL",
+          "trash_bin": "FILL"
+        },
+        "raw_capture_sha256": "FILL",
+        "raw_inspection_sha256": "FILL",
+        "expected_topic_manifest": {
+          "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+          "schema_version": 1,
+          "size_bytes": 0,
+          "sha256": "FILL"
+        },
+        "artifacts": {
+          "frames": null,
+          "collector_manifest": null,
+          "typed_raw_binding": null,
+          "rgbd_artifact": null,
+          "ground_truth": null,
+          "tf_artifact": null,
+          "xyz_ground_truth": null,
+          "depth_quality": null,
+          "depth_measurement_reference": null
+        }
+      },
+      "latency": {
+        "capture_provenance": {
+          "capture_binding_id": "FILL",
+          "capture_id": "FILL",
+          "scene": "bottle_in_bin",
+          "task_id": "FILL",
+          "capture_window": {
+            "started_unix_sec": 0,
+            "ended_unix_sec": 0
+          },
+          "release_id": "FILL",
+          "source_set_sha256": "FILL",
+          "model_sha256": {
+            "plastic_bottle": "FILL",
+            "trash_bin": "FILL"
+          },
+          "raw_capture_sha256": "FILL",
+          "raw_inspection_sha256": "FILL",
+          "expected_topic_manifest": {
+            "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+            "schema_version": 1,
+            "size_bytes": 0,
+            "sha256": "FILL"
+          }
+        },
+        "clock_domain": "system_time_unix",
+        "use_sim_time": false,
+        "sensor_stamp_clock": "CLOCK_REALTIME",
+        "receipt_clock": "CLOCK_REALTIME",
+        "synchronization_source": "chrony",
+        "synchronization_status": "synchronized",
+        "verified_at_unix_sec": 0
+      },
+      "depth_measurement_reference": null
+    },
+    "bottle_outside": {
+      "arrangement": {
+        "capture_id": "FILL",
+        "scene_label": "bottle_outside",
+        "independently_arranged": true,
+        "operator": "FILL",
+        "reviewer": "FILL",
+        "started_unix_sec": 0,
+        "ended_unix_sec": 0
+      },
+      "frames": null,
+      "collector_manifest": null,
+      "typed_raw_binding": null,
+      "rgbd_artifact": null,
+      "raw_capture": {
+        "capture_id": "FILL",
+        "scene_label": "bottle_outside",
+        "storage_identifier": "sqlite3",
+        "storage_file": null,
+        "inspection": null
+      },
+      "ground_truth": null,
+      "tf_artifact": null,
+      "xyz_ground_truth": null,
+      "depth_quality": null,
+      "evidence_binding": {
+        "schema_version": 1,
+        "scene": "bottle_outside",
+        "capture_id": "FILL",
+        "capture_binding_id": "FILL",
+        "capture_window": {
+          "started_unix_sec": 0,
+          "ended_unix_sec": 0
+        },
+        "release_id": "FILL",
+        "source_set_sha256": "FILL",
+        "model_sha256": {
+          "plastic_bottle": "FILL",
+          "trash_bin": "FILL"
+        },
+        "raw_capture_sha256": "FILL",
+        "raw_inspection_sha256": "FILL",
+        "expected_topic_manifest": {
+          "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+          "schema_version": 1,
+          "size_bytes": 0,
+          "sha256": "FILL"
+        },
+        "artifacts": {
+          "frames": null,
+          "collector_manifest": null,
+          "typed_raw_binding": null,
+          "rgbd_artifact": null,
+          "ground_truth": null,
+          "tf_artifact": null,
+          "xyz_ground_truth": null,
+          "depth_quality": null,
+          "depth_measurement_reference": null
+        }
+      },
+      "latency": {
+        "capture_provenance": {
+          "capture_binding_id": "FILL",
+          "capture_id": "FILL",
+          "scene": "bottle_outside",
+          "task_id": "FILL",
+          "capture_window": {
+            "started_unix_sec": 0,
+            "ended_unix_sec": 0
+          },
+          "release_id": "FILL",
+          "source_set_sha256": "FILL",
+          "model_sha256": {
+            "plastic_bottle": "FILL",
+            "trash_bin": "FILL"
+          },
+          "raw_capture_sha256": "FILL",
+          "raw_inspection_sha256": "FILL",
+          "expected_topic_manifest": {
+            "manifest_id": "limo-dabai-rgbd-six-topics-v1",
+            "schema_version": 1,
+            "size_bytes": 0,
+            "sha256": "FILL"
+          }
+        },
+        "clock_domain": "system_time_unix",
+        "use_sim_time": false,
+        "sensor_stamp_clock": "CLOCK_REALTIME",
+        "receipt_clock": "CLOCK_REALTIME",
+        "synchronization_source": "chrony",
+        "synchronization_status": "synchronized",
+        "verified_at_unix_sec": 0
+      },
+      "depth_measurement_reference": null
+    }
+  }
+}

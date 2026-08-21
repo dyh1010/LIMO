@@ -1,0 +1,27 @@
+<launch>
+  <!-- Read-only ROS graph/topic/TF checker. It never publishes Twist. -->
+  <arg name="stage" default="scan" />
+  <arg name="map_file" default="" />
+  <arg name="active_map_id" default="" />
+  <arg name="mode" default="native" />
+  <arg name="cmd_vel_output_topic" default="" />
+  <arg name="samples" default="30" />
+  <!-- Empty/unverified remains fail-closed; never auto-discover vendor TF. -->
+  <arg name="vendor_tf_rules_file" default="" />
+  <arg name="vendor_source_manifest_file" default="" />
+  <arg name="vendor_publisher_pin_file" default="" />
+
+  <node pkg="limo_v1_navigation" type="v1_runtime_preflight.py"
+        name="v1_runtime_preflight" output="screen" required="true">
+    <param name="profile_file" value="$(find limo_v1_navigation)/config/v1_navigation_profile.yaml" />
+    <param name="stage" value="$(arg stage)" />
+    <param name="map_file" value="$(arg map_file)" />
+    <param name="active_map_id" value="$(arg active_map_id)" />
+    <param name="mode" value="$(arg mode)" />
+    <param name="cmd_vel_output_topic" value="$(arg cmd_vel_output_topic)" />
+    <param name="samples" value="$(arg samples)" />
+    <param name="vendor_tf_rules_file" value="$(arg vendor_tf_rules_file)" />
+    <param name="vendor_source_manifest_file" value="$(arg vendor_source_manifest_file)" />
+    <param name="vendor_publisher_pin_file" value="$(arg vendor_publisher_pin_file)" />
+  </node>
+</launch>

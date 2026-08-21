@@ -1,0 +1,46 @@
+GlobalPlanner:
+  allow_unknown: false
+  default_tolerance: 0.10
+  use_dijkstra: true
+  use_quadratic: true
+  use_grid_path: false
+  old_navfn_behavior: false
+  lethal_cost: 253
+  neutral_cost: 50
+  cost_factor: 3.0
+  publish_potential: false
+  orientation_mode: 0
+  orientation_window_size: 1
+
+TrajectoryPlannerROS:
+  acc_lim_x: 0.35
+  acc_lim_theta: 0.8
+  max_vel_x: 0.18
+  min_vel_x: 0.0
+  max_vel_theta: 0.45
+  min_vel_theta: -0.45
+  min_in_place_vel_theta: 0.15
+  holonomic_robot: false
+  escape_vel: 0.0
+  yaw_goal_tolerance: 0.20
+  xy_goal_tolerance: 0.15
+  latch_xy_goal_tolerance: false
+  sim_time: 1.0
+  sim_granularity: 0.02
+  angular_sim_granularity: 0.02
+  vx_samples: 8
+  vtheta_samples: 16
+  controller_frequency: 5.0
+  meter_scoring: true
+  occdist_scale: 0.20
+  pdist_scale: 1.0
+  gdist_scale: 0.8
+  heading_lookahead: 0.325
+  heading_scoring: false
+  heading_scoring_timestep: 0.8
+  dwa: false
+  simple_attractor: false
+  publish_cost_grid_pc: true
+  oscillation_reset_dist: 0.15
+  escape_reset_dist: 0.10
+  escape_reset_theta: 0.10

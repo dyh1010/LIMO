@@ -1,0 +1,47 @@
+{
+  "schema_version": "limo_apriltag_docking_calibration_intake/v1",
+  "status": "RECORDED",
+  "recorded_timestamp_ns": 1234567000,
+  "camera_intrinsics": {
+    "camera_frame": "camera_color_optical_frame",
+    "image_width_px": 640,
+    "image_height_px": 480,
+    "fx": 600.0,
+    "fy": 600.0,
+    "cx": 320.0,
+    "cy": 240.0,
+    "distortion_model": "plumb_bob",
+    "distortion_coefficients": [0.0, 0.0, 0.0, 0.0, 0.0],
+    "calibration_timestamp_ns": 1234566000
+  },
+  "base_link_to_camera_extrinsics": {
+    "parent_frame": "base_link",
+    "child_frame": "camera_color_optical_frame",
+    "translation_m": {"x": 0.1, "y": 0.0, "z": 0.3},
+    "orientation_xyzw": {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0},
+    "calibration_timestamp_ns": 1234566000
+  },
+  "tag_installation_checklist": {
+    "field_tag_size_m": 0.20,
+    "object_tag_size_m": 0.14,
+    "object_tag_center_height_m": 0.30,
+    "installation_verified_timestamp_ns": 1234567000,
+    "fixed_field_tag_measurements": [
+      {"family": "tag36h11", "id": 0, "frame_id": "map", "position_m": {"x": 0.0, "y": 1.0, "z": 0.3, "yaw": 0.0}, "measurement_timestamp_ns": 1234567000, "measured_verified": true},
+      {"family": "tag36h11", "id": 1, "frame_id": "map", "position_m": {"x": 1.0, "y": 1.0, "z": 0.3, "yaw": 1.57}, "measurement_timestamp_ns": 1234567000, "measured_verified": true},
+      {"family": "tag36h11", "id": 2, "frame_id": "map", "position_m": {"x": 1.0, "y": 0.0, "z": 0.3, "yaw": 3.14}, "measurement_timestamp_ns": 1234567000, "measured_verified": true},
+      {"family": "tag36h11", "id": 3, "frame_id": "map", "position_m": {"x": 0.0, "y": 0.0, "z": 0.3, "yaw": -1.57}, "measurement_timestamp_ns": 1234567000, "measured_verified": true}
+    ],
+    "object_dimensions_m": [
+      {"object_index": 0, "length": 0.4, "width": 0.3, "height": 0.5, "measured_verified": true},
+      {"object_index": 1, "length": 0.4, "width": 0.3, "height": 0.5, "measured_verified": true},
+      {"object_index": 2, "length": 0.4, "width": 0.3, "height": 0.5, "measured_verified": true}
+    ],
+    "tag_flatness_checked": true,
+    "tag_nonreflective_checked": true,
+    "tag_unoccluded_checked": true,
+    "tag_faces_outward_checked": true
+  },
+  "abort_if_any_required_value_missing": true,
+  "notes": "Synthetic offline fixture only; never field evidence or motion authorization."
+}

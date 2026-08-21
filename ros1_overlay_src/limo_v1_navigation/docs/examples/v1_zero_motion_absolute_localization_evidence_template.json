@@ -1,0 +1,111 @@
+{
+  "schema": "limo_v1_zero_motion_absolute_localization_evidence/v1",
+  "template_only": true,
+  "real_machine_evidence": false,
+  "status": "NOT_RUN",
+  "zero_motion_required": true,
+  "measurement_contract": {
+    "error_definition": "absolute_localization_error = surveyed_truth_pose - stationary_amcl_pose",
+    "position_error_formula": "position_m = hypot(error_x_m, error_y_m)",
+    "position_threshold_m": 0.1,
+    "yaw_not_thresholded": true,
+    "covariance_proves_absolute_accuracy": false,
+    "repeatability_proves_absolute_accuracy": false
+  },
+  "pass_independence": {
+    "zero_motion_absolute_localization_pass_implies_repeatability_pass": false,
+    "repeatability_pass_implies_zero_motion_absolute_localization_pass": false,
+    "zero_motion_absolute_localization_pass_implies_navigation_control_endpoint_pass": false,
+    "navigation_control_endpoint_pass_implies_zero_motion_absolute_localization_pass": false,
+    "zero_motion_absolute_localization_pass_implies_physical_total_endpoint_pass": false,
+    "physical_total_endpoint_pass_implies_zero_motion_absolute_localization_pass": false,
+    "zero_motion_absolute_localization_pass_implies_static_avoidance_pass": false,
+    "static_avoidance_pass_implies_zero_motion_absolute_localization_pass": false,
+    "zero_motion_absolute_localization_pass_implies_dynamic_avoidance_pass": false,
+    "dynamic_avoidance_pass_implies_zero_motion_absolute_localization_pass": false
+  },
+  "record_template": {
+    "session_id": "",
+    "run_id": "",
+    "authorization_id": "",
+    "authorization_scope": "",
+    "robot_id": "",
+    "overlay_revision": "",
+    "active_map_id": "",
+    "map_yaml_sha256": "",
+    "map_image_sha256": "",
+    "amcl_config_sha256": "",
+    "surveyed_mark": {
+      "id": "",
+      "physical_description": "",
+      "survey_frame_id": "",
+      "robot_reference_point": "",
+      "heading_fixture": ""
+    },
+    "ground_truth": {
+      "frame_id": "map",
+      "x": null,
+      "y": null,
+      "yaw": null,
+      "measurement_time": "",
+      "clock_domain": "",
+      "instrument": "",
+      "instrument_serial": "",
+      "measurement_method": "",
+      "raw_survey_path": "",
+      "raw_survey_sha256": ""
+    },
+    "instrument_calibration": {
+      "calibration_id": "",
+      "valid_at_measurement_time": null,
+      "record_path": "",
+      "record_sha256": ""
+    },
+    "frame_transform": {
+      "source_frame_id": "",
+      "target_frame_id": "map",
+      "method": "",
+      "transform_record_path": "",
+      "transform_record_sha256": "",
+      "calibration_id": ""
+    },
+    "raw_capture": {
+      "jsonl_path": "",
+      "jsonl_sha256": ""
+    },
+    "ready_window": {
+      "clock_domain": "",
+      "start_time": "",
+      "end_time": "",
+      "ready_remained_true": null,
+      "chain_health_remained_valid": null,
+      "status_evidence_path": "",
+      "status_evidence_sha256": "",
+      "ready_loss_reason": ""
+    },
+    "stationary_amcl_pose": {
+      "frame_id": "map",
+      "x": null,
+      "y": null,
+      "yaw": null,
+      "sample_count": 0,
+      "aggregation_rule": "",
+      "sample_artifact_path": "",
+      "sample_artifact_sha256": ""
+    },
+    "absolute_localization_error": {
+      "definition": "surveyed_truth_pose - stationary_amcl_pose",
+      "error_x_m": null,
+      "error_y_m": null,
+      "error_yaw_rad": null,
+      "position_m": null,
+      "position_threshold_m": 0.1,
+      "position_result": "NOT_RUN",
+      "yaw_not_thresholded": true
+    },
+    "motion_observed": null,
+    "result": "NOT_RUN",
+    "block_reason": ""
+  },
+  "records": []
+}

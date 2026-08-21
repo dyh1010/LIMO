@@ -1,0 +1,28 @@
+<launch>
+  <!-- map_file and active_map_id are mandatory; there is no vendor fallback. -->
+  <arg name="enable_localization" default="false" />
+  <arg name="preflight_token" />
+  <arg name="map_file" />
+  <arg name="active_map_id" />
+  <arg name="enable_rviz" default="false" />
+
+  <group if="$(eval arg('enable_localization') == 'true' and arg('preflight_token') == 'V1_SCAN_ODOM_TF_PREFLIGHT_PASS')">
+    <node pkg="map_server" type="map_server" name="map_server"
+          args="$(arg map_file)" output="screen" required="true">
+      <param name="frame_id" value="map" />
+    </node>
+    <node pkg="amcl" type="amcl" name="amcl" output="screen" required="true">
+      <rosparam file="$(find limo_v1_navigation)/config/amcl.yaml" command="load" />
+      <remap from="initialpose" to="/v1/validated_initialpose" />
+    </node>
+    <node pkg="limo_v1_navigation" type="v1_localization_manager.py"
+          name="v1_localization_manager" output="screen" required="true">
+      <param name="profile_file" value="$(find limo_v1_navigation)/config/v1_navigation_profile.yaml" />
+      <param name="map_file" value="$(arg map_file)" />
+      <param name="active_map_id" value="$(arg active_map_id)" />
+      <rosparam file="$(find limo_v1_navigation)/config/localization_manager.yaml" command="load" />
+    </node>
+    <node if="$(arg enable_rviz)" pkg="rviz" type="rviz" name="v1_localization_rviz"
+          args="-d $(find limo_bringup)/rviz/navigation_diff.rviz" />
+  </group>
+</launch>

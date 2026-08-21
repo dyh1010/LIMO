@@ -1,0 +1,225 @@
+{
+  "algorithm": {
+    "algorithm_id": "python38-ast-dump+utf8-crlf-to-lf+package-name-replacement-only/v1",
+    "line_ending_normalization": "CRLF_TO_LF_ONLY",
+    "package_name_replacements": [
+      {
+        "from": "limo_cleanup_ros1_perception",
+        "to": "limo_cleanup_perception"
+      }
+    ],
+    "python_feature_version": "3.8",
+    "semantic_representation": "ast.dump(annotate_fields=True,include_attributes=False)",
+    "text_encoding": "utf-8-strict"
+  },
+  "authorizes_motion": false,
+  "binding_id": "limo-v2-ros1-source-core-binding-v1",
+  "delivery_ready": false,
+  "pairs": [
+    {
+      "algorithm_id": "python38-ast-dump+utf8-crlf-to-lf+package-name-replacement-only/v1",
+      "host": {
+        "normalized_semantic_sha256": "14424efd8a0f02c799f2091a8cfdb759e15186e6c0c6d8fe2da287a0c92c4064",
+        "path": "src/limo_cleanup_perception/limo_cleanup_perception/evidence_binding.py",
+        "raw_sha256": "69b4466c06ef18c9375c93bddd806bbbe7f4183c19fc883f98fb3dedb1901b91",
+        "size_bytes": 3565
+      },
+      "mode": "normalized_ast_equivalent",
+      "pair_id": "evidence_binding",
+      "ros1": {
+        "normalized_semantic_sha256": "14424efd8a0f02c799f2091a8cfdb759e15186e6c0c6d8fe2da287a0c92c4064",
+        "path": "ros1_overlay_src/limo_cleanup_ros1_perception/src/limo_cleanup_ros1_perception/evidence_binding.py",
+        "raw_sha256": "9a2c61b8db6c872ff0439d300dc21bd97d07a008c7aa4f9ffb33db9060bfdab2",
+        "size_bytes": 3566
+      }
+    },
+    {
+      "algorithm_id": "python38-ast-dump+utf8-crlf-to-lf+package-name-replacement-only/v1",
+      "host": {
+        "normalized_semantic_sha256": "68de36ac98097a69778483e5d3e98070cf124d96197d2188635983118b2c63ec",
+        "path": "src/limo_cleanup_perception/limo_cleanup_perception/image_conversion.py",
+        "raw_sha256": "77f0812ff76821bb0c10d2a990d8b9008c03bb65cd7712ebbe49104ad5945877",
+        "size_bytes": 2239
+      },
+      "mode": "normalized_ast_equivalent",
+      "pair_id": "image_conversion",
+      "ros1": {
+        "normalized_semantic_sha256": "68de36ac98097a69778483e5d3e98070cf124d96197d2188635983118b2c63ec",
+        "path": "ros1_overlay_src/limo_cleanup_ros1_perception/src/limo_cleanup_ros1_perception/image_conversion.py",
+        "raw_sha256": "a6f250b7ec23ed11781dda53c6722e501248a7745dd832eb66043d7e110f52fa",
+        "size_bytes": 2240
+      }
+    },
+    {
+      "algorithm_id": "python38-ast-dump+utf8-crlf-to-lf+package-name-replacement-only/v1",
+      "host": {
+        "normalized_semantic_sha256": "364f3f0c629aa76764a5ac9c25b60d5327da0ad66c76f5d79bf1efd0f167c867",
+        "path": "src/limo_cleanup_perception/limo_cleanup_perception/orchestration_contract.py",
+        "raw_sha256": "b4ffb20c85bc2a7c2666f8a3a3a671770c879773030cc2f994c0aaa505a7c5e0",
+        "size_bytes": 6410
+      },
+      "mode": "normalized_ast_equivalent",
+      "pair_id": "orchestration_contract",
+      "ros1": {
+        "normalized_semantic_sha256": "364f3f0c629aa76764a5ac9c25b60d5327da0ad66c76f5d79bf1efd0f167c867",
+        "path": "ros1_overlay_src/limo_cleanup_ros1_perception/src/limo_cleanup_ros1_perception/orchestration_contract.py",
+        "raw_sha256": "258f03a2085720640fa5b88a93cce8c44da77ab451dd316121f16736827a9919",
+        "size_bytes": 6411
+      }
+    },
+    {
+      "algorithm_id": "python38-ast-dump+utf8-crlf-to-lf+package-name-replacement-only/v1",
+      "host": {
+        "normalized_semantic_sha256": "01244210801be011e5d5e14d6dbc5b15ff1b5abed0be864ac26b5df677206120",
+        "path": "src/limo_cleanup_perception/limo_cleanup_perception/perception_frame_io.py",
+        "raw_sha256": "9f28a2c6b98eeec9d6ce8ba346a1226caa69ec0cd5e0e5fff173e092da507c75",
+        "size_bytes": 4174
+      },
+      "mode": "normalized_ast_equivalent",
+      "pair_id": "perception_frame_io",
+      "ros1": {
+        "normalized_semantic_sha256": "01244210801be011e5d5e14d6dbc5b15ff1b5abed0be864ac26b5df677206120",
+        "path": "ros1_overlay_src/limo_cleanup_ros1_perception/src/limo_cleanup_ros1_perception/perception_frame_io.py",
+        "raw_sha256": "9f28a2c6b98eeec9d6ce8ba346a1226caa69ec0cd5e0e5fff173e092da507c75",
+        "size_bytes": 4174
+      }
+    },
+    {
+      "algorithm_id": "python38-ast-dump+utf8-crlf-to-lf+package-name-replacement-only/v1",
+      "host": {
+        "normalized_semantic_sha256": "e36ce4dc92b563f18dc3541e15a49213d216a9f7544c06b54c922cfefacebb2d",
+        "path": "src/limo_cleanup_perception/limo_cleanup_perception/rgbd_contract.py",
+        "raw_sha256": "b93167d5ef7090a5f7d3334e2c5fa905678fd14a0bad1e9e12a1f3ecbfd92ce4",
+        "size_bytes": 2850
+      },
+      "mode": "normalized_ast_equivalent",
+      "pair_id": "rgbd_contract",
+      "ros1": {
+        "normalized_semantic_sha256": "e36ce4dc92b563f18dc3541e15a49213d216a9f7544c06b54c922cfefacebb2d",
+        "path": "ros1_overlay_src/limo_cleanup_ros1_perception/src/limo_cleanup_ros1_perception/rgbd_contract.py",
+        "raw_sha256": "fcbf84e28d266dfb9837a96660d39638a83d1e4f96d79b2359c31d483a3c57d7",
+        "size_bytes": 2851
+      }
+    },
+    {
+      "algorithm_id": "python38-ast-dump+utf8-crlf-to-lf+package-name-replacement-only/v1",
+      "host": {
+        "normalized_semantic_sha256": "aa537a77fabf60384200720b7433c3849bcd137e144c0979cc28de31cf465973",
+        "path": "src/limo_cleanup_perception/limo_cleanup_perception/target_contract.py",
+        "raw_sha256": "34bfd1c32be09e43482c948346c1b05e87a0f0aec55c473dfec4382b56d22fd7",
+        "size_bytes": 8296
+      },
+      "mode": "normalized_ast_equivalent",
+      "pair_id": "target_contract",
+      "ros1": {
+        "normalized_semantic_sha256": "aa537a77fabf60384200720b7433c3849bcd137e144c0979cc28de31cf465973",
+        "path": "ros1_overlay_src/limo_cleanup_ros1_perception/src/limo_cleanup_ros1_perception/target_contract.py",
+        "raw_sha256": "fb2bd0eda441b647dd3eee00494383d0f3016aadf46b00f63de859e59f8cb70b",
+        "size_bytes": 8302
+      }
+    },
+    {
+      "algorithm_id": "python38-ast-dump+utf8-crlf-to-lf+package-name-replacement-only/v1",
+      "api_contract": {
+        "behavior_test": {
+          "normalized_semantic_sha256": "0a66851cfbe0833035b7772122c8a6798f411ac452c5bed4e3a7d12918532754",
+          "path": "src/limo_cleanup_perception/test/test_perception_core.py",
+          "raw_sha256": "9a27c54a52cbd286cc50ddea8d8e77cfd1ce8ca885dddd3808f662795773f221",
+          "size_bytes": 9518
+        },
+        "host_exports": [
+          "ClassDef:BottleClassification",
+          "ClassDef:Detection2D",
+          "ClassDef:DisposalPhase",
+          "ClassDef:DisposalStateMachine",
+          "FunctionDef:bin_opening_region",
+          "FunctionDef:bottle_is_in_bin",
+          "FunctionDef:classify_bottles",
+          "FunctionDef:classify_bottles_with_depth",
+          "FunctionDef:intersection_area",
+          "FunctionDef:select_target_bin",
+          "FunctionDef:select_target_bottle"
+        ],
+        "host_only_exports": [
+          "ClassDef:DisposalPhase",
+          "ClassDef:DisposalStateMachine"
+        ],
+        "ros1_exports": [
+          "ClassDef:BottleClassification",
+          "ClassDef:Detection2D",
+          "FunctionDef:bin_opening_region",
+          "FunctionDef:bottle_is_in_bin",
+          "FunctionDef:classify_bottles",
+          "FunctionDef:classify_bottles_with_depth",
+          "FunctionDef:intersection_area",
+          "FunctionDef:select_target_bin",
+          "FunctionDef:select_target_bottle"
+        ],
+        "ros1_only_exports": [],
+        "shared_exports": [
+          {
+            "export": "ClassDef:BottleClassification",
+            "normalized_semantic_sha256": "f033e72236d8bbc0f3b04d8637bbba0c5a50dc758da3fd83a61a1b1cdb5095c8"
+          },
+          {
+            "export": "ClassDef:Detection2D",
+            "normalized_semantic_sha256": "0255cf432f2c9f3c01e0e491ed0ca66702f9979a63cfd13b1876d7f921a3903f"
+          },
+          {
+            "export": "FunctionDef:bin_opening_region",
+            "normalized_semantic_sha256": "c64208deeafcb3c4e2f6c2fd881b83379c5b09fa3a2bd90215f8eca64928113f"
+          },
+          {
+            "export": "FunctionDef:bottle_is_in_bin",
+            "normalized_semantic_sha256": "e468cba48ed00b8b8092179a64394bb18d243f95a6221732a95d8539338edad3"
+          },
+          {
+            "export": "FunctionDef:classify_bottles",
+            "normalized_semantic_sha256": "dfe478fdc1a06fe60d8b7b8f8d56181f8e10d618653b0bf0fccabc363ca018f7"
+          },
+          {
+            "export": "FunctionDef:classify_bottles_with_depth",
+            "normalized_semantic_sha256": "cf4f7f4715daf81e984848549cba4ddc4a1b78c7d931ff8663d621dc46dddfe7"
+          },
+          {
+            "export": "FunctionDef:intersection_area",
+            "normalized_semantic_sha256": "2774569b4b408de98127d01a3ed0e75e8de15f054987b26212b39ea772d58bef"
+          },
+          {
+            "export": "FunctionDef:select_target_bin",
+            "normalized_semantic_sha256": "240d712637d60c58a6bc785e79b94244342363e5f59d5821814774beaacab5bb"
+          },
+          {
+            "export": "FunctionDef:select_target_bottle",
+            "normalized_semantic_sha256": "c5ef8e51867c751d50b72b6265add6372f14d31f580c2f279cbc43bf944bc8a0"
+          }
+        ]
+      },
+      "host": {
+        "normalized_semantic_sha256": "af181b9677dcb14839981a8eddc1e042fe2128f48db59a6bf870331594a20547",
+        "path": "src/limo_cleanup_perception/limo_cleanup_perception/perception_core.py",
+        "raw_sha256": "8f05bc0486a5924bed05f38a1cc808cb110e4d412a113fc9d03d3188abb2548f",
+        "size_bytes": 9150
+      },
+      "mode": "exact_ast_api_subset",
+      "pair_id": "perception_core",
+      "ros1": {
+        "normalized_semantic_sha256": "8caa220e818aa5bc84be22c3a33459008cfc718d5e9dbc9b8656a30a1089c0f8",
+        "path": "ros1_overlay_src/limo_cleanup_ros1_perception/src/limo_cleanup_ros1_perception/perception_core.py",
+        "raw_sha256": "2438bc1fcdce42fb5d4ad9c112a8831696a9aec95821531fb8a574bcf3458d58",
+        "size_bytes": 6749
+      }
+    }
+  ],
+  "read_only": true,
+  "required_pair_ids": [
+    "evidence_binding",
+    "image_conversion",
+    "orchestration_contract",
+    "perception_frame_io",
+    "rgbd_contract",
+    "target_contract",
+    "perception_core"
+  ],
+  "schema_version": 1
+}

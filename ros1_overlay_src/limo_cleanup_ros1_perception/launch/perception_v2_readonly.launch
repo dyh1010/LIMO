@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Perception only: this launch has no camera, navigation, actuator, or
+       robot bringup include. Its publishers are constrained by the installed
+       read_only_output_contract.json. -->
+  <arg name="rgb_topic" default="/camera/color/image_raw"/>
+  <arg name="depth_topic" default="/camera/depth/image_raw"/>
+  <arg name="rgb_camera_info_topic" default="/camera/color/camera_info"/>
+  <arg name="depth_camera_info_topic" default="/camera/depth/camera_info"/>
+  <arg name="model_manifest" default="$(find limo_cleanup_ros1_perception)/config/model_bindings.json"/>
+
+  <node pkg="limo_cleanup_ros1_perception"
+        type="dual_model_detector.py"
+        name="cleanup_dual_model_detector"
+        output="screen"
+        required="true">
+    <param name="rgb_topic" value="$(arg rgb_topic)"/>
+    <param name="depth_topic" value="$(arg depth_topic)"/>
+    <param name="rgb_camera_info_topic" value="$(arg rgb_camera_info_topic)"/>
+    <param name="depth_camera_info_topic" value="$(arg depth_camera_info_topic)"/>
+    <param name="model_manifest" value="$(arg model_manifest)"/>
+    <param name="confidence" value="0.35"/>
+    <param name="iou" value="0.45"/>
+    <param name="image_size" value="640"/>
+    <param name="max_sync_delta_sec" value="0.15"/>
+    <param name="depth_scale" value="0.001"/>
+    <param name="opening_height_ratio" value="0.62"/>
+    <param name="in_bin_overlap" value="0.30"/>
+  </node>
+</launch>

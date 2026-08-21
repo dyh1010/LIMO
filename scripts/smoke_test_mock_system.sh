@@ -1,37 +1,56 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+# ROS1_NOETIC_CURRENT_FIELD_AUTHORITY
+# LEGACY_ROS2_OFFLINE_ONLY / NON_AUTHORITATIVE_DO_NOT_RUN
+# NOT_NOETIC_BUILD_INSTALL_FIELD_OR_DELIVERY_EVIDENCE
+#
+# Retained only for an isolated ROS2 pure-mock graph.  It never authorizes
+# real perception/execution, base/arm/gripper motion, camera/device access,
+# field evidence, or delivery.  Current operations begin at
+# docs/PERCEPTION_V2_CURRENT_OPERATIONS_INDEX.md.
 
-workspace="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
-ros_setup="${ROS_SETUP:-}"
-underlay_setup="${ROS_UNDERLAY_SETUP:-}"
+set -euo pipefail
 
-if [[ -z "${ros_setup}" ]]; then
-  if [[ -f /opt/ros/foxy/setup.bash ]]; then
-    ros_setup=/opt/ros/foxy/setup.bash
-  else
-    ros_setup=/opt/ros/humble/setup.bash
-  fi
+readonly operations_index='docs/PERCEPTION_V2_CURRENT_OPERATIONS_INDEX.md'
+readonly isolated_domain='194'
+
+if [[ "${LIMO_ALLOW_LEGACY_ROS2_OFFLINE:-}" != '1' ]]; then
+  echo 'BLOCKED_LEGACY_ROS2_OFFLINE_OPT_IN_REQUIRED' >&2
+  echo "Read ${operations_index}." >&2
+  exit 64
 fi
 
-source "${ros_setup}"
-if [[ -n "${underlay_setup}" ]]; then
-  source "${underlay_setup}"
-elif [[ -f /home/agilex/limo_ros2_ws/install/setup.bash ]]; then
-  source /home/agilex/limo_ros2_ws/install/setup.bash
+if [[ "$#" -ne 0 ]]; then
+  echo 'BLOCKED_LEGACY_ROS2_UNDERLAY_OR_WORKSPACE_OVERRIDE_FORBIDDEN' >&2
+  echo "Read ${operations_index}." >&2
+  exit 66
 fi
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+workspace="$(cd -- "${script_dir}/.." && pwd -P)"
+source /opt/ros/foxy/setup.bash
 source "${workspace}/install/setup.bash"
 
+# Reassert isolation after every sourced environment so neither Foxy nor the
+# local install can widen the graph scope of this legacy-only mock harness.
 export ROS_LOCALHOST_ONLY=1
-export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-137}"
-if [[ -z "${RMW_IMPLEMENTATION:-}" ]]; then
-  export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-fi
-if [[ "${RMW_IMPLEMENTATION}" != rmw_cyclonedds_cpp ]]; then
-  unset CYCLONEDDS_URI
-fi
+export ROS_DOMAIN_ID="${isolated_domain}"
+unset ROS_DISCOVERY_SERVER CYCLONEDDS_URI FASTRTPS_DEFAULT_PROFILES_FILE
 
-set -u
+readonly -a mock_safety_args=(
+  use_mock_perception:=true
+  use_real_perception:=false
+  use_mock_executor:=true
+  use_detection_gate:=true
+  executor_dry_run:=true
+  allow_arm_motion:=false
+  use_gripper_controller:=false
+  gripper_backend:=dry_run
+  allow_gripper_motion:=false
+  confirmed_gripper_model:=UNRESOLVED_DO_NOT_CONNECT
+  use_tracked_base_controller:=false
+  allow_base_motion:=false
+)
 
 test_dir=$(mktemp -d /tmp/limo_cleanup_mock.XXXXXX)
 log_file="$test_dir/launch.log"
@@ -62,10 +81,7 @@ trap cleanup EXIT
 
 setsid ros2 launch \
   limo_cleanup_bringup cleanup_system.launch.py \
-  use_real_perception:=false \
-  use_mock_perception:=true \
-  use_mock_executor:=true \
-  use_gripper_controller:=false >"$log_file" 2>&1 &
+  "${mock_safety_args[@]}" >"$log_file" 2>&1 &
 launch_pid=$!
 
 ready=false

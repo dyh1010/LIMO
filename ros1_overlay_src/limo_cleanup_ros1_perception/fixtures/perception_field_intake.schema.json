@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LIMO V2 ROS1 Noetic read-only field intake",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "intake_id",
+    "runtime_family",
+    "ros_distro",
+    "read_only",
+    "authorizes_motion",
+    "delivery_ready",
+    "sensor_only_isolation",
+    "software_binding",
+    "capture_policy",
+    "scenes"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "intake_id": {"type": ["string", "null"], "minLength": 1},
+    "runtime_family": {"const": "ROS1"},
+    "ros_distro": {"const": "noetic"},
+    "read_only": {"const": true},
+    "authorizes_motion": {"const": false},
+    "delivery_ready": {"const": false},
+    "sensor_only_isolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "camera_driver_owner",
+        "control_publishers_present",
+        "services_or_actions_used",
+        "shared_graph",
+        "mixed_tf"
+      ],
+      "properties": {
+        "camera_driver_owner": {"type": ["string", "null"]},
+        "control_publishers_present": {"type": ["boolean", "null"]},
+        "services_or_actions_used": {"type": ["boolean", "null"]},
+        "shared_graph": {"type": ["boolean", "null"]},
+        "mixed_tf": {"type": ["boolean", "null"]}
+      }
+    },
+    "software_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_set_sha256",
+        "model_manifest_sha256",
+        "output_contract_sha256",
+        "ros1_field_install_evidence"
+      ],
+      "properties": {
+        "source_set_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "model_manifest_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "output_contract_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "ros1_field_install_evidence": {"type": ["string", "null"]}
+      }
+    },
+    "capture_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_topic_manifest",
+        "bag_format",
+        "minimum_unique_frames_per_scene",
+        "unique_output_directories",
+        "overwrite_allowed"
+      ],
+      "properties": {
+        "expected_topic_manifest": {"const": "dabai_ros1_formal_four_scene_six_topics_v1.json"},
+        "bag_format": {"const": "rosbag1-v2"},
+        "minimum_unique_frames_per_scene": {"const": 30},
+        "unique_output_directories": {"const": true},
+        "overwrite_allowed": {"const": false}
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scene_id",
+          "capture_id",
+          "task_id",
+          "rosbag1_path",
+          "rosbag1_sha256",
+          "typed_frames_path",
+          "ground_truth_path",
+          "measurement_reference_path",
+          "unique_bound_frame_count"
+        ],
+        "properties": {
+          "scene_id": {"enum": ["background", "bin_only", "bottle_in_bin", "bottle_outside"]},
+          "capture_id": {"type": ["string", "null"]},
+          "task_id": {"type": ["string", "null"]},
+          "rosbag1_path": {"type": ["string", "null"], "pattern": "\\.bag$"},
+          "rosbag1_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+          "typed_frames_path": {"type": ["string", "null"]},
+          "ground_truth_path": {"type": ["string", "null"]},
+          "measurement_reference_path": {"type": ["string", "null"]},
+          "unique_bound_frame_count": {"type": ["integer", "null"], "minimum": 30}
+        }
+      }
+    }
+  }
+}

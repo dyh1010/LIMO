@@ -1,0 +1,41 @@
+<launch>
+  <!--
+    Native-only navigation core. Every argument is mandatory and has no
+    fallback. This file owns exactly one map_server, AMCL, and move_base. It
+    must never start hardware, a velocity guard/watchdog, a bridge adapter, or
+    RViz, and it can never publish the integrated bridge request topic.
+  -->
+  <arg name="map_file" />
+  <arg name="active_map_id" />
+  <arg name="preflight_token" />
+
+  <group if="$(eval arg('preflight_token') == 'V1_SCAN_ODOM_TF_PREFLIGHT_PASS' and arg('map_file') != '' and arg('active_map_id') != '' and arg('active_map_id') not in ['map02', 'map1017', 'NOT_AVAILABLE_MAP_NOT_FROZEN'] and 'map1017' not in arg('map_file') and 'map02' not in arg('map_file') and '/limo_bringup/maps/' not in arg('map_file'))">
+    <param name="/v1/active_map_id" value="$(arg active_map_id)" />
+    <param name="/v1/navigation_cmd_output" value="/v1/nav_cmd_vel" />
+
+    <node pkg="map_server" type="map_server" name="map_server"
+          args="$(arg map_file)" output="screen" required="true">
+      <param name="frame_id" value="map" />
+    </node>
+
+    <node pkg="amcl" type="amcl" name="amcl" output="screen" required="true">
+      <rosparam file="$(find limo_v1_navigation)/config/amcl.yaml" command="load" />
+      <remap from="initialpose" to="/v1/validated_initialpose" />
+    </node>
+
+    <node pkg="move_base" type="move_base" name="move_base"
+          output="screen" required="true">
+      <rosparam file="$(find limo_v1_navigation)/config/costmap_common.yaml" command="load" ns="global_costmap" />
+      <rosparam file="$(find limo_v1_navigation)/config/costmap_common.yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find limo_v1_navigation)/config/local_costmap.yaml" command="load" />
+      <rosparam file="$(find limo_v1_navigation)/config/global_costmap.yaml" command="load" />
+      <rosparam file="$(find limo_v1_navigation)/config/move_base.yaml" command="load" />
+      <rosparam file="$(find limo_v1_navigation)/config/planner.yaml" command="load" />
+      <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+      <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" />
+      <remap from="move_base" to="/v1/private_move_base" />
+      <remap from="move_base_simple/goal" to="/v1/private_move_base_simple/goal" />
+      <remap from="/cmd_vel" to="/v1/nav_cmd_vel" />
+    </node>
+  </group>
+</launch>

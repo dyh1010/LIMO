@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "frames": {
+    "map": "map",
+    "odom": "odom",
+    "base": "base_link",
+    "laser": "laser_link"
+  },
+  "topics": {
+    "scan": "/scan",
+    "odom": "/odom",
+    "nav_cmd": "/v1/nav_cmd_vel",
+    "driver_cmd": "/v1/driver_cmd_vel"
+  },
+  "owners": {
+    "odom_tf": "/limo_base_node",
+    "scan": "/ydlidar_lidar_publisher",
+    "forbidden_odom_tf": ["/robot_pose_ekf"]
+  },
+  "scan": {
+    "expected_hz": 6.0,
+    "min_hz": 4.8,
+    "max_hz": 7.2,
+    "range_min_m": 0.02,
+    "range_max_m": 16.0
+  },
+  "freshness": {
+    "scan_timeout_s": 0.5,
+    "odom_timeout_s": 0.5,
+    "tf_timeout_s": 0.5,
+    "command_timeout_s": 0.25
+  },
+  "tf_timing": {
+    "amcl_transform_tolerance_s": 0.05,
+    "source_future_tolerance_s": 0.10
+  },
+  "motion": {
+    "allow_nonzero_default": false,
+    "driver_timeout_verified": false,
+    "max_linear_x_mps": 0.18,
+    "max_angular_z_rps": 0.45,
+    "max_linear_accel_mps2": 0.35,
+    "max_angular_accel_rps2": 0.8
+  },
+  "map_policy": {
+    "require_absolute_path": true,
+    "reject_vendor_maps": true,
+    "rejected_map_ids": ["map02", "map1017", "NOT_AVAILABLE_MAP_NOT_FROZEN"]
+  }
+}

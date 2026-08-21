@@ -1,0 +1,28 @@
+uint8 TARGET_NORMALIZED_POSITION=1
+uint8 TARGET_JAW_OPENING_M=2
+
+uint8 target_kind
+float64 normalized_position
+float64 jaw_opening_m
+float64 speed_normalized
+string expected_tool_revision
+string authorization_id
+string expected_session_id
+---
+bool success
+string command_id
+string final_state
+string detail
+bool measured_normalized_position_valid
+float64 measured_normalized_position
+bool measured_jaw_opening_valid
+float64 measured_jaw_opening_m
+---
+string command_id
+string state
+float32 progress
+string detail
+bool measured_normalized_position_valid
+float64 measured_normalized_position
+bool measured_jaw_opening_valid
+float64 measured_jaw_opening_m

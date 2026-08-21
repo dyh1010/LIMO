@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "contract_id": "limo-v2-ros1-noetic-read-only-output-v1",
+  "runtime_family": "ROS1",
+  "ros_distro": "noetic",
+  "read_only": true,
+  "authorizes_motion": false,
+  "authorizes_field_delivery": false,
+  "delivery_ready": false,
+  "control_publishers_allowed": false,
+  "services_allowed": false,
+  "actions_allowed": false,
+  "allowed_publish_topics": [
+    {
+      "topic": "/cleanup/perception/frames",
+      "type": "limo_cleanup_ros1_perception/PerceptionFrame",
+      "role": "typed_read_only_observation",
+      "classes": ["plastic_bottle", "trash_bin"],
+      "may_trigger_motion": false
+    },
+    {
+      "topic": "/cleanup/detection/raw",
+      "type": "limo_cleanup_ros1_perception/ObjectDetection",
+      "role": "legacy_actionable_bottle_compatibility",
+      "classes": ["plastic_bottle"],
+      "requires_valid_depth": true,
+      "trash_bin_forbidden": true,
+      "may_trigger_motion": false
+    },
+    {
+      "topic": "/cleanup/perception_status",
+      "type": "std_msgs/String",
+      "role": "diagnostic_status",
+      "may_trigger_motion": false
+    }
+  ],
+  "forbidden_publish_topics": [
+    "/cmd_vel",
+    "/cleanup/base/safe_cmd_vel",
+    "/move_base/goal",
+    "/move_base/cancel",
+    "/arm_controller/command",
+    "/gripper_controller/command"
+  ],
+  "frame_policy": {
+    "frame_id_override": "",
+    "preserve_camera_header_stamp": true,
+    "preserve_camera_frame_id": true,
+    "string_only_frame_relabel_forbidden": true,
+    "tf_transform_required_for_frame_change": true,
+    "tf_valid_means_position_expressed_in_tf_target_frame": true,
+    "chain_lookup_without_transform_is_not_tf_valid": true
+  },
+  "consumer_policy": {
+    "ordinary_observations_are_never_navigation_goals": true,
+    "trash_bin_staging_waypoint_remains_external_and_frozen": true,
+    "duplicate_stale_or_invalid_observations_must_be_rejected": true
+  }
+}

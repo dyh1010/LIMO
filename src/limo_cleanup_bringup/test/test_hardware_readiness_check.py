@@ -4,12 +4,13 @@ import math
 from pathlib import Path
 
 import numpy as np
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CameraInfo, Image
 
 from limo_cleanup_bringup.hardware_readiness_check import (
     HardwareReadinessCheck,
     angle_distance,
     aligned_depth_frame_matches_rgb,
+    camera_info_intrinsics_valid,
     depth_image_array,
     nearest_stamped_message,
     quaternion_to_rpy,
@@ -76,6 +77,16 @@ def make_stamped_image(seconds, nanoseconds=0):
     message.header.stamp.sec = seconds
     message.header.stamp.nanosec = nanoseconds
     return message
+
+
+def test_camera_info_intrinsics_require_finite_positive_focal_lengths():
+    """Both RGB and depth CameraInfo must carry usable intrinsics."""
+    message = CameraInfo()
+    message.k[0] = 500.0
+    message.k[4] = 501.0
+    assert camera_info_intrinsics_valid(message)
+    message.k[4] = float('nan')
+    assert not camera_info_intrinsics_valid(message)
 
 
 def test_readonly_check_rejects_command_subscriber_without_publisher():
@@ -177,3 +188,15 @@ def test_readonly_acceptance_rejects_all_actuation_endpoints():
     assert 'get_subscriptions_info_by_topic(topic)' in source
     assert "'no_actuation_publishers'" in source
     assert "'no_actuation_subscribers'" in source
+
+
+def test_readiness_requires_depth_camera_info_stream_and_contract():
+    """The read-only checker must subscribe and validate depth CameraInfo."""
+    source = READINESS_SOURCE.read_text(encoding='utf-8')
+    assert "('depth_camera_info_topic', '/camera/depth/camera_info')" in source
+    assert 'self.depth_camera_info_callback' in source
+    assert "'depth_camera_info_received'" in source
+    assert "'depth_camera_info_matches_rgb'" in source
+    assert "'depth_camera_intrinsics_valid'" in source
+    assert "'rgb_depth_camera_info_timestamp_alignment'" in source
+    assert "'rgb_depth_camera_info_frame_consistency'" in source

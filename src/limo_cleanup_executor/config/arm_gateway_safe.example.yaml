@@ -1,0 +1,88 @@
+arm_gateway:
+  # Static release gate. Keep false until a separately authorized real-motion
+  # acceptance has been completed on the final installed arm/tool assembly.
+  permit_motion: false
+
+  transport:
+    # Intentionally unresolved. Do not copy a legacy device path, VID/PID,
+    # serial or baud into production without a separately reviewed binding.
+    port: null
+    baud: null
+    expected_vid_pid: null
+    expected_serial: null
+    allow_tty_fallback: false
+    exclusive_owner_required: true
+
+  state:
+    max_age_s: 0.25
+    stable_samples_required: 3
+    stationary_dwell_s: null
+    stationary_joint_tolerance_deg: null
+    require_controller_connected: true
+    require_power_on: true
+    require_error_code_zero: true
+    require_all_servos_enabled: true
+    required_fresh_mode: null
+
+  command:
+    # Vendor grades, not physical speed units. A lower project maximum must be
+    # selected after controlled speed and stopping-distance measurement.
+    max_speed_grade: null
+    approved_speed_grades: []
+    timeout_s: null
+    stop_timeout_s: null
+    max_stop_attempts: null
+    stop_retry_interval_s: null
+    stop_retry_backoff_factor: null
+    allowed_tcp_modes: []
+    required_reference_frame: 0
+    required_end_type: 0
+    # Tool coordinates require a reviewed six-value TCP; flange-only projects
+    # still set an explicit reviewed zero reference instead of omitting it.
+    expected_tool_reference: []
+    # Must identify a measured, reviewed speed/acceleration/stopping-distance
+    # profile. There is no generic brochure-derived project default.
+    acceleration_profile_id: null
+    runtime_release_id: null
+    release_manifest_sha256: null
+    acceleration_profile_manifest_sha256: null
+    acceleration_profile_runtime_release_id: null
+
+    # Real transport stays disabled unless both capabilities have scoped,
+    # hash-bound evidence in the release manifest. A Python timeout thread is
+    # not cancellation and a shared adapter lock is not an independent STOP.
+    bounded_call_capability: false
+    deadline_enforcement_capability: false
+    native_cancel_capability: false
+    independent_stop_channel_capability: false
+    persistent_safety_latch_capability: false
+
+  limits:
+    # Intentionally unresolved: do not populate from generic brochure values.
+    # Use the final controller limits intersected with collision-tested project
+    # limits for the installed robot.
+    joint_limits_deg: []
+    tcp_bounds: []
+    joint_tolerance_deg: null
+    tcp_translation_tolerance_mm: null
+    tcp_rotation_tolerance_deg: null
+
+  named_joint_poses: {}
+
+  forbidden_automatic_calls:
+    - power_on
+    - power_off
+    - release_all_servos
+    - release_servo
+    - focus_all_servos
+    - focus_servo
+    - clear_error_information
+    - set_servo_calibration
+    - set_joint_min
+    - set_joint_max
+    - set_free_mode
+    - jog_angle
+    - jog_coord
+    - jog_rpy
+    - set_encoder
+    - set_encoders

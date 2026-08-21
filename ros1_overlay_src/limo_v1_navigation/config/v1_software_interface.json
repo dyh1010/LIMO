@@ -1,0 +1,308 @@
+{
+  "compatibility": "additive_only",
+  "controlled_interfaces": [
+    {
+      "default_authorized": false,
+      "effect": "may_start_motion",
+      "id": "native_navigation_request",
+      "internal_only": false,
+      "kind": "topic",
+      "modes": [
+        "native"
+      ],
+      "name": "/v1/navigation/goal",
+      "ros_type": "geometry_msgs/PoseStamped"
+    },
+    {
+      "default_authorized": false,
+      "effect": "cancel_only",
+      "id": "native_navigation_cancel_topic",
+      "internal_only": false,
+      "kind": "topic",
+      "modes": [
+        "native"
+      ],
+      "name": "/v1/navigation/cancel",
+      "ros_type": "std_msgs/Bool"
+    },
+    {
+      "default_authorized": false,
+      "effect": "opens_authority_only",
+      "id": "native_gateway_arm",
+      "internal_only": false,
+      "kind": "service",
+      "modes": [
+        "native"
+      ],
+      "name": "/v1_navigation_gateway/arm",
+      "ros_type": "std_srvs/Trigger"
+    },
+    {
+      "default_authorized": false,
+      "effect": "cancel_only",
+      "id": "native_gateway_cancel_service",
+      "internal_only": false,
+      "kind": "service",
+      "modes": [
+        "native"
+      ],
+      "name": "/v1_navigation_gateway/cancel",
+      "ros_type": "std_srvs/Trigger"
+    },
+    {
+      "default_authorized": false,
+      "effect": "may_start_motion",
+      "id": "integrated_navigation_command",
+      "internal_only": true,
+      "kind": "topic",
+      "modes": [
+        "integrated"
+      ],
+      "name": "/cleanup/navigation/bridge_command",
+      "public_consumer": false,
+      "ros_type": "std_msgs/String"
+    },
+    {
+      "default_authorized": false,
+      "effect": "opens_authority_only",
+      "id": "initial_pose_authorization",
+      "internal_only": false,
+      "kind": "service",
+      "modes": [
+        "native"
+      ],
+      "name": "/v1_localization_manager/authorize_initial_pose",
+      "ros_type": "std_srvs/Trigger"
+    },
+    {
+      "default_authorized": false,
+      "effect": "localization_only",
+      "id": "initial_pose_input",
+      "internal_only": false,
+      "kind": "topic",
+      "modes": [
+        "native"
+      ],
+      "name": "/initialpose",
+      "ros_type": "geometry_msgs/PoseWithCovarianceStamped"
+    }
+  ],
+  "defaults": {
+    "integrated": {
+      "adapter_enabled": false,
+      "navigation_ready": false
+    },
+    "native": {
+      "forwarding_allowed": false,
+      "gateway_enabled": false,
+      "navigation_enabled": false,
+      "nonzero_output_allowed": false,
+      "stop_latched": true
+    }
+  },
+  "frozen": true,
+  "freshness_policy": {
+    "basis": "consumer_monotonic_receipt",
+    "error_records_are_not_health_heartbeats": true,
+    "fresh_if": "0 <= receipt_age_s < freshness_timeout_s",
+    "latched_heartbeat_requires_followup_sample": true,
+    "missing_heartbeat_fail_closed": true,
+    "stale_at_or_above_timeout": true
+  },
+  "mock_fixture": "docs/examples/v1_read_only_status_fixture.json",
+  "modes": {
+    "integrated": {
+      "action_client_owner": "/cleanup_ros1_navigation_adapter",
+      "action_prefix": "/move_base",
+      "action_server_owner": "/move_base",
+      "forbidden_action_client_owner": "/v1_navigation_gateway",
+      "visibility": "runner_private_internal"
+    },
+    "mutually_exclusive": true,
+    "native": {
+      "action_client_owner": "/v1_navigation_gateway",
+      "action_prefix": "/v1/private_move_base",
+      "action_server_owner": "/move_base",
+      "forbidden_action_client_owner": "/cleanup_ros1_navigation_adapter",
+      "visibility": "private"
+    }
+  },
+  "read_only_interfaces": [
+    {
+      "access": "subscribe_only",
+      "id": "localization_ready",
+      "kind": "topic",
+      "latched": true,
+      "first_sample_establishes_liveness": false,
+      "freshness_semantics": "heartbeat",
+      "freshness_timeout_s": 0.5,
+      "modes": [
+        "native"
+      ],
+      "motion_capable": false,
+      "name": "/v1/localization/ready",
+      "nominal_publish_period_s": 0.1,
+      "payload_contract": "boolean",
+      "publisher_owner": "/v1_localization_manager",
+      "required_payload_fields": [],
+      "ros_type": "std_msgs/Bool"
+    },
+    {
+      "access": "subscribe_only",
+      "id": "localization_status",
+      "kind": "topic",
+      "latched": true,
+      "first_sample_establishes_liveness": false,
+      "freshness_semantics": "heartbeat",
+      "freshness_timeout_s": 0.5,
+      "modes": [
+        "native"
+      ],
+      "motion_capable": false,
+      "name": "/v1/localization/status",
+      "nominal_publish_period_s": 0.1,
+      "payload_contract": "limo_v1_localization_status/v1",
+      "publisher_owner": "/v1_localization_manager",
+      "required_payload_fields": [
+        "schema",
+        "state",
+        "ready",
+        "reason",
+        "chain_ok",
+        "chain_reason",
+        "active_map_id",
+        "motion_commanded"
+      ],
+      "ros_type": "std_msgs/String"
+    },
+    {
+      "access": "subscribe_only",
+      "id": "localization_diagnostics",
+      "kind": "topic",
+      "latched": true,
+      "first_sample_establishes_liveness": false,
+      "freshness_semantics": "heartbeat",
+      "freshness_timeout_s": 0.5,
+      "modes": [
+        "native"
+      ],
+      "motion_capable": false,
+      "name": "/v1/localization/diagnostics",
+      "nominal_publish_period_s": 0.1,
+      "payload_contract": "limo_v1_localization_status/v1",
+      "publisher_owner": "/v1_localization_manager",
+      "required_payload_fields": [
+        "schema",
+        "state",
+        "ready",
+        "reason",
+        "chain_ok",
+        "chain_reason",
+        "active_map_id",
+        "motion_commanded"
+      ],
+      "ros_type": "std_msgs/String"
+    },
+    {
+      "access": "subscribe_only",
+      "id": "navigation_status",
+      "kind": "topic",
+      "latched": true,
+      "first_sample_establishes_liveness": false,
+      "freshness_semantics": "heartbeat",
+      "freshness_timeout_s": 0.5,
+      "modes": [
+        "native"
+      ],
+      "motion_capable": false,
+      "name": "/v1/navigation/status",
+      "nominal_publish_period_s": 0.1,
+      "payload_contract": "limo_v1_navigation_status/v1",
+      "publisher_owner": "/v1_navigation_gateway",
+      "required_payload_fields": [
+        "schema",
+        "state",
+        "reason",
+        "armed",
+        "localization_ready",
+        "action_server_ready",
+        "cancel_required",
+        "gateway_enabled",
+        "allow_goal_forwarding",
+        "guard_health",
+        "guard_latched"
+      ],
+      "ros_type": "std_msgs/String"
+    },
+    {
+      "access": "subscribe_only",
+      "id": "navigation_error",
+      "kind": "topic",
+      "latched": true,
+      "first_sample_establishes_liveness": false,
+      "freshness_semantics": "latched_event_record",
+      "freshness_timeout_s": null,
+      "modes": [
+        "native"
+      ],
+      "motion_capable": false,
+      "name": "/v1/navigation/error",
+      "nominal_publish_period_s": null,
+      "payload_contract": "limo_v1_navigation_error/v1",
+      "publisher_owner": "/v1_navigation_gateway",
+      "required_payload_fields": [
+        "schema",
+        "monotonic",
+        "reason"
+      ],
+      "ros_type": "std_msgs/String"
+    },
+    {
+      "access": "subscribe_only",
+      "id": "native_stop_latched",
+      "kind": "topic",
+      "latched": true,
+      "first_sample_establishes_liveness": false,
+      "freshness_semantics": "heartbeat",
+      "freshness_timeout_s": 0.5,
+      "modes": [
+        "native"
+      ],
+      "motion_capable": false,
+      "name": "/v1/cmd_guard/stop_latched",
+      "nominal_publish_period_s": 0.1,
+      "payload_contract": "boolean",
+      "publisher_owner": "/v1_cmd_guard",
+      "required_payload_fields": [],
+      "ros_type": "std_msgs/Bool"
+    },
+    {
+      "access": "subscribe_only",
+      "id": "integrated_navigation_status",
+      "kind": "topic",
+      "latched": false,
+      "first_sample_establishes_liveness": true,
+      "freshness_semantics": "heartbeat",
+      "freshness_timeout_s": 0.25,
+      "modes": [
+        "integrated"
+      ],
+      "motion_capable": false,
+      "name": "/cleanup/navigation/bridge_status",
+      "nominal_publish_period_s": 0.05,
+      "payload_contract": "cleanup_navigation_bridge/v3",
+      "publisher_owner": "/cleanup_ros1_navigation_adapter",
+      "required_payload_fields": [
+        "protocol",
+        "state",
+        "epoch",
+        "nonce",
+        "server_ready",
+        "scan_fresh",
+        "tf_ready"
+      ],
+      "ros_type": "std_msgs/String"
+    }
+  ],
+  "schema": "limo_v1_software_interface/v1"
+}

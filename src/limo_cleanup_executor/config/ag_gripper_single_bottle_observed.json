@@ -1,0 +1,49 @@
+{
+  "schema": "limo_ag_gripper_single_bottle_observed/v1",
+  "runtime_default": "ros1_noetic",
+  "production_motion_authority": false,
+  "scope": "single_bottle_static_grip_only",
+  "controller": {
+    "robot": "myCobot 280 M5",
+    "sdk": "pymycobot 3.3.4",
+    "api_variant": "gripper_type_1",
+    "gripper_type": 1
+  },
+  "calibrated_range": {
+    "closed_value": 0,
+    "open_reference_value": 100,
+    "max_observed_tracking_error_counts": 1,
+    "empty_range_cycles_observed": 2
+  },
+  "accepted_static_bottle_grip": {
+    "target": 20,
+    "steady_feedback": 21,
+    "speed_grade": 30,
+    "protect_current_readback": 300,
+    "hold_duration_s": 15,
+    "stable": true,
+    "slip_observed": false,
+    "abnormal_noise_or_jitter_observed": false,
+    "abnormal_heat_observed": false
+  },
+  "unsupported_or_unbound": {
+    "hts_torque_write": true,
+    "requested_hts_torque": 500,
+    "unchanged_hts_torque_readback": 200,
+    "two_parameter_ag_frames_for_this_release": true
+  },
+  "not_accepted": [
+    "tighter_grip_target",
+    "higher_protect_current",
+    "arm_motion",
+    "vision_guided_grasp",
+    "transport_or_release",
+    "continuous_cycles",
+    "ros1_adapter"
+  ],
+  "evidence": {
+    "incident_record": "docs/evidence/ARM_GRIPPER_AG_TWO_PARAMETER_NOISE_INCIDENT_20260820.md",
+    "operator_terminal_attachment_sha256": "7945cbe8789c5884663fdf60fba220bfa913e1edd58b2f2f21607c6a249197da",
+    "status": "SINGLE_BOTTLE_STATIC_GRIP_ACCEPTANCE_PASS"
+  }
+}

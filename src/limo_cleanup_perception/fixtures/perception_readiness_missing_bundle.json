@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "evidence_scope": "formal_four_scene_rgbd_acceptance",
+  "read_only": true,
+  "authorizes_motion": false,
+  "publishes_ros_messages": false,
+  "release_binding": null,
+  "software_binding": {
+    "models": {},
+    "sources": [],
+    "runtime_preflight": null
+  },
+  "ros_build_validation": null,
+  "ros1_field_install_validation": null,
+  "hardware_readiness": null,
+  "extrinsics_measurement_reference": null,
+  "scenes": {}
+}

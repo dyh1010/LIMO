@@ -1,0 +1,318 @@
+{
+  "schema_version": 1,
+  "read_only": true,
+  "topic": "/cleanup/perception/frames",
+  "message_type": "limo_cleanup_ros1_perception/PerceptionFrame",
+  "consumer_contract": {
+    "allowed_target_classes": [
+      "plastic_bottle",
+      "trash_bin"
+    ],
+    "max_frame_age_sec": 1.0,
+    "plastic_bottle_requires_actionable": true,
+    "trash_bin_is_observation_only": true,
+    "authorizes_motion": false
+  },
+  "cases": [
+    {
+      "name": "valid_bottle",
+      "requested_class": "plastic_bottle",
+      "consumer_now_sec": 100.5,
+      "last_sequence": 0,
+      "seen_observation_ids": [],
+      "frame": {
+        "stamp": {"sec": 100, "nanosec": 0},
+        "frame_id": "camera_color_optical_frame",
+        "task_id": "fixture-read-only",
+        "sequence": 1,
+        "valid": true,
+        "status": "targets_ready",
+        "error_code": "",
+        "sync_span_sec": 0.02,
+        "processing_latency_sec": 0.1,
+        "targets": [
+          {
+            "observation_id": "fixture-bottle-invalid-higher-confidence",
+            "object_class": "plastic_bottle",
+            "confidence": 0.99,
+            "valid": false,
+            "actionable": false,
+            "status": "active",
+            "error_code": "insufficient_depth_pixels",
+            "position": {"x": 0.0, "y": 0.0, "z": 0.0},
+            "size": {"x": 0.08, "y": 0.2, "z": 0.03},
+            "bbox": [260.0, 160.0, 350.0, 370.0],
+            "depth_m": 0.0,
+            "depth_valid_pixels": 1,
+            "depth_total_pixels": 180,
+            "depth_valid_ratio": 0.0055556,
+            "source": "bottle_model",
+            "position_semantics": "aligned_depth_roi_median_at_clipped_bbox_center"
+          },
+          {
+            "observation_id": "fixture-bottle-001",
+            "object_class": "plastic_bottle",
+            "confidence": 0.8,
+            "valid": true,
+            "actionable": true,
+            "status": "active",
+            "error_code": "",
+            "position": {"x": 0.08, "y": 0.02, "z": 1.1},
+            "size": {"x": 0.08, "y": 0.2, "z": 0.03},
+            "bbox": [280.0, 180.0, 340.0, 360.0],
+            "depth_m": 1.1,
+            "depth_valid_pixels": 160,
+            "depth_total_pixels": 180,
+            "depth_valid_ratio": 0.8888889,
+            "source": "bottle_model",
+            "position_semantics": "aligned_depth_roi_median_at_clipped_bbox_center"
+          }
+        ]
+      },
+      "expected": {
+        "accepted": true,
+        "reason": "selected",
+        "observation_id": "fixture-bottle-001"
+      }
+    },
+    {
+      "name": "valid_bin",
+      "requested_class": "trash_bin",
+      "consumer_now_sec": 101.4,
+      "last_sequence": 1,
+      "seen_observation_ids": [],
+      "frame": {
+        "stamp": {"sec": 101, "nanosec": 0},
+        "frame_id": "camera_color_optical_frame",
+        "task_id": "fixture-read-only",
+        "sequence": 2,
+        "valid": true,
+        "status": "targets_ready",
+        "error_code": "",
+        "sync_span_sec": 0.018,
+        "processing_latency_sec": 0.11,
+        "targets": [
+          {
+            "observation_id": "fixture-bin-001",
+            "object_class": "trash_bin",
+            "confidence": 0.97,
+            "valid": true,
+            "actionable": false,
+            "status": "observed",
+            "error_code": "",
+            "position": {"x": 0.2, "y": 0.04, "z": 1.35},
+            "size": {"x": 0.45, "y": 0.65, "z": 0.08},
+            "bbox": [180.0, 120.0, 460.0, 450.0],
+            "depth_m": 1.35,
+            "depth_valid_pixels": 620,
+            "depth_total_pixels": 700,
+            "depth_valid_ratio": 0.8857143,
+            "source": "bin_model",
+            "position_semantics": "aligned_depth_roi_median_at_clipped_bbox_center"
+          }
+        ]
+      },
+      "expected": {
+        "accepted": true,
+        "reason": "selected",
+        "observation_id": "fixture-bin-001"
+      }
+    },
+    {
+      "name": "invalid_frame",
+      "requested_class": "plastic_bottle",
+      "consumer_now_sec": 102.2,
+      "last_sequence": 2,
+      "seen_observation_ids": [],
+      "frame": {
+        "stamp": {"sec": 102, "nanosec": 0},
+        "frame_id": "camera_color_optical_frame",
+        "task_id": "fixture-read-only",
+        "sequence": 3,
+        "valid": false,
+        "status": "rgbd_contract_rejected",
+        "error_code": "timestamp_span_exceeded",
+        "sync_span_sec": 0.22,
+        "processing_latency_sec": 0.01,
+        "targets": []
+      },
+      "expected": {
+        "accepted": false,
+        "reason": "frame_invalid",
+        "observation_id": null
+      }
+    },
+    {
+      "name": "invalid_target_depth",
+      "requested_class": "plastic_bottle",
+      "consumer_now_sec": 103.2,
+      "last_sequence": 3,
+      "seen_observation_ids": [],
+      "frame": {
+        "stamp": {"sec": 103, "nanosec": 0},
+        "frame_id": "camera_color_optical_frame",
+        "task_id": "fixture-read-only",
+        "sequence": 4,
+        "valid": true,
+        "status": "targets_ready",
+        "error_code": "",
+        "sync_span_sec": 0.02,
+        "processing_latency_sec": 0.1,
+        "targets": [
+          {
+            "observation_id": "fixture-bottle-invalid-depth",
+            "object_class": "plastic_bottle",
+            "confidence": 0.91,
+            "valid": false,
+            "actionable": false,
+            "status": "active",
+            "error_code": "insufficient_depth_pixels",
+            "position": {"x": 0.0, "y": 0.0, "z": 0.0},
+            "size": {"x": 0.0, "y": 0.0, "z": 0.0},
+            "bbox": [270.0, 170.0, 345.0, 365.0],
+            "depth_m": 0.0,
+            "depth_valid_pixels": 2,
+            "depth_total_pixels": 180,
+            "depth_valid_ratio": 0.0111111,
+            "source": "bottle_model",
+            "position_semantics": "aligned_depth_roi_median_at_clipped_bbox_center"
+          }
+        ]
+      },
+      "expected": {
+        "accepted": false,
+        "reason": "no_valid_target",
+        "observation_id": null
+      }
+    },
+    {
+      "name": "stale_frame",
+      "requested_class": "plastic_bottle",
+      "consumer_now_sec": 110.5,
+      "last_sequence": 4,
+      "seen_observation_ids": [],
+      "frame": {
+        "stamp": {"sec": 108, "nanosec": 0},
+        "frame_id": "camera_color_optical_frame",
+        "task_id": "fixture-read-only",
+        "sequence": 5,
+        "valid": true,
+        "status": "targets_ready",
+        "error_code": "",
+        "sync_span_sec": 0.02,
+        "processing_latency_sec": 0.1,
+        "targets": [
+          {
+            "observation_id": "fixture-bottle-stale",
+            "object_class": "plastic_bottle",
+            "confidence": 0.94,
+            "valid": true,
+            "actionable": true,
+            "status": "active",
+            "error_code": "",
+            "position": {"x": 0.1, "y": 0.01, "z": 1.0},
+            "size": {"x": 0.08, "y": 0.2, "z": 0.03},
+            "bbox": [280.0, 180.0, 340.0, 360.0],
+            "depth_m": 1.0,
+            "depth_valid_pixels": 150,
+            "depth_total_pixels": 180,
+            "depth_valid_ratio": 0.8333333,
+            "source": "bottle_model",
+            "position_semantics": "aligned_depth_roi_median_at_clipped_bbox_center"
+          }
+        ]
+      },
+      "expected": {
+        "accepted": false,
+        "reason": "frame_stale",
+        "observation_id": null
+      }
+    },
+    {
+      "name": "duplicate_observation",
+      "requested_class": "trash_bin",
+      "consumer_now_sec": 111.3,
+      "last_sequence": 5,
+      "seen_observation_ids": ["fixture-bin-duplicate"],
+      "frame": {
+        "stamp": {"sec": 111, "nanosec": 0},
+        "frame_id": "camera_color_optical_frame",
+        "task_id": "fixture-read-only",
+        "sequence": 6,
+        "valid": true,
+        "status": "targets_ready",
+        "error_code": "",
+        "sync_span_sec": 0.02,
+        "processing_latency_sec": 0.1,
+        "targets": [
+          {
+            "observation_id": "fixture-bin-duplicate",
+            "object_class": "trash_bin",
+            "confidence": 0.96,
+            "valid": true,
+            "actionable": false,
+            "status": "observed",
+            "error_code": "",
+            "position": {"x": 0.2, "y": 0.04, "z": 1.4},
+            "size": {"x": 0.45, "y": 0.65, "z": 0.08},
+            "bbox": [180.0, 120.0, 460.0, 450.0],
+            "depth_m": 1.4,
+            "depth_valid_pixels": 600,
+            "depth_total_pixels": 700,
+            "depth_valid_ratio": 0.8571429,
+            "source": "bin_model",
+            "position_semantics": "aligned_depth_roi_median_at_clipped_bbox_center"
+          }
+        ]
+      },
+      "expected": {
+        "accepted": false,
+        "reason": "duplicate_observation",
+        "observation_id": null
+      }
+    },
+    {
+      "name": "duplicate_sequence",
+      "requested_class": "plastic_bottle",
+      "consumer_now_sec": 112.2,
+      "last_sequence": 7,
+      "seen_observation_ids": [],
+      "frame": {
+        "stamp": {"sec": 112, "nanosec": 0},
+        "frame_id": "camera_color_optical_frame",
+        "task_id": "fixture-read-only",
+        "sequence": 7,
+        "valid": true,
+        "status": "targets_ready",
+        "error_code": "",
+        "sync_span_sec": 0.02,
+        "processing_latency_sec": 0.1,
+        "targets": [
+          {
+            "observation_id": "fixture-bottle-sequence-duplicate",
+            "object_class": "plastic_bottle",
+            "confidence": 0.92,
+            "valid": true,
+            "actionable": true,
+            "status": "active",
+            "error_code": "",
+            "position": {"x": 0.1, "y": 0.01, "z": 1.05},
+            "size": {"x": 0.08, "y": 0.2, "z": 0.03},
+            "bbox": [280.0, 180.0, 340.0, 360.0],
+            "depth_m": 1.05,
+            "depth_valid_pixels": 155,
+            "depth_total_pixels": 180,
+            "depth_valid_ratio": 0.8611111,
+            "source": "bottle_model",
+            "position_semantics": "aligned_depth_roi_median_at_clipped_bbox_center"
+          }
+        ]
+      },
+      "expected": {
+        "accepted": false,
+        "reason": "duplicate_or_stale_sequence",
+        "observation_id": null
+      }
+    }
+  ]
+}

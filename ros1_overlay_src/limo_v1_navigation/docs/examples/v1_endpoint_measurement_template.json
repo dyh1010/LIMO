@@ -1,0 +1,19 @@
+{
+  "active_map_id": "REPLACE_WITH_FROZEN_MAP_ID",
+  "amcl_final": {
+    "x": 0.0,
+    "y": 0.0,
+    "yaw": 0.0
+  },
+  "goal": {
+    "x": 0.0,
+    "y": 0.0,
+    "yaw": 0.0
+  },
+  "ground_truth_final": {
+    "x": 0.0,
+    "y": 0.0,
+    "yaw": 0.0
+  },
+  "schema": "limo_v1_endpoint_measurement/v1"
+}

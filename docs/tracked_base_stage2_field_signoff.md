@@ -1,134 +1,103 @@
-# 履带底盘 Stage 2 现场签字记录
+# ROS2 vendor Stage 2 历史记录（已冻结，禁止执行）
 
-用途：记录第 0～1 级现场证据，供 `tracked_base_stage2_preflight.sh` 人工复核。本文件不是
-授权脚本，不会设置环境变量，也不代表允许启动原厂 `limo_base`。
+> 本文件只保存 2026-08-11 已结束实验的证据，不再是现场签字表、授权表或操作说明。
+> 不得根据本文件设置环境变量、启动 ROS2 `limo_base`、打开 `/dev/ttyTHS0` 或重试运动。
 
-当前状态：**现场部分就绪但未签字，禁止 Stage 2**。
+## 架构纠偏
 
-## 2026-08-11 18:14 用户口头现场状态（未签字）
+现场最终证据表明：
 
-用户已口头报告：
+- 机器人原生 ROS1 Noetic `limo_base_node` 使用 `ttyTHS0`、`use_mcnamu=false`，并已通过
+  `limo_start.launch` 与键盘 teleop 真实驱动履带；
+- ROS2 Foxy 受控链虽然在软件图中输出过 `linear.x=0.03 m/s`、持续 `0.5 s`，但履带物理
+  完全没有动作，原因未知，不能记为 Stage 3 通过；
+- 中间的 `limo_cleanup_ws_review2` 候选没有覆盖最终源码的测试证据，并保留 guard 生产话题
+  非零注入、可重放 vendor 布尔授权及测试/实现不一致等阻塞；从未合入或部署，永久禁止执行；
+- ROS1 `limo_base_node` 现为 `/dev/ttyTHS0` 的唯一硬件 owner；ROS2 vendor driver 只保留为
+  历史诊断资产，不再是默认实机入口；
+- ROS2 自动运动必须经过安全网关、受限单向 bridge、ROS1 fail-closed watchdog 和私有
+  `/cleanup/base/driver_cmd_vel`，完整要求见 `docs/ros1_ros2_base_bridge_contract.md` 与
+  `docs/tracked_base_acceptance.md`。
 
-- 履带已安装；
-- 黄色模式灯已亮起；
-- 测试场地已空出；
-- 当前唯一可用的物理停止手段是机器人主电源开关；
-- 任何可能导致机器人运动的步骤开始前，必须先通知用户并等待明确确认。
+当前 bridge、catkin wrapper 与 watchdog 已在本地实现并通过离线测试，但尚未完成 Catkin
+构建、ROS1/ROS2 跨图运行、机器人全零、断链停车或实机运动验证，状态为
+`ROS1_ROS2_BASE_BRIDGE_IMPLEMENTED_LOCALLY_UNVERIFIED`。当前 ROS1 bringup/teleop 是否
+仍在运行也未复核，按 `ROS1_RUNTIME_STATE_UNKNOWN_ASSUME_ACTIVE` 处理；在用户确认停止前，
+把 UART 视为已占用。
 
-这些信息只作为现场进度记录，不自动勾选下方签字项，也不构成 Stage 2 或运动授权。仍需
-确认主开关已经做过独立断电实测、履带张力与车门间隙、至少 1 m 缓冲区/软围挡、机器人
-架空或可靠托轮、机械臂与线缆收纳，以及对原厂启动发送 `0x421` 的单次知情授权。
-在断电/恢复测试完成前，`TRACKED_BASE_ESTOP_TESTED` 不得设置为 `YES`。
+后续独立只读安全审计又发现 ROS2 源端 owner、导航结果闭环、防重放、vendor 前连续零证明
+和退出/UART 清理阻塞。该历史文件不提供修复后的执行入口；任何新验收必须使用经专项修复、
+重新审查并另行授权的新流程。
 
-## 只读软件基线
+V1 不等待 bridge 实机验收即可继续只读、感知和 dry-run 交付；这不构成 bridge 验收通过，
+也不授权 V1 发布真实自动底盘命令。
 
-- 日期：2026-08-11
-- 主机：`master`
-- ROS：Foxy，`ROS_DOMAIN_ID=137`，`ROS_LOCALHOST_ONLY=0`
-- 原厂包：`/home/agilex/limo_ros2_ws/install/limo_base`
-- 底盘端口：`/dev/ttyTHS0`
-- sysfs 设备：`/sys/devices/platform/3100000.serial`
-- 内核驱动：`/sys/bus/platform/drivers/serial-tegra`
-- 串口占用：无
-- `dialout`：已确认
-- kernel console / serial-getty 冲突：无
-- 命令话题端点：第 1 级审计时不存在
-- 原厂启动行为：会调用 `enableCommandedMode()` 并发送 `0x421`
-- 当前 preflight：`STAGE2_PREFLIGHT_BLOCKED`
+## 2026-08-11 18:14 现场口头状态
 
-以上仅为只读证据。每次 Stage 2 前仍必须重新运行预检，禁止复制旧 PASS。
+用户当时口头报告履带已安装、黄色模式灯亮、场地已清空，主开关是唯一可用的物理停止
+手段，并要求任何可能运动前必须先通知。该信息只记录当时现场状态，不构成现在或未来的
+授权，也不能代替新的场地、主开关和人员复核。
 
-## A. 机械与模式检查
+## 2026-08-11 18:37 首次 ROS2 Stage 2 尝试
 
-- [ ] 两侧模式插销均处于四轮差速/履带要求的位置，短线朝车头并实际插入。
-- [ ] 两侧履带安装完整、方向正确、张力合适，无跳齿或脱轨迹象。
-- [ ] 两侧车门抬起并固定，不与履带接触。
-- [ ] 上电后黄色模式灯稳定常亮；已记录照片或现场观察时间。
-- [ ] 机械臂已收纳，`allow_arm_motion=false`，线缆不会卷入履带。
+- 用户只对当次全零验收作出单次授权并守在主开关旁；该授权已消耗并失效。
+- Gate 1 精确为 `Gate1_FILE_HASHES=PASS`、`GATE1_AUDIT=PASS`、`GATE1=PASS`。
+- 带当次 ACK 的 Gate 2 为 `GATE2_PREFLIGHT=STAGE2_PREFLIGHT_PASS`。
+- 全零网关进入 READY 后，Gate 3 因 Foxy endpoint owner 显示
+  `_NODE_NAMESPACE_UNKNOWN_/_NODE_NAME_UNKNOWN_` 而 fail-closed，精确输出：
 
-观察时间：____________________
+  ```text
+  ZERO_OUTPUT_GUARD_BLOCKED: /cleanup/base/safe_cmd_vel publisher is
+  _NODE_NAMESPACE_UNKNOWN_/_NODE_NAME_UNKNOWN_, expected
+  /cleanup_tracked_base_zero_output
+  ```
 
-现场人员：____________________　签字：____________________
+- 验证在 topology 阶段停止，未进入样本计数；不能声明采集到全零样本或 Stage 2 通过。
+- vendor 从未启动，`0x421` 未发送，`/dev/ttyTHS0` 从未打开且最终空闲；非零命令为 `0`，
+  用户确认履带全程没有物理动作。
+- 后续隔离 Domain 证明 Fast DDS 与 Cyclone DDS 都能返回 endpoint names；确定性兼容问题是
+  Foxy `Node` 缺少 `get_fully_qualified_name()`。最小兼容修复后的
+  `ZERO_OUTPUT_GUARD_PASS` 只属于纯软件复测，不是硬件 Stage 2 通过。
 
-异常/照片编号：____________________________________________________________
+## 后续 ROS2 vendor 受控短脉冲
 
-## B. 测试区域与人员
+后续一次独立授权下，ROS2 流程完成 preflight、全零守卫、vendor 拓扑与 motion zero guard；
+软件观测到 `linear.x=0.03 m/s`、持续 `0.5 s`，峰值 `0.030000`，随后连续全零、有序停止
+vendor 并释放 UART。用户现场确认履带物理完全没有动作。
 
-- [ ] 地面平整、干燥、无散落线缆和可卷入物。
-- [ ] 机器人四周至少保留 1 m 缓冲区，并设置软围挡。
-- [ ] 机器人已经架空或置于可靠托轮架，履带不会接触地面或人员。
-- [ ] 现场只保留一名命令操作者和一名急停观察员；职责已口头确认。
-- [ ] 禁用键盘、手柄、Nav2、teleop 和历史调试节点。
+该结果只能证明当时 ROS2 图、串口打开和软件命令观测链完成，不能证明底盘执行成功，也不能
+把零动作归因于驱动、模式、死区或脉冲时长中的任一项。不得自动增加参数或自动重试。
 
-现场人员：____________________　签字：____________________
+## 只读历史基线（不可推断当前状态）
 
-## C. 物理急停/断电独立测试
+当时记录为：
 
-本项必须在未启动原厂 `limo_base`、未发布任何速度命令时独立完成。
+- 主机：`master`，ROS2 Foxy；
+- `/dev/ttyTHS0` sysfs：`/sys/devices/platform/3100000.serial`；
+- driver：`/sys/bus/platform/drivers/serial-tegra`；
+- 当次审计时串口无占用、用户属于 `dialout`、无 console/getty 冲突；
+- ROS2 vendor 启动会调用 `enableCommandedMode()` 并发送 `0x421`。
 
-- [ ] 急停或物理断电装置可直接触达，无物体遮挡。
-- [ ] 已实际操作急停/断电，并确认机器人供能被切断。
-- [ ] 已恢复供电并确认没有自动运动、没有遗留运动节点或命令话题端点。
-- [ ] 急停观察员知道出现任何履带动作时立即执行物理停止，而非等待软件响应。
+以上都是时间点证据，不能用于证明当前进程、ROS 图或 UART 空闲。尤其 ROS1 与 ROS2 节点不在
+同一张原生图中，单侧“无节点”不构成安全结论。
 
-测试时间：____________________
+## 永久禁止按本文件执行的事项
 
-急停观察员：__________________　签字：____________________
+- 复用历史 `TRACKED_BASE_*` 确认变量或旧 `STAGE2_PREFLIGHT_PASS`；
+- 根据旧复选框或口头状态再次授权；
+- 启动 `tracked_base_vendor_stage2.launch.py` 作为生产底盘入口；
+- ROS1 `limo_base_node` 活跃时启动 ROS2 `limo_base` 或打开 `/dev/ttyTHS0`；
+- 使用 `--bridge-all-topics`，桥接 `/cmd_vel` 或
+  `/cleanup/base/driver_cmd_vel`，或制造命令回环；
+- 把软件零输出 PASS、UART 打开或 ROS2 命令峰值解释为物理运动成功；
+- 在未重新通知用户并取得单次授权前执行任何可能运动的步骤。
 
-测试结果/异常：____________________________________________________________
+## 后续唯一入口
 
-## D. `0x421` 硬件写入知情确认
+后续工作只按以下两份当前文档推进：
 
-启动原厂 `limo_base` 不是只读操作。它会打开 `/dev/ttyTHS0`，调用
-`enableCommandedMode()`，并向底盘发送 `MSG_CTRL_MODE_CONFIG_ID (0x421)`。
+- `docs/ros1_ros2_base_bridge_contract.md`
+- `docs/tracked_base_acceptance.md`
 
-- [ ] 我理解 Stage 2 会发生上述硬件写入，即使 `allow_base_motion=false`。
-- [ ] 我理解软件“紧急停止”或语音 cancel 不能替代物理急停。
-- [ ] 我理解 Stage 2 只允许全零命令，不授权真实移动、导航或机械臂动作。
-- [ ] 我明确授权本次、单次 Stage 2 零速验收；授权在退出后自动失效。
-- [ ] 执行者已在本次操作前明确通知“下一步可能引发硬件状态变化/运动”，并收到授权人的
-  当次确认；旧消息和历史授权不得复用。
-
-授权人：______________________　签字：____________________
-
-授权时间：____________________
-
-## E. 运行前复核
-
-所有 A～D 项均签字后，现场人员才可在同一终端临时设置三个确认变量。UART 身份变量必须
-逐字使用本页只读基线，不得根据端口名称猜测：
-
-```bash
-unset ROS_DISCOVERY_SERVER CYCLONEDDS_URI FASTRTPS_DEFAULT_PROFILES_FILE
-export ROS_DOMAIN_ID=137
-export ROS_LOCALHOST_ONLY=0
-export TRACKED_BASE_PHYSICAL_CHECKLIST_CONFIRMED=YES
-export TRACKED_BASE_ESTOP_TESTED=YES
-export TRACKED_BASE_COMMAND_MODE_WRITE_ACK=YES
-export TRACKED_BASE_EXPECTED_SYSFS_DEVICE=/sys/devices/platform/3100000.serial
-export TRACKED_BASE_EXPECTED_DRIVER=/sys/bus/platform/drivers/serial-tegra
-bash scripts/tracked_base_stage2_preflight.sh
-```
-
-预检时间：____________________
-
-预检输出：`STAGE2_PREFLIGHT_`____________________
-
-操作者：______________________　签字：____________________
-
-若不是精确的 `STAGE2_PREFLIGHT_PASS`，立即停止，不得启动零速网关或原厂驱动。
-
-## F. Stage 2 结束记录
-
-- [ ] 先停止 `limo_base_stage2`，确认原厂状态话题消失。
-- [ ] 再停止零速网关。
-- [ ] 四个公开命令话题与私有安全话题均无残留端点。
-- [ ] `/dev/ttyTHS0` 无占用。
-- [ ] 履带全程没有运动。
-- [ ] 三个现场确认环境变量已在终端退出后失效。
-
-结束时间：____________________
-
-操作者：______________________　急停观察员：______________________
-
-异常/结论：________________________________________________________________
+新验收必须重新记录机械/场地/主开关、ROS1 图、ROS2 图、进程、UART owner、bridge 白名单、
+watchdog lease、私有 driver 命令、断链停车和当次授权；本历史文件不再提供可勾选签字项。

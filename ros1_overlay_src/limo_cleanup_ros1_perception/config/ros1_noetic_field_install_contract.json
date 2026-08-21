@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "contract_id": "ROS1_NOETIC_FIELD_INSTALL",
+  "runtime_family": "ROS1",
+  "ros_distro": "noetic",
+  "required_for_delivery": true,
+  "indexer_only_sufficient": false,
+  "package": {
+    "name": "limo_cleanup_ros1_perception",
+    "source_root": "ros1_overlay_src/limo_cleanup_ros1_perception",
+    "build_type": "catkin",
+    "required_dependencies": [
+      "cv_bridge",
+      "geometry_msgs",
+      "message_filters",
+      "message_generation",
+      "message_runtime",
+      "python3-numpy",
+      "python3-opencv",
+      "rosbag",
+      "rospy",
+      "sensor_msgs",
+      "std_msgs",
+      "tf2_msgs",
+      "tf2_ros"
+    ],
+    "dependency_tags": {
+      "buildtool_depend": [
+        "catkin"
+      ],
+      "build_depend": [
+        "message_generation"
+      ],
+      "depend": [
+        "cv_bridge",
+        "geometry_msgs",
+        "message_filters",
+        "rosbag",
+        "rospy",
+        "sensor_msgs",
+        "std_msgs",
+        "tf2_msgs",
+        "tf2_ros"
+      ],
+      "exec_depend": [
+        "message_runtime",
+        "python3-numpy",
+        "python3-opencv"
+      ],
+      "test_depend": [
+        "python3-nose"
+      ]
+    },
+    "forbidden_dependencies": [
+      "ament_cmake",
+      "ament_python",
+      "rclpy",
+      "rosidl_default_generators",
+      "rosidl_default_runtime"
+    ]
+  },
+  "required_capabilities": [
+    "bottle_inside_bin_filter",
+    "depth_projection_xyz",
+    "dual_class_detection",
+    "formal_readiness_rosbag1_admission",
+    "legacy_bottle_compat",
+    "rgbd_four_stream_sync",
+    "rosbag1_indexing",
+    "source_core_binding",
+    "tf_provenance_no_frame_relabel",
+    "typed_perception_frame",
+    "typed_raw_binding"
+  ],
+  "required_python_modules": [
+    "__init__.py",
+    "dual_model_detector.py",
+    "evidence_binding.py",
+    "image_conversion.py",
+    "model_binding_contract.py",
+    "orchestration_contract.py",
+    "perception_core.py",
+    "perception_frame_collector.py",
+    "perception_frame_io.py",
+    "perception_readiness.py",
+    "rgbd_contract.py",
+    "ros1_adapter.py",
+    "rosbag1_isolated_probe.py",
+    "rosbag1_rgbd_indexer.py",
+    "source_core_binding.py",
+    "target_contract.py",
+    "typed_raw_binding.py"
+  ],
+  "required_launch_files": [
+    "perception_v2_formal_capture.launch",
+    "perception_v2_readonly.launch"
+  ],
+  "required_catkin_test_files": [
+    "test_rosbag1_isolated_probe.py",
+    "test_rosbag1_rgbd_indexer.py",
+    "test_ros1_adapter_pure_fake.py",
+    "test_runtime_install_contract.py"
+  ],
+  "required_entrypoints": {
+    "dual_model_detector": "scripts/dual_model_detector.py",
+    "perception_frame_adapter": "scripts/perception_frame_adapter.py",
+    "perception_frame_collector": "scripts/perception_frame_collector.py",
+    "perception_readiness": "scripts/perception_readiness.py",
+    "rosbag1_rgbd_indexer": "scripts/rosbag1_rgbd_indexer.py",
+    "typed_raw_binding": "scripts/typed_raw_binding.py"
+  },
+  "required_config_files": [
+    "capability_matrix.json",
+    "dabai_ros1_formal_four_scene_six_topics_v1.json",
+    "dabai_ros1_raw_rgbd_six_topics_v1.json",
+    "model_bindings.json",
+    "read_only_output_contract.json",
+    "ros1_noetic_field_install_contract.json",
+    "source_core_binding_v2.json"
+  ],
+  "required_fixture_files": [
+    "dabai_camera_query_allowlist.json",
+    "orchestration_typed_frames.json",
+    "perception_field_intake.schema.json",
+    "perception_field_intake_template.json",
+    "perception_readiness_bundle_template.json",
+    "perception_readiness_missing_bundle.json",
+    "perception_readiness_negative_cases.json",
+    "rgbd_expected_topics.json",
+    "ros1_dabai_runtime_contract.json"
+  ],
+  "interface_modes": {
+    "native_ros1_messages": {
+      "required_files": [
+        "msg/ObjectDetection.msg",
+        "msg/PerceptionFrame.msg",
+        "msg/PerceptionTarget.msg"
+      ]
+    },
+    "audited_bridge": {
+      "required_files": [
+        "config/ros1_ros2_perception_bridge_contract.json",
+        "src/limo_cleanup_ros1_perception/perception_frame_bridge.py"
+      ]
+    }
+  },
+  "model_manifest": {
+    "path": "config/model_bindings.json",
+    "required_classes": [
+      "plastic_bottle",
+      "trash_bin"
+    ]
+  },
+  "python_runtime_dependency_lock": {
+    "lock_id": "ROS1_NOETIC_PERCEPTION_PYTHON_RUNTIME_V1",
+    "version_provenance": {
+      "authority": "latest_verified_limo_jetson_runtime",
+      "source_path": "docs/foxy_arm64_deployment.md",
+      "source_scope": "verified_arm64_runtime_versions",
+      "source_declaration_is_install_evidence": false
+    },
+    "source_policy": {
+      "declaration_path": "setup.py",
+      "exact_pins_required": true,
+      "rosdep_claim_forbidden": true,
+      "source_declaration_is_install_evidence": false
+    },
+    "install_evidence_policy": {
+      "distribution_artifact_identity_required": true,
+      "distribution_metadata_required": true,
+      "fresh_isolated_import_probe_required": true,
+      "module_origin_required": true,
+      "reported_distribution_version_required": true,
+      "reported_module_version_required": true,
+      "runtime_provisioning_required": true,
+      "regular_files_only": true,
+      "linklike_forbidden": true
+    },
+    "requirements": [
+      {
+        "distribution": "numpy",
+        "import_name": "numpy",
+        "exact_version": "1.23.4",
+        "requirement": "numpy==1.23.4",
+        "required_for": "rgbd_array_processing",
+        "provisioning_policy": "isolated_offline_artifact_exact_version",
+        "deployment_source": "isolated_offline_wheel_artifact",
+        "distribution_artifact_provenance_policy": "required_field_install_artifact_identity",
+        "distribution_artifact_format": "wheel"
+      },
+      {
+        "distribution": "torch",
+        "import_name": "torch",
+        "exact_version": "2.1.0a0+41361538.nv23.06",
+        "requirement": "torch==2.1.0a0+41361538.nv23.06",
+        "required_for": "dual_model_backend",
+        "provisioning_policy": "isolated_offline_artifact_exact_version",
+        "deployment_source": "isolated_jetson_vendor_wheel_artifact",
+        "distribution_artifact_provenance_policy": "required_field_install_artifact_identity",
+        "distribution_artifact_format": "wheel"
+      },
+      {
+        "distribution": "ultralytics",
+        "import_name": "ultralytics",
+        "exact_version": "8.3.21",
+        "requirement": "ultralytics==8.3.21",
+        "required_for": "dual_model_inference",
+        "provisioning_policy": "isolated_offline_artifact_exact_version",
+        "deployment_source": "isolated_offline_wheel_artifact",
+        "distribution_artifact_provenance_policy": "required_field_install_artifact_identity",
+        "distribution_artifact_format": "wheel"
+      }
+    ]
+  },
+  "install_policy": {
+    "isolation_prefix": "/tmp/limo_v2_ros1_noetic_",
+    "source_space_relative": "ros1_overlay_src",
+    "application_root_relative": "install/lib/python3/dist-packages",
+    "runtime_provisioning_strategy": "offline_wheels_no_index_no_deps_target",
+    "regular_files_only": true,
+    "required_build_tool": "catkin_make",
+    "forbidden_build_tools": [
+      "colcon"
+    ],
+    "required_exit_codes": {
+      "build": 0,
+      "install": 0,
+      "test": 0,
+      "test_result": 0
+    },
+    "required_environment_flags": [
+      "build_started",
+      "install_created",
+      "install_started",
+      "runtime_provisioning_completed",
+      "runtime_provisioning_started",
+      "shell_entered",
+      "tests_started"
+    ]
+  }
+}

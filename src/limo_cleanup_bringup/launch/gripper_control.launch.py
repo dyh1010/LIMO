@@ -22,7 +22,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'backend',
             default_value='dry_run',
-            description='dry_run or pymycobot',
+            description='dry_run only; real gripper backend is unreleased',
         ),
         DeclareLaunchArgument(
             'allow_hardware_motion',
@@ -31,13 +31,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'confirmed_gripper_model',
-            default_value='mycobot_gripper_ag',
-            description='Expected physical gripper model',
-        ),
-        DeclareLaunchArgument(
-            'serial_port',
-            default_value='/dev/elephant',
-            description='myCobot serial device',
+            default_value='UNRESOLVED_DO_NOT_CONNECT',
+            description='Final physical gripper model is not frozen',
         ),
         Node(
             package='limo_cleanup_executor',
@@ -53,7 +48,6 @@ def generate_launch_description():
                         value_type=bool),
                     'confirmed_gripper_model': LaunchConfiguration(
                         'confirmed_gripper_model'),
-                    'serial_port': LaunchConfiguration('serial_port'),
                 },
             ],
         ),

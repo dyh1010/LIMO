@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "intake_id": null,
+  "runtime_family": "ROS1",
+  "ros_distro": "noetic",
+  "read_only": true,
+  "authorizes_motion": false,
+  "delivery_ready": false,
+  "sensor_only_isolation": {
+    "camera_driver_owner": null,
+    "control_publishers_present": null,
+    "services_or_actions_used": null,
+    "shared_graph": null,
+    "mixed_tf": null
+  },
+  "software_binding": {
+    "source_set_sha256": null,
+    "model_manifest_sha256": null,
+    "output_contract_sha256": null,
+    "ros1_field_install_evidence": null
+  },
+  "capture_policy": {
+    "expected_topic_manifest": "dabai_ros1_formal_four_scene_six_topics_v1.json",
+    "bag_format": "rosbag1-v2",
+    "minimum_unique_frames_per_scene": 30,
+    "unique_output_directories": true,
+    "overwrite_allowed": false
+  },
+  "scenes": [
+    {"scene_id": "background", "capture_id": null, "task_id": null, "rosbag1_path": null, "rosbag1_sha256": null, "typed_frames_path": null, "ground_truth_path": null, "measurement_reference_path": null, "unique_bound_frame_count": null},
+    {"scene_id": "bin_only", "capture_id": null, "task_id": null, "rosbag1_path": null, "rosbag1_sha256": null, "typed_frames_path": null, "ground_truth_path": null, "measurement_reference_path": null, "unique_bound_frame_count": null},
+    {"scene_id": "bottle_in_bin", "capture_id": null, "task_id": null, "rosbag1_path": null, "rosbag1_sha256": null, "typed_frames_path": null, "ground_truth_path": null, "measurement_reference_path": null, "unique_bound_frame_count": null},
+    {"scene_id": "bottle_outside", "capture_id": null, "task_id": null, "rosbag1_path": null, "rosbag1_sha256": null, "typed_frames_path": null, "ground_truth_path": null, "measurement_reference_path": null, "unique_bound_frame_count": null}
+  ]
+}

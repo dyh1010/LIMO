@@ -1,7 +1,9 @@
 # LIMO Cleanup 坐标系规范
 
 更新时间：2026-08-11
-状态：DaBai 真实 RGB/对齐深度 frame 已验收；机械安装外参与工具 TCP 仍待现场实测。
+状态：DaBai 真实 RGB/对齐深度 frame 已验收；机械安装外参与工具 TCP 仍待现场实测；
+ROS1 → ROS2 bridge 已在本地实现并通过离线测试，但 Catkin 构建、跨图运行、状态与 TF
+实机验收尚未完成。
 
 ## 1. 目的
 
@@ -35,9 +37,9 @@ map
 
 | 坐标系 | 父坐标系 | 类型 | 发布者 | 当前状态 |
 | --- | --- | --- | --- | --- |
-| map | 无 | 全局固定 | 定位 / SLAM | 样机到货后启用 |
-| odom | map | 局部连续 | 底盘里程计 | 官方 limo_base 提供 |
-| base_link | odom | 动态 | robot_state_publisher + URDF | 官方 URDF 已提供 |
+| map | 无 | 全局固定 | 坐标约定 | 定位 / SLAM 验收后启用 |
+| odom | map | 全局到局部校正 | 定位 / SLAM | `map -> odom` 尚未实机验收 |
+| base_link | odom | 动态底盘里程计 | ROS1 Noetic `limo_base_node` | ROS1 实动已确认；`odom -> base_link` 唯一桥入 ROS2 尚未验收 |
 | camera_link | base_link | 静态 | static_transform / URDF | 待实测 |
 | camera_depth_frame | camera_link | 静态 | 相机驱动 | DaBai 实机 TF 已确认 |
 | camera_depth_optical_frame | camera_depth_frame | 静态 | 相机驱动 | 原始深度光学坐标系；实机 TF 已确认 |
@@ -47,6 +49,27 @@ map
 | gripper_tcp | 机械臂末关节 | 动态 | 机械臂驱动 | `mycobot_gripper_ag` 已确认；TCP 待标定 |
 | touch_tcp | 机械臂法兰 | 静态工具外参 | URDF / static_transform | touch-only 专用软触碰头；待测，禁止沿用 gripper TCP |
 | bin_frame | map | 静态 | 手动标定 / AprilTag | 待垃圾桶方案确认 |
+
+### 3.1 跨 ROS 版本的 TF 所有权
+
+当前 ROS1 Noetic `limo_base_node` 是 `/dev/ttyTHS0` 的唯一底盘 driver，也是
+`odom -> base_link` 的权威来源。ROS2 Foxy `limo_base` 只保留为历史诊断路径，不得与
+ROS1 driver 并发，也不得在 ROS2 中再生成第二份 `odom -> base_link`。
+
+`map -> odom` 只归定位或 SLAM 节点所有，不能由底盘 driver 或
+`robot_state_publisher` 发布。`robot_state_publisher` 只负责 URDF 关节链，不是动态
+底盘里程计 TF 的 owner。
+
+ROS1 的 `/odom`、`/imu`、`/tf`、`/tf_static` 以及底盘状态如何进入 ROS2 尚未验收。
+`/limo_status` 等自定义消息必须先确认 ROS1/ROS2 消息定义和 bridge pair；`/tf` 与
+`/tf_static` 必须完成逐 child 唯一所有权审计后才可桥接。禁止同时“桥接原 TF”并在
+ROS2 根据 `/odom` 重发同一 `odom -> base_link`。
+
+ROS2 checker 与 `view_frames` 看不到 ROS1 原生图。只看到一棵无冲突的 ROS2 TF 树，不能
+证明 ROS1 中不存在第二个发布者；所有权结论必须同时来自 ROS1 图、ROS2 图和实际 bridge
+端点。当前状态为 `ROS1_ROS2_BASE_BRIDGE_IMPLEMENTED_LOCALLY_UNVERIFIED`：本地实现和
+离线测试不等于 Catkin 构建、ROS1/ROS2 跨图运行或机器人 TF/状态验收通过。V1 不等待
+这些 bridge 验收，但 V1 也不启用依赖它的真实自动导航或底盘运动。
 
 已确认执行机构为大象机器人（Elephant Robotics）myCobot 280 M5，末端执行器为
 myCobot Gripper AG（`mycobot_gripper_ag`）。型号确认不代表运动授权；机械臂安装板、
@@ -98,19 +121,24 @@ touch-only 的现场记录统一填写 `docs/touch_only_arm_geometry_field_sheet
 达到 `REVIEWED` 前，不得发布 `base_link -> arm_base_link` 或 `arm_flange -> touch_tcp`
 占位变换，不得把空白或全零值解释为已标定。
 
-## 7. 到货后的只读验证步骤
+## 7. 实机只读验证步骤
 
 验证期间不启动 RViz / Gazebo（WSL 渲染风险见进度记录第 8 节），全部使用命令行工具：
 
-1. `ros2 run tf2_tools view_frames` 生成 frames.pdf，确认整棵坐标树连通。
-2. `ros2 run tf2_ros tf2_echo base_link camera_color_optical_frame` 确认真实检测 frame 的完整变换与实测一致。
-3. 使用 `ros2 topic list -t` 与 `ros2 topic info --verbose <topic>` 记录 RGB、深度、
+1. 在隔离的 ROS1、ROS2 shell 中分别记录节点、TF 发布者和话题端点，并核对
+   `/dev/ttyTHS0` 只有 ROS1 `limo_base_node` 或完全无 owner；任一侧查询失败都不能按安全处理。
+2. bridge 尚未验收时，只验证 ROS2 相机子树，不得宣称 `map -> odom -> base_link` 已连通。
+3. bridge 的状态/TF 白名单和唯一 owner 通过后，才运行
+   `ros2 run tf2_tools view_frames` 生成 frames.pdf，并确认没有重复 child。
+4. `ros2 run tf2_ros tf2_echo base_link camera_color_optical_frame` 确认真实检测 frame 的完整变换与实测一致。
+5. 使用 `ros2 topic list -t` 与 `ros2 topic info --verbose <topic>` 记录 RGB、深度、
    `camera_info` 和点云的实际消息类型、发布者与 QoS。Foxy 手册提示图像采用
    Best Effort，Humble 环境需按实际发布者匹配。
-4. 把已知尺寸的标定物放在底盘正前方 0.3～1.5 m 的已知距离处，比较检测三维
+6. 把已知尺寸的标定物放在底盘正前方 0.3～1.5 m 的已知距离处，比较检测三维
    位置经 TF2 转换到 base_link 后的误差。DaBai 手册标称深度有效范围为
    0.3～3 m，0.3 m 内的结果不得纳入有效测量。
-5. 位置误差进入可接受范围（首版目标 ±2 cm）之前，只允许只读验证，不允许驱动底盘或机械臂。
+7. 位置误差进入可接受范围（首版目标 ±2 cm），且 bridge、ROS1 watchdog、状态话题和
+   TF 断链/唯一所有权全部通过之前，只允许只读验证，不允许驱动底盘或机械臂。
 
 验证顺序（与进度记录第 16.2 节一致）：
 
@@ -122,5 +150,6 @@ touch-only 的现场记录统一填写 `docs/touch_only_arm_geometry_field_sheet
 能计算三维位置
 能转换坐标
 位置误差达到可接受范围
-再允许底盘或机械臂动作
+bridge / watchdog / 状态 / TF 验收通过
+再分别申请底盘或机械臂单次动作授权
 ```

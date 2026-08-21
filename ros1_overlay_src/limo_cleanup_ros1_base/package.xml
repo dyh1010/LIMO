@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>limo_cleanup_ros1_base</name>
+  <version>0.1.0</version>
+  <description>Fail-closed ROS1 command adapter for the LIMO cleanup base bridge.</description>
+  <maintainer email="dyh@todo.todo">dyh</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>actionlib</depend>
+  <depend>actionlib_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>move_base_msgs</depend>
+  <depend>rospy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2_ros</depend>
+  <exec_depend>rosgraph</exec_depend>
+  <exec_depend>limo_v1_navigation</exec_depend>
+
+  <test_depend>python3-nose</test_depend>
+  <test_depend>python3-pytest</test_depend>
+</package>

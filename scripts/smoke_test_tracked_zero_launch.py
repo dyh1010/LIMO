@@ -7,6 +7,10 @@ from rclpy.node import Node
 from std_msgs.msg import Bool
 
 
+TEST_PREFIX = '/test/legacy_ros2_offline/tracked_zero_launch'
+TEST_REQUEST_TOPIC = TEST_PREFIX + '/request'
+TEST_AUTHORIZATION_TOPIC = TEST_PREFIX + '/authorized'
+TEST_SAFETY_TOPIC = TEST_PREFIX + '/safety'
 TEST_OUTPUT_TOPIC = '/test/cleanup/tracked_zero_output'
 
 
@@ -15,11 +19,11 @@ class ZeroLaunchProbe(Node):
         super().__init__('cleanup_tracked_zero_launch_probe')
         self.samples = []
         self.request_publisher = self.create_publisher(
-            Twist, '/cleanup/base/cmd_vel_request', 10)
+            Twist, TEST_REQUEST_TOPIC, 10)
         self.authorization_publisher = self.create_publisher(
-            Bool, '/cleanup/base/motion_authorized', 10)
+            Bool, TEST_AUTHORIZATION_TOPIC, 10)
         self.safety_publisher = self.create_publisher(
-            Bool, '/cleanup/base/safety_clear', 10)
+            Bool, TEST_SAFETY_TOPIC, 10)
         self.output_subscription = self.create_subscription(
             Twist, TEST_OUTPUT_TOPIC, self._on_output, 10)
 
@@ -72,9 +76,11 @@ def main():
         assert not probe.get_publishers_info_by_topic('/cmd_vel'), (
             'isolated zero-output smoke created a real /cmd_vel publisher')
         print(
-            'PASS: hard-disabled zero-output launch rejected authorized '
-            'nonzero requests')
-        print('PASS: isolated launch created no real /cmd_vel publisher')
+            'LEGACY_ROS2_OFFLINE_ONLY_MOCK_CHECK: hard-disabled '
+            'zero-output launch rejected test-only nonzero requests')
+        print(
+            'LEGACY_ROS2_OFFLINE_ONLY_MOCK_CHECK: isolated launch created '
+            'no public command publisher')
     finally:
         probe.destroy_node()
         rclpy.shutdown()

@@ -1,0 +1,12 @@
+<launch>
+  <!--
+    Starting the included vendor launch opens /dev/ttyTHS0 and can change
+    hardware state. The false default is deliberate and must remain.
+  -->
+  <arg name="hardware_write_authorized" default="false" />
+
+  <group if="$(arg hardware_write_authorized)">
+    <remap from="/cmd_vel" to="/cleanup/base/driver_cmd_vel" />
+    <include file="$(find limo_bringup)/launch/limo_start.launch" />
+  </group>
+</launch>
